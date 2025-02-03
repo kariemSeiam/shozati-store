@@ -8,5 +8,5 @@ export default defineConfig({
       'react-router-dom': 'react-router-dom'
     }
   },
-  base: '/shozati-store'  
+  base: '/', 
 });
