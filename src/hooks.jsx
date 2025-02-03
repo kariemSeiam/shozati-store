@@ -104,23 +104,27 @@ export const AuthContext = createContext({
     isAuthenticated: false,
     userInfo: null,
     phone: null,
-    login: () => {},
-    logout: () => {},
-    updateProfile: () => {},
-    addAddress: () => {},
-    updateAddress: () => {},
+    login: () => { },
+    logout: () => { },
+    updateProfile: () => { },
+    addAddress: () => { },
+    updateAddress: () => { },
     loading: true,
 });
+
+const generateCartItemId = (productId, variantId, size) => {
+    return `${productId}-${variantId}-${size}`;
+};
 
 // Cart Context
 export const CartContext = createContext({
     cart: [],
     isCartOpen: false,
-    setIsCartOpen: () => {},
-    addToCart: () => {},
-    removeFromCart: () => {},
-    updateQuantity: () => {},
-    emptyCart: () => {},
+    setIsCartOpen: () => { },
+    addToCart: () => { },
+    removeFromCart: () => { },
+    updateQuantity: () => { },
+    emptyCart: () => { },
     cartTotal: 0,
 });
 
@@ -368,166 +372,192 @@ export const useSlides = () => {
     return { slides, loading, error };
 };
 
-// Favorites Hook with Caching
 export const useFavorites = () => {
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [optimisticUpdates, setOptimisticUpdates] = useState(new Map());
-    const [pagination, setPagination] = useState({
-        currentPage: 1,
-        totalPages: 1,
-        hasMore: false,
-    });
+    const [statusCache, setStatusCache] = useState(new Map());
 
     const { isAuthenticated } = useContext(AuthContext);
     const pendingOperations = useRef(new Set());
+    const statusRequests = useRef(new Map());
 
-    const getFavoriteStatus = useCallback(
-        (productId) => {
-            if (!isAuthenticated || productId == null) return false;
-            return (
-                optimisticUpdates.get(productId) ??
-                favorites.some((f) => f.id === productId)
-            );
-        },
-        [favorites, optimisticUpdates, isAuthenticated]
-    );
+    // Synchronous favorite status check
+    const getFavoriteStatus = useCallback((productId) => {
+        if (!isAuthenticated || productId == null) return false;
 
-    const fetchFavorites = useCallback(
-        async (page = 1) => {
-            if (!isAuthenticated) {
-                setFavorites([]);
-                setLoading(false);
-                return;
-            }
-
-            try {
-                setLoading(true);
-                const data = await apiRequest(
-                    `/favorites?page=${page}`,
-                    {},
-                    true
-                );
-
-                const updatedFavorites = data.favorites.map((favorite) => ({
-                    ...favorite,
-                    isFavorite:
-                        optimisticUpdates.get(favorite.id) ??
-                        favorite.isFavorite,
-                }));
-
-                setFavorites((prev) =>
-                    page > 1 ? [...prev, ...updatedFavorites] : updatedFavorites
-                );
-                setPagination({
-                    currentPage: data.currentPage,
-                    totalPages: data.pages,
-                    hasMore: data.currentPage < data.pages,
-                });
-            } catch (err) {
-                setError(formatError(err));
-                toast.error('Failed to load favorites');
-            } finally {
-                setLoading(false);
-            }
-        },
-        [isAuthenticated, optimisticUpdates]
-    );
-
-    const toggleFavorite = useCallback(
-        async (productId) => {
-            if (!isAuthenticated) {
-                toast.error('Please login first');
-                return false;
-            }
-
-            if (pendingOperations.current.has(productId)) {
-                return false;
-            }
-
-            try {
-                pendingOperations.current.add(productId);
-                const currentStatus = getFavoriteStatus(productId);
-                setOptimisticUpdates((prev) =>
-                    new Map(prev).set(productId, !currentStatus)
-                );
-
-                const response = await apiRequest(
-                    '/favorites',
-                    {
-                        method: 'POST',
-                        body: JSON.stringify({ product_id: productId }),
-                    },
-                    true
-                );
-
-                setOptimisticUpdates((prev) => {
-                    const updated = new Map(prev);
-                    updated.delete(productId);
-                    return updated;
-                });
-
-                if (!currentStatus && response.product) {
-                    setFavorites((prev) => [
-                        { ...response.product, isFavorite: true },
-                        ...prev,
-                    ]);
-                } else {
-                    setFavorites((prev) =>
-                        prev.filter((f) => f.id !== productId)
-                    );
-                }
-
-                return true;
-            } catch (err) {
-                setOptimisticUpdates((prev) => {
-                    const updated = new Map(prev);
-                    updated.delete(productId);
-                    return updated;
-                });
-
-                toast.error(formatError(err));
-                return false;
-            } finally {
-                pendingOperations.current.delete(productId);
-            }
-        },
-        [isAuthenticated, getFavoriteStatus]
-    );
-
-    const loadMore = useCallback(() => {
-        if (pagination.hasMore && !loading && isAuthenticated) {
-            fetchFavorites(pagination.currentPage + 1);
+        // Check optimistic updates first
+        const optimisticStatus = optimisticUpdates.get(productId);
+        if (optimisticStatus !== undefined) {
+            return optimisticStatus;
         }
-    }, [
-        pagination.hasMore,
-        pagination.currentPage,
-        loading,
-        fetchFavorites,
-        isAuthenticated,
-    ]);
 
+        // Check if product is in favorites list
+        const inFavoritesList = favorites.some(f => f.id === productId);
+        if (inFavoritesList) {
+            return true;
+        }
+
+        // Check status cache
+        const cachedStatus = statusCache.get(productId);
+        if (cachedStatus && Date.now() - cachedStatus.timestamp < 30000) {
+            return cachedStatus.status;
+        }
+
+        return false;
+    }, [isAuthenticated, favorites, optimisticUpdates, statusCache]);
+
+    // Fetch all favorites
+    const fetchFavorites = useCallback(async () => {
+        if (!isAuthenticated) {
+            setFavorites([]);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const data = await apiRequest('/favorites', {}, true);
+
+            const updatedFavorites = data.favorites.map((favorite) => ({
+                ...favorite,
+                isFavorite: optimisticUpdates.get(favorite.id) ?? true
+            }));
+
+            setFavorites(updatedFavorites);
+
+            // Update status cache for all favorites
+            const newCache = new Map(statusCache);
+            updatedFavorites.forEach(favorite => {
+                newCache.set(favorite.id, {
+                    status: true,
+                    timestamp: Date.now()
+                });
+            });
+            setStatusCache(newCache);
+
+        } catch (err) {
+            setError(formatError(err));
+            toast.error('Failed to load favorites');
+        } finally {
+            setLoading(false);
+        }
+    }, [isAuthenticated, optimisticUpdates]);
+
+    // Toggle favorite status
+    const toggleFavorite = useCallback(async (productId) => {
+        if (!isAuthenticated) {
+            toast.error('Please login first');
+            return false;
+        }
+
+        if (pendingOperations.current.has(productId)) {
+            return false;
+        }
+
+        try {
+            pendingOperations.current.add(productId);
+            const currentStatus = getFavoriteStatus(productId);
+
+            // Apply optimistic update
+            setOptimisticUpdates(prev => new Map(prev).set(productId, !currentStatus));
+
+            const response = await apiRequest(
+                '/favorites',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ product_id: productId })
+                },
+                true
+            );
+
+            // Clear optimistic update
+            setOptimisticUpdates(prev => {
+                const updated = new Map(prev);
+                updated.delete(productId);
+                return updated;
+            });
+
+            // Update favorites list
+            setFavorites(prev => {
+                const isNowFavorite = !currentStatus;
+                if (isNowFavorite) {
+                    const productExists = prev.some(f => f.id === productId);
+                    if (!productExists) {
+                        return [...prev, { id: productId, isFavorite: true }];
+                    }
+                    return prev;
+                } else {
+                    return prev.filter(f => f.id !== productId);
+                }
+            });
+
+            // Update status cache
+            setStatusCache(prev => new Map(prev).set(productId, {
+                status: !currentStatus,
+                timestamp: Date.now()
+            }));
+
+            return true;
+        } catch (err) {
+            // Revert optimistic update
+            setOptimisticUpdates(prev => {
+                const updated = new Map(prev);
+                updated.delete(productId);
+                return updated;
+            });
+            toast.error(formatError(err));
+            return false;
+        } finally {
+            pendingOperations.current.delete(productId);
+        }
+    }, [isAuthenticated, getFavoriteStatus]);
+
+    // Check individual product favorite status
+    const checkFavoriteStatus = useCallback(async (productId) => {
+        if (!isAuthenticated || productId == null || statusRequests.current.has(productId)) {
+            return getFavoriteStatus(productId);
+        }
+
+        try {
+            const promise = apiRequest(`/favorites/${productId}/status`, {}, true);
+            statusRequests.current.set(productId, promise);
+
+            const response = await promise;
+
+            setStatusCache(prev => new Map(prev).set(productId, {
+                status: response.isFavorite,
+                timestamp: Date.now()
+            }));
+
+            return response.isFavorite;
+        } catch (error) {
+            console.error('Error checking favorite status:', error);
+            return getFavoriteStatus(productId);
+        } finally {
+            statusRequests.current.delete(productId);
+        }
+    }, [isAuthenticated, getFavoriteStatus]);
+
+    // Initialize favorites on auth change
     useEffect(() => {
         if (isAuthenticated) {
             fetchFavorites();
         } else {
             setFavorites([]);
-            setLoading(false);
+            setStatusCache(new Map());
+            setOptimisticUpdates(new Map());
         }
-    }, [fetchFavorites, isAuthenticated]);
+    }, [isAuthenticated, fetchFavorites]);
 
     return {
         favorites,
         loading,
         error,
-        pagination,
-        fetchFavorites,
-        toggleFavorite,
-        loadMore,
         getFavoriteStatus,
-        isPending: (productId) =>
-            pendingOperations.current.has(productId),
+        checkFavoriteStatus,
+        toggleFavorite,
+        isPending: (productId) => pendingOperations.current.has(productId)
     };
 };
 
@@ -772,16 +802,15 @@ export const CartProvider = ({ children }) => {
 
     const addToCart = (product, variant, size, quantity = 1) => {
         setCart((prev) => {
+            const cartItemId = generateCartItemId(product.id, variant.id, size);
+
             const existingItem = prev.find(
-                (item) =>
-                    item.id === product.id &&
-                    item.variantId === variant.id &&
-                    item.size === size
+                (item) => item.cartItemId === cartItemId
             );
 
             if (existingItem) {
                 return prev.map((item) =>
-                    item === existingItem
+                    item.cartItemId === cartItemId
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
@@ -791,6 +820,7 @@ export const CartProvider = ({ children }) => {
                 ...prev,
                 {
                     id: product.id,
+                    cartItemId,
                     name: product.name,
                     price: product.discountPrice || product.basePrice,
                     image: variant.images[0],
@@ -805,19 +835,18 @@ export const CartProvider = ({ children }) => {
         setIsCartOpen(true);
     };
 
-    const removeFromCart = (itemId) => {
-        setCart((prev) => prev.filter((item) => item.id !== itemId));
+    const removeFromCart = (cartItemId) => {
+        setCart((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
     };
 
-    const updateQuantity = (itemId, quantity) => {
+    const updateQuantity = (cartItemId, quantity) => {
         if (quantity < 1) {
-            removeFromCart(itemId);
+            removeFromCart(cartItemId);
             return;
         }
-
         setCart((prev) =>
             prev.map((item) =>
-                item.id === itemId ? { ...item, quantity } : item
+                item.cartItemId === cartItemId ? { ...item, quantity } : item
             )
         );
     };

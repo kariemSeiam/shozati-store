@@ -24,18 +24,63 @@ const calculateDiscount = (basePrice, discountPrice) => {
 };
 
 
-// Memoized Badge Component
-const Badge = memo(({ icon: Icon, text, color, className = '' }) => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className={`px-2 py-1 rounded-full backdrop-blur-sm flex items-center gap-1 
-                text-white text-sm font-medium ${className}`}
-    >
-        <Icon className="w-4 h-4" />
-        <span>{text}</span>
-    </motion.div>
-));
+// Utility function to determine text color based on background
+const getContrastColor = (hexColor) => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    // Calculate relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Return white for dark backgrounds, black for light backgrounds
+    return luminance > 0.5 ? '#FFFFFF' : '#FFFFFF';
+};
+
+const Badge = memo(({
+    icon: Icon,
+    text,
+    color,
+    className = '',
+    size = 'default' // 'small' | 'default' | 'large'
+}) => {
+    // Ensure color is in correct format
+    const bgColor = color?.startsWith('#') ? color : `#${color}`;
+    const textColor = getContrastColor(bgColor);
+
+    // Dynamic size classes
+    const sizeClasses = {
+        small: 'px-1.5 py-0.5 text-xs',
+        default: 'px-2 py-1 text-sm',
+        large: 'px-3 py-1.5 text-base'
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{
+                backgroundColor: `${bgColor}40`, // 40 is for 25% opacity
+                color: textColor,
+                borderColor: bgColor
+            }}
+            className={`
+          rounded-full 
+          backdrop-blur-sm 
+          flex 
+          items-center 
+          gap-1
+          font-medium
+          ${sizeClasses[size]}
+          ${className}
+        `}
+        >
+            {Icon && <Icon className={size === 'small' ? 'w-3 h-3' : size === 'large' ? 'w-5 h-5' : 'w-4 h-4'} />}
+            <span>{text}</span>
+        </motion.div>
+    );
+});
 
 const ColorSelector = memo(({
     variants,
@@ -53,7 +98,7 @@ const ColorSelector = memo(({
     return (
         <div className="relative">
             <div className="flex gap-2 overflow-x-auto hide-scrollbar py-1 px-1"
-            dir='rtl'>
+                dir='rtl'>
                 {visibleVariants.map((variant) => (
                     <motion.button
                         key={variant.id}
@@ -62,8 +107,8 @@ const ColorSelector = memo(({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
                         className={`relative p-0.5 rounded-full transition-all ${selectedVariant?.id === variant.id
-                                ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900'
-                                : ''
+                            ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900'
+                            : ''
                             }`}
                     >
                         <div
@@ -102,7 +147,7 @@ const ColorSelector = memo(({
                         onClick={() => setIsExpanded(false)}
                         className="flex items-center justify-center px-2 rounded-full 
                        hover:bg-gray-800/50 transition-colors"
-                       
+
                     >
                         <ChevronRight className="w-4 h-4 text-gray-400" />
                     </motion.button>
@@ -147,14 +192,15 @@ const SizeSelector = memo(({ sizes, selectedSize, onSizeSelect }) => {
 // Enhanced Product Card Component
 export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => {
 
-    const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
     const { isAuthenticated } = useContext(AuthContext);
     const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isChangingVariant, setIsChangingVariant] = useState(false);
 
+    const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
     const isFavorite = getFavoriteStatus(product.id);
     const isLoading = isPending(product.id);
+
     // Image rotation interval
     useEffect(() => {
         if (selectedVariant.images.length > 1) {
@@ -179,7 +225,6 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
         if (!canProceed) return;
     };
 
-    const discountPercentage = calculateDiscount(product.basePrice, product.discountPrice);
 
     return (
         <motion.div
@@ -215,10 +260,11 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                             className="bg-black/50 text-yellow-500"
                         />
                     )}
-                    {discountPercentage && (
+                    {(product.tag && product.tagColor) && (
                         <Badge
                             icon={Tag}
-                            text={`${discountPercentage}%-`}
+                            text={product.tag}
+                            color={product.tagColor}
                             className="bg-red-500/80"
                         />
                     )}
@@ -393,8 +439,10 @@ export const ProductSheet = memo(({
     onClose,
     checkAuthAndProceed
 }) => {
+    // In ProductCard or ProductSheet
     const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
-    const { addToCart } = useContext(CartContext);
+    const isFavorite = getFavoriteStatus(product.id);
+    const isLoading = isPending(product.id); const { addToCart } = useContext(CartContext);
     const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -411,8 +459,6 @@ export const ProductSheet = memo(({
         }
     }, [isOpen, product]);
 
-    const isFavorite = getFavoriteStatus(product?.id);
-    const isLoading = isPending(product?.id);
 
     const handleFavoriteToggle = async () => {
         const canProceed = await checkAuthAndProceed({
