@@ -130,8 +130,8 @@ const SEOWrapper = ({ children }) => {
     <>
       <Helmet>
         {/* Enhanced Primary Meta Tags */}
-        <title>شوزاتي - متجر الأحذية النسائية الأول في مصر | Shozati</title>
-        <meta name="title" content="شوزاتي - متجر الأحذية النسائية الأول في مصر | Shozati" />
+        <title>شوزاتي  | Shozati</title>
+        <meta name="title" content="شوزاتي | Shozati" />
         <meta name="description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. أحذية أنيقة بجودة عالية وأسعار مناسبة. توصيل سريع لجميع المحافظات، ضمان الجودة، وخدمة عملاء متميزة. تسوقي الآن!" />
         <meta name="keywords" content="احذية نسائية, احذية حريمي, شوزات, متجر احذية, احذية مصر, شوزاتي" />
         
@@ -139,7 +139,7 @@ const SEOWrapper = ({ children }) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://shozati.com/" />
         <meta property="og:site_name" content="Shozati شوزاتي" />
-        <meta property="og:title" content="شوزاتي - متجر الأحذية النسائية الأول في مصر | Shozati" />
+        <meta property="og:title" content="شوزاتي | Shozati" />
         <meta property="og:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. أحذية أنيقة بجودة عالية وأسعار مناسبة. توصيل لجميع المحافظات 🚚 ضمان الجودة ✨" />
         <meta property="og:image" content="https://shozati.com/social-cover.jpg" />
         <meta property="og:locale" content="ar_EG" />
@@ -149,7 +149,7 @@ const SEOWrapper = ({ children }) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@shozati" />
         <meta name="twitter:creator" content="@shozati" />
-        <meta name="twitter:title" content="شوزاتي - متجر الأحذية النسائية الأول في مصر | Shozati" />
+        <meta name="twitter:title" content="شوزاتي | Shozati" />
         <meta name="twitter:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. توصيل سريع ✈️ ضمان الجودة 💎 أسعار مناسبة 🏷️" />
         <meta name="twitter:image" content="https://shozati.com/social-cover.jpg" />
 

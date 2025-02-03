@@ -121,7 +121,7 @@ const OrderCard = ({ order, onSelect }) => {
               <div className="p-2 rounded-xl bg-blue-500/10">
                 <ShoppingBag className="w-4 h-4 text-blue-500" />
               </div>
-              <span className="text-gray-400 text-sm">{order.items.length} منتج</span>
+              <span className="text-gray-400 text-sm">{order.totalQuantity} منتج</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-blue-500 font-bold text-lg">
@@ -345,7 +345,7 @@ const OrderDetailsContent = ({ order, onCancel }) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-white">المنتجات</h3>
           <span className="text-sm text-gray-400">
-            {order.items.length} منتج
+            {order.totalQuantity} منتج
           </span>
         </div>
 
@@ -378,7 +378,7 @@ const OrderDetailsContent = ({ order, onCancel }) => {
                 <div className="flex-1">
                   <div className="flex justify-between">
                     <span className="font-bold text-blue-500">
-                      {formatCurrency(item.price)}
+                      {formatCurrency(item.totalPrice)}
                     </span>
                     <div className="text-right">
                       <h4 className="font-bold text-white mb-1">{item.productName}</h4>
@@ -398,11 +398,11 @@ const OrderDetailsContent = ({ order, onCancel }) => {
                      rounded-2xl p-5 border border-gray-700/50 space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-400">المجموع</span>
-            <span className="text-white">{formatCurrency(order.total - 50)}</span>
+            <span className="text-white">{formatCurrency(order.subtotal)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400">الشحن</span>
-            <span className="text-green-500">{formatCurrency(50)}</span>
+            <span className="text-green-500">{order.shippingFee === 0 ? 'مجاناً' : formatCurrency(order.shippingFee)}</span>
           </div>
           <div className="h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
           <div className="flex justify-between items-center">
@@ -572,7 +572,7 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           </motion.div>
 
           {/* Orders List */}
-          <div className="flex-1 overflow-auto" >
+          <div className="flex-1 overflow-auto hide-scrollbar" >
             <div className="px-4 py-4 space-y-4">
               <AnimatePresence mode="popLayout">
                 {filteredOrders.length > 0 ? (

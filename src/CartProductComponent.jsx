@@ -1,8 +1,8 @@
-import React, { useState, useContext, useRef, useEffect ,useCallback } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import {
-  X, ChevronDown, ShoppingBag, Heart, ChevronRight, Share2, Star, Tag,ArrowRight ,ArrowLeft ,
+  X, ChevronDown, ShoppingBag, Heart, ChevronRight, Share2, Star, Tag, ArrowRight, ArrowLeft,
   Plus, Minus, Clock, Package, Shield, ExternalLink, Ruler, Palette, Check, Loader2
 } from 'lucide-react';
 import { CartContext, AuthContext, useOrders } from './hooks';
@@ -28,8 +28,8 @@ const ColorSelector = ({ variants, selectedVariant, onVariantSelect }) => {
           onClick={() => onVariantSelect(variant)}
           className={`group relative p-0.5 rounded-full transition-all 
                    duration-300 ${selectedVariant?.id === variant.id
-            ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900'
-            : ''}`}
+              ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900'
+              : ''}`}
         >
           <div
             className="w-8 h-8 rounded-full border-2 border-gray-700 
@@ -62,7 +62,7 @@ const SizeSelector = ({ sizes, selectedSize, onSizeSelect }) => {
           onClick={() => onSizeSelect(sizeObj)}
           disabled={!sizeObj.inStock}
           className={`relative p-3 rounded-xl font-bold text-sm transition-all
-            ${sizeObj.inStock 
+            ${sizeObj.inStock
               ? selectedSize?.size === sizeObj.size
                 ? 'bg-blue-500 text-white ring-2 ring-blue-500/50'
                 : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700'
@@ -85,10 +85,10 @@ const SizeSelector = ({ sizes, selectedSize, onSizeSelect }) => {
 const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity < 1) {
-      onRemove(item.id);
+      onRemove(item.cartItemId);  // Changed from item.id to item.cartItemId
       return;
     }
-    onUpdateQuantity(item.id, newQuantity);
+    onUpdateQuantity(item.cartItemId, newQuantity);  // Changed from item.id to item.cartItemId
   };
 
   return (
@@ -109,18 +109,18 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
             {item.quantity}×
           </div>
         </div>
-        
+
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => onRemove(item.id)}
+              onClick={() => onRemove(item.cartItemId)}  // Changed from item.id to item.cartItemId
               className="p-1.5 rounded-full hover:bg-red-500/10 transition-colors"
             >
               <X className="w-4 h-4 text-red-500" />
             </motion.button>
-            
+
             <div className="text-right">
               <h4 className="font-bold text-white group-hover:text-blue-500 transition-colors">
                 {item.name}
@@ -135,7 +135,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
             <span className="font-bold text-blue-500">
               {formatCurrency(item.price.toFixed(2))}
             </span>
-            
+
             <div className="flex items-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -145,11 +145,11 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
               >
                 <Minus className="w-4 h-4" />
               </motion.button>
-              
+
               <span className="text-white font-medium w-6 text-center">
                 {item.quantity}
               </span>
-              
+
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -182,12 +182,12 @@ const OrderSummary = ({ orderDetails, onConfirm, onBack, isLoading }) => {
       <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-lg rounded-2xl p-6 pt-0 space-y-4 border border-gray-700/50 relative overflow-hidden">
         {/* Islamic Pattern Overlay */}
         <div className="absolute inset-0 opacity-5 bg-[url('/pattern-arabic.svg')] bg-repeat" />
-        
+
         {/* Content */}
         <div className="relative">
           {/* Shipping Address */}
-          <div className="space-y-4" 
-          dir='rtl'>
+          <div className="space-y-4"
+            dir='rtl'>
             <h4 className="font-bold text-xl text-white font-arabic">عنوان التوصيل</h4>
             <div className="bg-gray-900/70 rounded-xl p-4 space-y-2 border border-gray-700/30">
               <p className="text-gray-200 text-lg">{orderDetails.address.details}</p>
@@ -199,7 +199,7 @@ const OrderSummary = ({ orderDetails, onConfirm, onBack, isLoading }) => {
 
           {/* Cost Breakdown with Arabic styling */}
           <div className="space-y-4 mt-6 pt-6 border-t border-gray-700/30"
-          dir='rtl'>
+            dir='rtl'>
             <div className="space-y-3">
               <div className="flex justify-between text-base">
                 <span className="text-gray-300">المجموع الفرعي</span>
@@ -212,9 +212,9 @@ const OrderSummary = ({ orderDetails, onConfirm, onBack, isLoading }) => {
                 </span>
               </div>
             </div>
-            
+
             <div className="flex justify-between items-center pt-4 border-t border-gray-700/30"
-            dir='ltr'>
+              dir='ltr'>
               <span className="text-2xl font-bold text-white font-arabic">{formatCurrency(finalTotal)}</span>
               <span className="text-xl text-gray-300">المجموع الكلي</span>
             </div>
@@ -240,7 +240,7 @@ const OrderSummary = ({ orderDetails, onConfirm, onBack, isLoading }) => {
             </>
           )}
         </motion.button>
-        
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -255,7 +255,7 @@ const OrderSummary = ({ orderDetails, onConfirm, onBack, isLoading }) => {
   );
 };
 
-const OrderSuccess = ({ orderId, onViewOrders ,emptyCart}) => (
+const OrderSuccess = ({ orderId, onViewOrders, emptyCart }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
@@ -270,7 +270,7 @@ const OrderSuccess = ({ orderId, onViewOrders ,emptyCart}) => (
         <Check className="w-12 h-12 text-green-500" />
       </motion.div>
     </div>
-    
+
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-white p-2">
         تم تأكيد طلبك بنجاح
@@ -302,16 +302,16 @@ const EmptyCart = () => (
   </div>
 );
 
-export const CartSheet = ({ onOrderCreated ,checkAuthAndProceed}) => {
-  const { 
-    cart, 
-    isCartOpen, 
+export const CartSheet = ({ onOrderCreated, checkAuthAndProceed }) => {
+  const {
+    cart,
+    isCartOpen,
     setIsCartOpen,
     removeFromCart,
-    updateQuantity ,
+    updateQuantity,
     emptyCart
   } = useContext(CartContext);
-  
+
   const { userInfo } = useContext(AuthContext);
   const { createOrder } = useOrders();
 
@@ -374,7 +374,7 @@ export const CartSheet = ({ onOrderCreated ,checkAuthAndProceed}) => {
           }
         }));
         toast.success('تم إنشاء طلبك بنجاح');
-        
+
       } else {
         setOrderState(prev => ({
           ...prev,
@@ -407,7 +407,7 @@ export const CartSheet = ({ onOrderCreated ,checkAuthAndProceed}) => {
 
   const handleViewOrders = useCallback(() => {
     setIsCartOpen(false);
-    
+
     // Reset order state to initial values
     setOrderState({
       isProcessing: false,
@@ -419,7 +419,7 @@ export const CartSheet = ({ onOrderCreated ,checkAuthAndProceed}) => {
       },
       error: null
     });
-    
+
     onOrderCreated(orderState.confirmation.orderId);
   }, [orderState.confirmation.orderId, onOrderCreated, setIsCartOpen]);
 
@@ -460,7 +460,7 @@ export const CartSheet = ({ onOrderCreated ,checkAuthAndProceed}) => {
                   onUpdateQuantity={updateQuantity}
                 />
               ))}
-              
+
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -486,6 +486,12 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
   const [quantity, setQuantity] = useState(1);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const [hintMessage, setHintMessage] = useState('');
+  const [hintPosition, setHintPosition] = useState('color'); // 'color', 'size', or 'add'
+
+  if (!product || !isOpen) return null;
+
 
   useEffect(() => {
     if (isOpen && product) {
@@ -493,18 +499,72 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
       setSelectedSize(null);
       setQuantity(1);
       setCurrentImageIndex(0);
+      // Show initial hint after a short delay
+      setTimeout(() => {
+        if (!selectedVariant) {
+          setHintMessage('اختر اللون المناسب أولاً');
+          setHintPosition('color');
+          setShowHint(true);
+        }
+      }, 1000);
     }
   }, [isOpen, product]);
 
-  if (!product || !isOpen) return null;
+
+  // Update hints based on user selections
+  useEffect(() => {
+    if (selectedVariant && !selectedSize && selectedVariant.sizes.length > 0) {
+      setHintMessage('اختر المقاس المناسب');
+      setHintPosition('size');
+      setShowHint(true);
+    } else if (selectedVariant && selectedSize) {
+      setHintMessage('جاهز لإضافة المنتج للسلة');
+      setHintPosition('add');
+      setShowHint(true);
+    }
+  }, [selectedVariant, selectedSize]);
+
+  const HintComponent = ({ position }) => (
+    <div className={`absolute z-10 transition-all duration-500 ease-out transform
+                    ${position === 'color' ? 'top-full mt-4' :
+        position === 'size' ? 'top-full mt-4' : 'bottom-full mb-4'}
+                    ${position === 'add' ? 'left-1/2 -translate-x-1/2' : 'right-0'}
+                    ${showHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+      <div className="relative bg-gradient-to-r from-blue-500 to-blue-600
+                    text-white px-4 py-2 rounded-xl shadow-lg
+                    flex items-center gap-2 whitespace-nowrap
+                    border border-blue-400/20 backdrop-blur-sm">
+        {position === 'add' ? (
+          <ShoppingBag className="w-4 h-4 animate-bounce" />
+        ) : (
+          <AlertCircle className="w-4 h-4 animate-pulse" />
+        )}
+        <span className="text-sm font-medium">{hintMessage}</span>
+        <div className={`absolute ${position === 'add' ? '-bottom-1.5' : '-top-1.5'} 
+                      left-1/2 -translate-x-1/2
+                      w-3 h-3 bg-gradient-to-br from-blue-500 to-blue-600 
+                      ${position === 'add' ? 'rotate-45' : '-rotate-45'}`} />
+      </div>
+    </div>
+  );
+
+
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      toast.error('الرجاء اختيار المقاس');
+    if (!selectedVariant) {
+      setHintMessage('الرجاء اختيار اللون أولاً');
+      setHintPosition('color');
+      setShowHint(true);
+      return;
+    }
+    if (!selectedSize && selectedVariant.sizes.length > 0) {
+      setHintMessage('الرجاء اختيار المقاس');
+      setHintPosition('size');
+      setShowHint(true);
       return;
     }
 
-    addToCart(product, selectedVariant, selectedSize.size, quantity);
+    addToCart(product, selectedVariant, selectedSize?.size, quantity);
     toast.success('تم إضافة المنتج للسلة');
     onClose();
   };
@@ -564,11 +624,10 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        currentImageIndex === index
-                          ? 'bg-white w-4'
-                          : 'bg-white/50'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${currentImageIndex === index
+                        ? 'bg-white w-4'
+                        : 'bg-white/50'
+                        }`}
                     />
                   ))}
                 </div>
@@ -662,9 +721,16 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
               />
             </div>
 
+            {/* Add hints near relevant sections */}
+            <div className="relative">
+              {hintPosition === 'color' && <HintComponent position="color" />}
+            </div>
+
             {/* Size Selection */}
             {selectedVariant?.sizes.length > 0 && (
               <div className="space-y-3">
+                {hintPosition === 'size' && <HintComponent position="size" />}
+
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold text-white">المقاس</h3>
                   {selectedSize && (
@@ -683,7 +749,7 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
 
             {/* Features */}
             {product.features?.length > 0 && (
-              <div className="space-y-3 pt-4">
+              <div className="space-y-3">
                 <h3 className="font-bold text-white">مميزات المنتج</h3>
                 <div className="space-y-2">
                   {product.features.map((feature, index) => (
@@ -734,21 +800,26 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
                 </div>
               </div>
 
-              <button
-                onClick={handleAddToCart}
-                disabled={!selectedSize}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 
-                         text-white rounded-xl py-4 font-bold hover:brightness-110 
-                         transition-all duration-300 disabled:opacity-50 
-                         disabled:cursor-not-allowed flex items-center 
-                         justify-center gap-2"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                <span>إضافة للسلة</span>
-              </button>
+              {/* Add to Cart Button with Hint */}
+              <div className="relative">
+                {hintPosition === 'add' && <HintComponent position="add" />}
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 
+                   text-white rounded-xl py-4 font-bold
+                   transition-all duration-300 relative
+                   hover:brightness-110 disabled:opacity-50 
+                   disabled:cursor-not-allowed
+                   flex items-center justify-center gap-2"
+                  disabled={!selectedSize && selectedVariant?.sizes.length > 0}
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  <span>إضافة للسلة</span>
+                </button>
+              </div>
             </div>
 
-            
+
           </div>
         </div>
       </div>
