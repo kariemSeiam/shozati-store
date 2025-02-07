@@ -4,76 +4,20 @@ import { createRoot } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
 import App from './App';
 import './index.css';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
+import AdminDashboard from './admin/AdminApp';
 
-// Modern Creative Logo Component
-const ShozatiLogo = () => (
-  <svg
-    viewBox="0 0 48 48"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-12 h-12"
-  >
-    {/* Elegant Shoe Silhouette */}
-    <g filter="url(#shoe-shadow)">
-      {/* Main Shoe Shape */}
-      <path
-        d="M8 28C8 28 12 26 16 26C20 26 22 28 26 28C30 28 32 26 36 26C40 26 44 28 44 28V34C44 34 40 32 36 32C32 32 30 34 26 34C22 34 20 32 16 32C12 32 8 34 8 34V28Z"
-        className="fill-blue-500"
-        fillOpacity="0.9"
-      />
-      
-      {/* Shoe Upper Design */}
-      <path
-        d="M12 26C12 26 16 20 24 20C32 20 36 26 36 26"
-        className="stroke-blue-400"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      
-      {/* Decorative Lines */}
-      <path
-        d="M16 23C16 23 20 19 24 19C28 19 32 23 32 23"
-        className="stroke-white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeOpacity="0.6"
-      />
-      
-      {/* Shine Effect */}
-      <path
-        d="M20 22C20 22 24 18 28 22"
-        className="stroke-white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeOpacity="0.8"
-      />
-    </g>
+// Protected route component that checks for valid key
+const ProtectedAdminRoute = ({ children }) => {
+  const [searchParams] = useSearchParams();
+  const key = searchParams.get('key');
+  
+  if (key !== '112233') {
+    return <Navigate to="/" replace />;
+  }
 
-    {/* Modern Geometric Background */}
-    <circle
-      cx="24"
-      cy="24"
-      r="20"
-      className="fill-blue-600"
-      fillOpacity="0.1"
-    />
-    
-    <path
-      d="M24 4C24 4 36 12 36 24C36 36 24 44 24 44"
-      className="stroke-blue-500"
-      strokeWidth="1"
-      strokeLinecap="round"
-      strokeOpacity="0.3"
-    />
-
-    {/* Filters */}
-    <defs>
-      <filter id="shoe-shadow" x="6" y="17" width="40" height="20" filterUnits="userSpaceOnUse">
-        <feDropShadow dx="0" dy="2" stdDeviation="1" floodOpacity="0.3" />
-      </filter>
-    </defs>
-  </svg>
-);
+  return children;
+};
 
 // Enhanced SEO Wrapper with Rich Structured Data
 const SEOWrapper = ({ children }) => {
@@ -184,7 +128,7 @@ const SEOWrapper = ({ children }) => {
         {/* Language & Regional */}
         <link rel="canonical" href="https://shozati.com" />
         <link rel="alternate" href="https://shozati.com" hrefLang="ar-EG" />
-        <link rel="alternate" href="https://shozati.com/en" hrefLang="en" />
+        <link rel="alternate" href="https://shozati.com/" hrefLang="en" />
         <link rel="alternate" href="https://shozati.com" hrefLang="x-default" />
         
         {/* Preconnect to Required Origins */}
@@ -196,14 +140,39 @@ const SEOWrapper = ({ children }) => {
   );
 };
 
+// Main Routes component
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Main app route */}
+      <Route path="/" element={<App />} />
+      
+      {/* Protected admin route */}
+      <Route 
+        path="/admin" 
+        element={
+          <ProtectedAdminRoute>
+            <AdminDashboard />
+          </ProtectedAdminRoute>
+        } 
+      />
+      
+      {/* Catch all route redirects to main app */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
+
 // Enhanced Root Component
 const Root = () => {
   return (
-    <StrictMode>
-      <SEOWrapper>
-        <App />
-      </SEOWrapper>
-    </StrictMode>
+    <BrowserRouter basename="/">
+      <StrictMode>
+        <SEOWrapper>
+          <AppRoutes />
+        </SEOWrapper>
+      </StrictMode>
+    </BrowserRouter>
   );
 };
 

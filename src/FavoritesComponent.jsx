@@ -115,7 +115,6 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
         </motion.div>
       </div>
 
-      <AnimatePresence>
         {selectedProduct && (
           <ProductSheet
             product={selectedProduct}
@@ -124,7 +123,6 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
             checkAuthAndProceed={checkAuthAndProceed}
           />
         )}
-      </AnimatePresence>
     </motion.div>
   );
 };

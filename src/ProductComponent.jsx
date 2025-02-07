@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext, useCallback, memo, useRef, useM
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Heart, Star, Tag, Share2, ChevronDown, Plus, Minus, Check,
-    Package, Shield, Clock, X, ArrowRight, Loader2, Palette,
-    Ruler, ShoppingBag, MessageCircle, AlertCircle, ArrowDown
+    Package, Shield, Clock, X, ArrowRight, Loader2, Palette,Hash ,
+    Ruler, ShoppingBag, MessageCircle, AlertCircle, ArrowDown,
+    ClipboardList
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { AuthContext, CartContext, useFavorites, useProducts } from './hooks';
@@ -201,7 +202,6 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     const isFavorite = getFavoriteStatus(product.id);
     const isLoading = isPending(product.id);
 
-    // Image rotation interval
     useEffect(() => {
         if (selectedVariant.images.length > 1) {
             const interval = setInterval(() => {
@@ -209,7 +209,8 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             }, 1500);
             return () => clearInterval(interval);
         }
-    }, [selectedVariant]);
+    }, [selectedVariant.images.length]); // Only depend on the length of images, if possible
+    
 
     // Handle favorite toggle
     const handleFavoriteClick = async (e) => {
@@ -393,8 +394,7 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
     return (
         <>
             <div className="grid grid-cols-2 gap-4 p-4">
-                <AnimatePresence>
-                    {products.map(product => (
+            {products.map(product => (
                         <ProductCard
                             key={product.id}
                             product={product}
@@ -402,7 +402,6 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
                             checkAuthAndProceed={checkAuthAndProceed}
                         />
                     ))}
-                </AnimatePresence>
             </div>
 
             {/* Loading indicator */}
@@ -439,17 +438,16 @@ export const ProductSheet = memo(({
     onClose,
     checkAuthAndProceed
 }) => {
-    // In ProductCard or ProductSheet
     const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
     const isFavorite = getFavoriteStatus(product.id);
-    const isLoading = isPending(product.id); const { addToCart } = useContext(CartContext);
+    const isLoading = isPending(product.id);
+    const { addToCart } = useContext(CartContext);
     const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showImageViewer, setShowImageViewer] = useState(false);
 
-    // Reset state when product changes
     useEffect(() => {
         if (isOpen && product) {
             setSelectedVariant(product.variants[0]);
@@ -459,7 +457,6 @@ export const ProductSheet = memo(({
         }
     }, [isOpen, product]);
 
-
     const handleFavoriteToggle = async () => {
         const canProceed = await checkAuthAndProceed({
             requiresAuth: true,
@@ -467,37 +464,18 @@ export const ProductSheet = memo(({
                 await toggleFavorite(product.id);
             }
         });
-
         if (!canProceed) return;
     };
-
 
     const handleAddToCart = useCallback(() => {
         if (!selectedSize) {
             toast.error('يرجى اختيار المقاس');
             return;
         }
-
-        const canProceed = checkAuthAndProceed({
-            requiresAuth: true,
-            requiresAddress: true,
-            onSuccess: () => {
-                addToCart(product, selectedVariant, selectedSize.size, quantity);
-                toast.success('تم إضافة المنتج للسلة');
-                onClose();
-            }
-        });
-
-        if (!canProceed) return;
-    }, [
-        product,
-        selectedVariant,
-        selectedSize,
-        quantity,
-        addToCart,
-        onClose,
-        checkAuthAndProceed
-    ]);
+        addToCart(product, selectedVariant, selectedSize.size, quantity);
+        toast.success('تم إضافة المنتج للسلة');
+        onClose();
+    }, [product, selectedVariant, selectedSize, quantity, addToCart, onClose]);
 
     if (!product || !isOpen) return null;
 
@@ -684,16 +662,16 @@ export const ProductSheet = memo(({
                         </div>
                     )}
 
-                    {/* Quantity & Add to Cart */}
+                    
+
+                    {/* Quantity Section */}
                     <div className="space-y-4">
                         <div className="bg-gray-800/50 rounded-xl p-4">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                                        className="w-10 h-10 rounded-xl bg-gray-800 text-white 
-                                             flex items-center justify-center hover:bg-gray-700 
-                                             transition-colors"
+                                        className="w-10 h-10 rounded-xl bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
                                     >
                                         <Minus className="w-4 h-4" />
                                     </button>
@@ -702,9 +680,7 @@ export const ProductSheet = memo(({
                                     </span>
                                     <button
                                         onClick={() => setQuantity(prev => prev + 1)}
-                                        className="w-10 h-10 rounded-xl bg-gray-800 text-white 
-                                             flex items-center justify-center hover:bg-gray-700 
-                                             transition-colors"
+                                        className="w-10 h-10 rounded-xl bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
                                     >
                                         <Plus className="w-4 h-4" />
                                     </button>
@@ -718,19 +694,41 @@ export const ProductSheet = memo(({
                             </div>
                         </div>
 
-                        {/* Add to Cart Button */}
+                        {/* New Purchase Requirements Section */}
+                    <div className="bg-gray-800/30 rounded-xl p-4 space-y-3 ">
+                        <div className="flex items-center gap-2">
+                            <ClipboardList className="w-5 h-5 text-blue-500" />
+                            <span className="text-sm font-medium text-white">متطلبات الشراء</span>
+                        </div>
+                        <div className="flex gap-2 items-center justify-center">
+                            <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedVariant ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-400'}`}>
+                                <Palette className="w-4 h-4" />
+                                <span className="text-xs">اللون</span>
+                                {selectedVariant && <Check className="w-3.5 h-3.5" />}
+                            </div>
+                            <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedSize ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-400'}`}>
+                                <Ruler className="w-4 h-4" />
+                                <span className="text-xs">المقاس</span>
+                                {selectedSize && <Check className="w-3.5 h-3.5" />}
+                            </div>
+                            <div className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-green-500/20 text-green-400">
+                                <Hash className="w-4 h-4" />
+                                <span className="text-xs">الكمية</span>
+                                <Check className="w-3.5 h-3.5" />
+                            </div>
+                        </div>
+                    </div>
+
                         <button
                             onClick={handleAddToCart}
                             disabled={!selectedSize}
-                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                   text-white rounded-xl py-4 font-bold hover:brightness-110 
-                                   transition-all duration-300 disabled:opacity-50 
-                                   disabled:cursor-not-allowed flex items-center 
-                                   justify-center gap-2"
+                            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl py-4 font-bold hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             <ShoppingBag className="w-5 h-5" />
                             <span>إضافة للسلة</span>
                         </button>
+
+                        
                     </div>
 
                     {/* Support Section */}

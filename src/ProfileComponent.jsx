@@ -7,7 +7,7 @@ import {
     Store, HelpCircle, ShoppingBag, X, LogIn, ArrowLeft,Star ,Truck 
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AuthContext, useOrders, useFavorites } from './hooks';
+import { AuthContext } from './hooks';
 
 // Base BottomSheet Component
 export const BottomSheet = ({ 
@@ -421,7 +421,7 @@ const SupportSheet = ({ isOpen, onClose }) => {
             icon: Star,
             title: 'جودة مضمونة',
             description: 'منتجات أصلية 100% مع ضمان الجودة',
-            color: 'bg-amber-500/10 text-amber-500'
+            color: 'bg-blue-500/10 text-blue-500'
         },
         {
             icon: Truck,
