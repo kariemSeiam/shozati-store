@@ -327,21 +327,23 @@ export const CartSheet = ({ onOrderCreated, checkAuthAndProceed }) => {
   });
 
   const handleCheckout = useCallback(() => {
-    if (!userInfo?.addresses?.length) {
-      toast.error('الرجاء إضافة عنوان التوصيل أولاً');
-      return;
-    }
-
-    setOrderState(prev => ({
-      ...prev,
-      confirmation: {
-        show: true,
-        orderId: null,
-        success: false,
-        total: 0
+    checkAuthAndProceed({
+      requiresAuth: true,
+      requiresAddress: true,
+      onSuccess: () => {
+        setOrderState(prev => ({
+          ...prev,
+          confirmation: {
+            show: true,
+            orderId: null,
+            success: false,
+            total: 0
+          }
+        }));
       }
-    }));
-  }, [userInfo?.addresses]);
+    });
+    
+  }, [checkAuthAndProceed]);
 
   const handleConfirmOrder = useCallback(async () => {
     try {
@@ -549,7 +551,6 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
   );
 
 
-
   const handleAddToCart = () => {
     if (!selectedVariant) {
       setHintMessage('الرجاء اختيار اللون أولاً');
@@ -686,11 +687,11 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
                     </span>
                   )}
                 </div>
-                {product.salesCount > 0 && (
+                {/*product.salesCount > 0 && (
                   <span className="text-sm text-gray-400">
                     {product.salesCount} عملية شراء
                   </span>
-                )}
+                )*/}
               </div>
 
               <h1 className="text-2xl font-bold text-white">{product.name}</h1>
@@ -808,10 +809,9 @@ export const ProductViewSheet = ({ product, isOpen, onClose }) => {
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 
                    text-white rounded-xl py-4 font-bold
                    transition-all duration-300 relative
-                   hover:brightness-110 disabled:opacity-50 
-                   disabled:cursor-not-allowed
+                   hover:brightness-110 
                    flex items-center justify-center gap-2"
-                  disabled={!selectedSize && selectedVariant?.sizes.length > 0}
+                  
                 >
                   <ShoppingBag className="w-5 h-5" />
                   <span>إضافة للسلة</span>

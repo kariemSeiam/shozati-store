@@ -216,6 +216,7 @@ const MainContent = () => {
 
   const handleFavoritesClick = useCallback(() => {
     if (!isAuthenticated) {
+      
       setUiState(prev => ({ ...prev, showLogin: true }));
       return;
     }
@@ -224,14 +225,8 @@ const MainContent = () => {
   }, [isAuthenticated]);
 
   const handleCartClick = useCallback(() => {
-    checkAuthAndProceed({
-      requiresAuth: true,
-      requiresAddress: true,
-      onSuccess: () => {
-        setIsCartOpen(true);
-      }
-    });
-  }, [checkAuthAndProceed, setIsCartOpen]);
+    setIsCartOpen(true);
+  }, [setIsCartOpen]);
 
   const handleProductSelect = useCallback((product) => {
     setUiState(prev => ({ ...prev, selectedProduct: product }));
@@ -254,7 +249,7 @@ const MainContent = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white ">
       <Toaster position="top-center" />
 
       {/* Main Layout */}

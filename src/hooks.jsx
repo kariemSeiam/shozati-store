@@ -146,49 +146,347 @@ export const useAuth = () => {
 };
 
 // Products Hook with Caching
-export const useProducts = () => {
+export const useProducts = (config = {}) => {
+    // Core States
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [pagination, setPagination] = useState({
-        currentPage: 1,
-        totalPages: 1,
-        hasMore: false,
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+
+    // Pagination States
+    const [page, setPage] = useState(1);
+    const [perPage] = useState(150); // Matching backend limit
+
+    // Filter States
+    const [filters, setFilters] = useState({
+        category: 'all',
+        search: '',
+        minPrice: null,
+        maxPrice: null,
+        size: '',
+        color: '',
+        code: '',
+        sort: 'popular' // Default sort from backend
     });
 
-    const fetchProducts = useCallback(async (params = {}) => {
-        try {
-            setLoading(true);
-            const queryString = new URLSearchParams(params).toString();
-            const data = await apiRequest(`/products?${queryString}`, {}, true);
+    // Loading States
+    const [loadingStates, setLoadingStates] = useState({
+        isLoading: false,
+        isCreating: false,
+        isUpdating: false,
+        isDeleting: false,
+        isUploadingImages: false
+    });
 
-            setProducts((prev) =>
-                params.page > 1 ? [...prev, ...data.products] : data.products
-            );
-            setPagination({
-                currentPage: data.currentPage,
-                totalPages: data.pages,
-                hasMore: data.currentPage < data.pages,
-            });
-        } catch (err) {
-            setError(formatError(err));
-            toast.error('Failed to load products');
-        } finally {
-            setLoading(false);
-        }
+    // Error States
+    const [errors, setErrors] = useState({
+        fetchError: null,
+        createError: null,
+        updateError: null,
+        deleteError: null,
+        uploadError: null
+    });
+
+    // Refs for optimization
+    const abortController = useRef(null);
+    const cache = useRef(new Map());
+
+    // Helper to update loading states
+    const setLoading = useCallback((key, value) => {
+        setLoadingStates(prev => ({ ...prev, [key]: value }));
     }, []);
 
-    const loadMore = useCallback(() => {
-        if (pagination.hasMore && !loading) {
-            fetchProducts({ page: pagination.currentPage + 1 });
-        }
-    }, [pagination.hasMore, pagination.currentPage, loading, fetchProducts]);
+    // Helper to update error states
+    const setError = useCallback((key, value) => {
+        setErrors(prev => ({ ...prev, [key]: value }));
+    }, []);
 
+    // API Request Helper with Error Handling
+    const apiRequest = useCallback(async (endpoint, options = {}) => {
+        if (abortController.current) {
+            abortController.current.abort();
+        }
+        abortController.current = new AbortController();
+
+        const defaultHeaders = {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+        };
+
+        try {
+            const response = await fetch(`${config.apiBaseUrl || ''}/api${endpoint}`, {
+                ...options,
+                headers: defaultHeaders,
+                signal: abortController.current.signal
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'API request failed');
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error.name === 'AbortError') return null;
+            throw error;
+        }
+    }, [config.apiBaseUrl]);
+
+    // Generate cache key based on filters and pagination
+    const getCacheKey = useCallback((pageNum, filterParams) => {
+        return JSON.stringify({ page: pageNum, ...filterParams });
+    }, []);
+
+    // Fetch Products with Caching
+    const fetchProducts = useCallback(async (pageNum = page, filterParams = filters) => {
+        setLoading('isLoading', true);
+        setError('fetchError', null);
+
+        const cacheKey = getCacheKey(pageNum, filterParams);
+        
+        try {
+            // Check cache first
+            if (cache.current.has(cacheKey)) {
+                const cachedData = cache.current.get(cacheKey);
+                setProducts(cachedData.products);
+                setTotalProducts(cachedData.total);
+                setTotalPages(cachedData.pages);
+                return cachedData;
+            }
+
+            // Build query params
+            const queryParams = new URLSearchParams({
+                page: pageNum,
+                ...(filterParams.category !== 'all' && { category: filterParams.category }),
+                ...(filterParams.search && { search: filterParams.search }),
+                ...(filterParams.minPrice && { minPrice: filterParams.minPrice }),
+                ...(filterParams.maxPrice && { maxPrice: filterParams.maxPrice }),
+                ...(filterParams.size && { size: filterParams.size }),
+                ...(filterParams.color && { color: filterParams.color }),
+                ...(filterParams.code && { code: filterParams.code }),
+                ...(filterParams.sort && { sort: filterParams.sort })
+            }).toString();
+
+            const response = await apiRequest(`/products?${queryParams}`);
+            
+            if (response) {
+                setProducts(response.products);
+                setTotalProducts(response.total);
+                setTotalPages(response.pages);
+                
+                // Cache the results
+                cache.current.set(cacheKey, response);
+                
+                return response;
+            }
+        } catch (error) {
+            setError('fetchError', error.message);
+            return null;
+        } finally {
+            setLoading('isLoading', false);
+        }
+    }, [apiRequest, filters, getCacheKey, page, setError, setLoading]);
+
+    // Create Product
+    const createProduct = useCallback(async (productData) => {
+        setLoading('isCreating', true);
+        setError('createError', null);
+
+        try {
+            const response = await apiRequest('/admin/products', {
+                method: 'POST',
+                body: JSON.stringify(productData)
+            });
+
+            if (response) {
+                // Invalidate cache
+                cache.current.clear();
+                await fetchProducts();
+            }
+            return response;
+        } catch (error) {
+            setError('createError', error.message);
+            return null;
+        } finally {
+            setLoading('isCreating', false);
+        }
+    }, [apiRequest, fetchProducts, setError, setLoading]);
+
+    // Update Product
+    const updateProduct = useCallback(async (productId, productData) => {
+        setLoading('isUpdating', true);
+        setError('updateError', null);
+
+        try {
+            const response = await apiRequest(`/admin/products/${productId}`, {
+                method: 'PUT',
+                body: JSON.stringify(productData)
+            });
+
+            if (response) {
+                // Invalidate cache
+                cache.current.clear();
+                await fetchProducts();
+            }
+            return response;
+        } catch (error) {
+            setError('updateError', error.message);
+            return null;
+        } finally {
+            setLoading('isUpdating', false);
+        }
+    }, [apiRequest, fetchProducts, setError, setLoading]);
+
+    // Delete Product
+    const deleteProduct = useCallback(async (productId) => {
+        setLoading('isDeleting', true);
+        setError('deleteError', null);
+
+        try {
+            const response = await apiRequest(`/admin/products/${productId}`, {
+                method: 'DELETE'
+            });
+
+            if (response) {
+                // Invalidate cache
+                cache.current.clear();
+                await fetchProducts();
+            }
+            return response;
+        } catch (error) {
+            setError('deleteError', error.message);
+            return null;
+        } finally {
+            setLoading('isDeleting', false);
+        }
+    }, [apiRequest, fetchProducts, setError, setLoading]);
+
+    // Upload Product Images
+    const uploadProductImages = useCallback(async (productCode, colorName, images) => {
+        setLoading('isUploadingImages', true);
+        setError('uploadError', null);
+
+        try {
+            const formData = new FormData();
+            formData.append('productCode', productCode);
+            formData.append('colorName', colorName);
+            
+            images.forEach(image => {
+                formData.append('images', image);
+            });
+
+            const response = await apiRequest('/admin/products/upload-images', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': undefined // Let browser set correct content type for FormData
+                }
+            });
+
+            return response?.imageUrls || [];
+        } catch (error) {
+            setError('uploadError', error.message);
+            return [];
+        } finally {
+            setLoading('isUploadingImages', false);
+        }
+    }, [apiRequest, setError, setLoading]);
+
+    // Update Product Inventory
+    const updateInventory = useCallback(async (productId, inventoryData) => {
+        setLoading('isUpdating', true);
+        setError('updateError', null);
+
+        try {
+            const response = await apiRequest(`/admin/products/${productId}/inventory`, {
+                method: 'PUT',
+                body: JSON.stringify(inventoryData)
+            });
+
+            if (response) {
+                // Invalidate cache
+                cache.current.clear();
+                await fetchProducts();
+            }
+            return response;
+        } catch (error) {
+            setError('updateError', error.message);
+            return null;
+        } finally {
+            setLoading('isUpdating', false);
+        }
+    }, [apiRequest, fetchProducts, setError, setLoading]);
+
+    // Filter Management
+    const updateFilters = useCallback((newFilters) => {
+        setFilters(prev => {
+            const updated = { ...prev, ...newFilters };
+            // Reset page when filters change
+            if (JSON.stringify(prev) !== JSON.stringify(updated)) {
+                setPage(1);
+            }
+            return updated;
+        });
+    }, []);
+
+    // Pagination Management
+    const nextPage = useCallback(() => {
+        if (page < totalPages) {
+            setPage(prev => prev + 1);
+        }
+    }, [page, totalPages]);
+
+    const previousPage = useCallback(() => {
+        if (page > 1) {
+            setPage(prev => prev - 1);
+        }
+    }, [page]);
+
+    // Load products when page or filters change
     useEffect(() => {
         fetchProducts();
-    }, [fetchProducts]);
+    }, [fetchProducts, page, filters]);
 
-    return { products, loading, error, pagination, fetchProducts, loadMore };
+    // Cleanup
+    useEffect(() => {
+        return () => {
+            if (abortController.current) {
+                abortController.current.abort();
+            }
+            // Clear cache on unmount
+            cache.current.clear();
+        };
+    }, []);
+
+    return {
+        // Data
+        products,
+        selectedProduct,
+        totalProducts,
+        totalPages,
+        page,
+        perPage,
+        filters,
+
+        // Loading States
+        ...loadingStates,
+
+        // Error States
+        ...errors,
+
+        // Methods
+        setSelectedProduct,
+        setPage,
+        updateFilters,
+        fetchProducts,
+        createProduct,
+        updateProduct,
+        deleteProduct,
+        uploadProductImages,
+        updateInventory,
+        nextPage,
+        previousPage,
+    };
 };
 
 // Orders Hook with Caching
@@ -383,7 +681,19 @@ export const useFavorites = () => {
     const pendingOperations = useRef(new Set());
     const statusRequests = useRef(new Map());
 
-    // Synchronous favorite status check
+    // Enhanced cache system
+    const cache = useRef({
+        favorites: {
+            data: null,
+            timestamp: 0,
+            promise: null,
+            requestCount: 0,
+            maxCachedRequests: 6
+        },
+        status: new Map()
+    });
+
+    // Synchronous favorite status check with cache integration
     const getFavoriteStatus = useCallback((productId) => {
         if (!isAuthenticated || productId == null) return false;
 
@@ -399,52 +709,98 @@ export const useFavorites = () => {
             return true;
         }
 
-        // Check status cache
-        const cachedStatus = statusCache.get(productId);
-        if (cachedStatus && Date.now() - cachedStatus.timestamp < 30000) {
+        // Check status cache with enhanced caching
+        const cachedStatus = cache.current.status.get(productId);
+        if (cachedStatus && 
+            cachedStatus.requestCount < cache.current.favorites.maxCachedRequests) {
+            cache.current.status.set(productId, {
+                ...cachedStatus,
+                requestCount: cachedStatus.requestCount + 1
+            });
             return cachedStatus.status;
         }
 
         return false;
-    }, [isAuthenticated, favorites, optimisticUpdates, statusCache]);
+    }, [isAuthenticated, favorites, optimisticUpdates]);
 
-    // Fetch all favorites
+    // Main fetch function with enhanced caching
     const fetchFavorites = useCallback(async () => {
         if (!isAuthenticated) {
             setFavorites([]);
             return;
         }
 
+        const favoritesCache = cache.current.favorites;
+
+        // Return ongoing promise if exists
+        if (favoritesCache.promise) {
+            return favoritesCache.promise;
+        }
+
+        // Use cached data if within request limit
+        if (favoritesCache.data && 
+            favoritesCache.requestCount < favoritesCache.maxCachedRequests) {
+            favoritesCache.requestCount++;
+            setFavorites(favoritesCache.data);
+            return Promise.resolve(favoritesCache.data);
+        }
+
         try {
             setLoading(true);
-            const data = await apiRequest('/favorites', {}, true);
 
-            const updatedFavorites = data.favorites.map((favorite) => ({
-                ...favorite,
-                isFavorite: optimisticUpdates.get(favorite.id) ?? true
-            }));
+            const fetchPromise = (async () => {
+                try {
+                    const data = await apiRequest('/favorites', {}, true);
+                    
+                    const currentOptimisticUpdates = optimisticUpdates;
+                    
+                    const updatedFavorites = data.favorites.map((favorite) => ({
+                        ...favorite,
+                        isFavorite: currentOptimisticUpdates.get(favorite.id) ?? true
+                    }));
 
-            setFavorites(updatedFavorites);
+                    // Reset cache with new data
+                    cache.current.favorites = {
+                        data: updatedFavorites,
+                        timestamp: Date.now(),
+                        promise: null,
+                        requestCount: 1,
+                        maxCachedRequests: 6
+                    };
+                    
+                    setFavorites(updatedFavorites);
+                    
+                    // Update status cache
+                    updatedFavorites.forEach(favorite => {
+                        cache.current.status.set(favorite.id, {
+                            status: true,
+                            timestamp: Date.now(),
+                            requestCount: 1
+                        });
+                    });
 
-            // Update status cache for all favorites
-            const newCache = new Map(statusCache);
-            updatedFavorites.forEach(favorite => {
-                newCache.set(favorite.id, {
-                    status: true,
-                    timestamp: Date.now()
-                });
-            });
-            setStatusCache(newCache);
+                    return updatedFavorites;
+                } catch (err) {
+                    setError(formatError(err));
+                    toast.error('Failed to load favorites');
+                    throw err;
+                } finally {
+                    setLoading(false);
+                    cache.current.favorites.promise = null;
+                }
+            })();
+
+            cache.current.favorites.promise = fetchPromise;
+            return fetchPromise;
 
         } catch (err) {
             setError(formatError(err));
             toast.error('Failed to load favorites');
-        } finally {
-            setLoading(false);
+            cache.current.favorites.promise = null;
         }
     }, [isAuthenticated, optimisticUpdates]);
 
-    // Toggle favorite status
+    // Toggle favorite with cache integration
     const toggleFavorite = useCallback(async (productId) => {
         if (!isAuthenticated) {
             toast.error('Please login first');
@@ -459,17 +815,12 @@ export const useFavorites = () => {
             pendingOperations.current.add(productId);
             const currentStatus = getFavoriteStatus(productId);
 
-            // Apply optimistic update
+            // Optimistic update
             setOptimisticUpdates(prev => new Map(prev).set(productId, !currentStatus));
 
-            const response = await apiRequest(
-                '/favorites',
-                {
-                    method: 'POST',
-                    body: JSON.stringify({ product_id: productId })
-                },
-                true
-            );
+            const response = await apiRequest(`/favorites/${productId}`, {
+                method: !currentStatus ? 'POST' : 'DELETE'
+            }, true);
 
             // Clear optimistic update
             setOptimisticUpdates(prev => {
@@ -478,25 +829,29 @@ export const useFavorites = () => {
                 return updated;
             });
 
-            // Update favorites list
+            // Update favorites list and cache
             setFavorites(prev => {
                 const isNowFavorite = !currentStatus;
-                if (isNowFavorite) {
-                    const productExists = prev.some(f => f.id === productId);
-                    if (!productExists) {
-                        return [...prev, { id: productId, isFavorite: true }];
-                    }
-                    return prev;
-                } else {
-                    return prev.filter(f => f.id !== productId);
-                }
+                const newFavorites = isNowFavorite
+                    ? [...prev, { id: productId, isFavorite: true }]
+                    : prev.filter(f => f.id !== productId);
+
+                // Update cache
+                cache.current.favorites = {
+                    ...cache.current.favorites,
+                    data: newFavorites,
+                    requestCount: 1 // Reset counter on update
+                };
+
+                return newFavorites;
             });
 
             // Update status cache
-            setStatusCache(prev => new Map(prev).set(productId, {
+            cache.current.status.set(productId, {
                 status: !currentStatus,
-                timestamp: Date.now()
-            }));
+                timestamp: Date.now(),
+                requestCount: 1
+            });
 
             return true;
         } catch (err) {
@@ -513,7 +868,7 @@ export const useFavorites = () => {
         }
     }, [isAuthenticated, getFavoriteStatus]);
 
-    // Check individual product favorite status
+    // Check status with cache integration
     const checkFavoriteStatus = useCallback(async (productId) => {
         if (!isAuthenticated || productId == null || statusRequests.current.has(productId)) {
             return getFavoriteStatus(productId);
@@ -525,10 +880,12 @@ export const useFavorites = () => {
 
             const response = await promise;
 
-            setStatusCache(prev => new Map(prev).set(productId, {
+            // Update cache with new status
+            cache.current.status.set(productId, {
                 status: response.isFavorite,
-                timestamp: Date.now()
-            }));
+                timestamp: Date.now(),
+                requestCount: 1
+            });
 
             return response.isFavorite;
         } catch (error) {
@@ -539,14 +896,33 @@ export const useFavorites = () => {
         }
     }, [isAuthenticated, getFavoriteStatus]);
 
-    // Initialize favorites on auth change
+    // Force refresh cache
+    const forceFetchFavorites = useCallback(async () => {
+        cache.current.favorites.requestCount = cache.current.favorites.maxCachedRequests;
+        return fetchFavorites();
+    }, [fetchFavorites]);
+
+    // Reset cache on logout
+    useEffect(() => {
+        if (!isAuthenticated) {
+            cache.current = {
+                favorites: {
+                    data: null,
+                    timestamp: 0,
+                    promise: null,
+                    requestCount: 0,
+                    maxCachedRequests: 6
+                },
+                status: new Map()
+            };
+            setFavorites([]);
+        }
+    }, [isAuthenticated]);
+
+    // Initialize favorites on mount if authenticated
     useEffect(() => {
         if (isAuthenticated) {
             fetchFavorites();
-        } else {
-            setFavorites([]);
-            setStatusCache(new Map());
-            setOptimisticUpdates(new Map());
         }
     }, [isAuthenticated, fetchFavorites]);
 
@@ -554,6 +930,8 @@ export const useFavorites = () => {
         favorites,
         loading,
         error,
+        fetchFavorites,
+        forceFetchFavorites,
         getFavoriteStatus,
         checkFavoriteStatus,
         toggleFavorite,

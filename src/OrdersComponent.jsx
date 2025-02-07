@@ -16,7 +16,7 @@ const StatusBadge = ({ status }) => {
     pending: {
       icon: Clock,
       text: 'قيد التنفيذ',
-      class: 'bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-500 border-amber-500/30'
+      class: 'bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-500 border-blue-500/30'
     },
     processing: {
       icon: Package,
@@ -200,36 +200,6 @@ const OrderTimeline = ({ steps }) => {
                   <StatusIcon className={`w-4 h-4 ${isCompleted ? 'text-white' : 'text-gray-400'}`} />
                 </motion.div>
 
-                {/* Animated Glow Effect */}
-                {isCompleted && (
-                  <>
-                    <motion.div
-                      className="absolute inset-0 right-[-8px] bg-blue-500/30 rounded-xl blur-md"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.5, 0.2, 0.5]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    <motion.div
-                      className="absolute inset-0 right-[-8px] rounded-xl"
-                      style={{
-                        background: 'conic-gradient(from 90deg at 50% 50%, #3B82F6 0%, transparent 60%, transparent 100%)'
-                      }}
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    />
-                  </>
-                )}
               </div>
 
               {/* Content Box */}
@@ -300,7 +270,7 @@ const SupportActions = () => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
+    <div className="grid grid-cols-2 gap-4 p-6 pt-0">
       {actions.map((action, index) => (
         <motion.button
           key={index}
@@ -334,7 +304,7 @@ const OrderDetailsContent = ({ order, onCancel }) => {
   };
 
   return (
-    <div className="space-y-8 pt-8"
+    <div className="space-y-8 pt-8 pb-0"
     dir='rtl'>
 
       {order.tracking && order.tracking.length > 0 && (
@@ -416,7 +386,7 @@ const OrderDetailsContent = ({ order, onCancel }) => {
       </div>
 
       {['pending', 'processing'].includes(order.status) && (
-        <div className="px-6 pt-4 pb-8">
+        <div className="px-6 pt-4 pb-0">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -430,6 +400,8 @@ const OrderDetailsContent = ({ order, onCancel }) => {
           </motion.button>
         </div>
       )}
+
+      <SupportActions/>
     </div>
   );
 };
