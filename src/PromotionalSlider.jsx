@@ -54,7 +54,6 @@ const PromotionalSlider = ({ onSelect }) => {
 
   const handleTouchMove = (e) => {
     touchRef.current.end = e.touches[0].clientX;
-    // Optional: Add real-time feedback during swipe
     const diff = touchRef.current.start - touchRef.current.end;
     const element = sliderRef.current;
     if (element) {
@@ -83,9 +82,9 @@ const PromotionalSlider = ({ onSelect }) => {
 
   if (loading) {
     return (
-      <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-gray-800/50">
+      <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-sky-50">
         <div className="absolute inset-0 flex items-center justify-center">
-          <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+          <RefreshCw className="w-8 h-8 text-sky-500 animate-spin" />
         </div>
       </div>
     );
@@ -93,13 +92,14 @@ const PromotionalSlider = ({ onSelect }) => {
 
   if (error) {
     return (
-      <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-gray-800/50 flex items-center justify-center">
+      <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-sky-50 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <p className="text-gray-400 mb-4">فشل في تحميل المحتوى</p>
+          <p className="text-sky-700 mb-4">فشل في تحميل المحتوى</p>
           <button
             onClick={fetchSlides}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 
+                     transition-colors shadow-sm hover:shadow-md"
           >
             إعادة المحاولة
           </button>
@@ -111,7 +111,7 @@ const PromotionalSlider = ({ onSelect }) => {
   if (!slides?.length) return null;
 
   return (
-    <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-gray-800/20">
+    <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-sky-50/50 shadow-md">
       <div
         ref={sliderRef}
         className="absolute inset-0 transition-transform duration-300"
@@ -147,12 +147,12 @@ const PromotionalSlider = ({ onSelect }) => {
                   className="w-full h-full object-cover"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute" />
                 <div className="absolute bottom-0 right-0 p-6 text-right max-w-2xl">
                   <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
                     {slide.title}
                   </h3>
-                  <p className="text-sm text-gray-200 drop-shadow-md">
+                  <p className="text-sm text-sky-50 drop-shadow-md">
                     {slide.description}
                   </p>
                 </div>
@@ -176,10 +176,10 @@ const PromotionalSlider = ({ onSelect }) => {
               <motion.div
                 animate={{
                   width: currentIndex === index ? 24 : 8,
-                  opacity: currentIndex === index ? 1 : 0.5
+                  opacity: currentIndex === index ? 1 : 0.7
                 }}
                 className="h-2 bg-white rounded-full transition-all duration-300 
-                         group-hover:opacity-75"
+                         shadow-sm group-hover:opacity-90"
               />
             </button>
           ))}

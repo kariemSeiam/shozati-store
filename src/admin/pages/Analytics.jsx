@@ -95,32 +95,31 @@ const Analytics = () => {
             <MetricCard
               title="إجمالي المبيعات"
               value={`${metrics.revenue.current?.toLocaleString('ar-EG')} ج.م`}
-              trend={metrics.revenue.growth}
               icon={Wallet}
               color={metrics.revenue.color}
             />
             <MetricCard
               title="عدد الطلبات"
               value={metrics.orders.current}
-              trend={metrics.orders.growth}
               icon={Package}
               color={metrics.orders.color}
             />
             <MetricCard
               title="متوسط قيمة الطلب"
               value={`${metrics.avgOrderValue.current?.toLocaleString('ar-EG')} ج.م`}
-              trend={metrics.avgOrderValue.growth}
               icon={ShoppingBag}
               color={metrics.avgOrderValue.color}
             />
             <MetricCard
               title="معدل الاحتفاظ بالعملاء"
               value={`${metrics.customerRetention.current?.toFixed(1)}%`}
-              trend={metrics.customerRetention.growth}
               icon={Users}
               color={metrics.customerRetention.color}
             />
           </div>
+
+          {/* Top Products */}
+          <TopProducts products={analytics.topProducts} />
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -171,8 +170,7 @@ const Analytics = () => {
             />
           </div>
 
-          {/* Top Products */}
-          <TopProducts products={analytics.topProducts} />
+          
         </div>
       )}
     </div>

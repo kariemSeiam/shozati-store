@@ -6,10 +6,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#FF6B6B',
-        secondary: '#4ECDC4',
-        accent: '#FFE66D',
-        dark: '#2D3436',
+        bg: 'bg-[#FAFAFA]',
+        card: 'bg-white',
+        cardHover: 'bg-gray-50',
+        accent: 'from-blue-500 to-blue-600',
+        accentSolid: 'bg-blue-500',
+        text: 'text-gray-900',
+        textSecondary: 'text-gray-600',
+        border: 'border-gray-100',
+        shadow: 'shadow-sm'
       },
       fontFamily: {
         tajawal: ['Tajawal', 'sans-serif'],

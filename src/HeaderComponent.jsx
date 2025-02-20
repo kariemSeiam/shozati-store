@@ -8,18 +8,22 @@ import { toast } from 'react-hot-toast';
 import { AuthContext } from './hooks';
 import { PhoneVerificationSheet } from './ProfileComponent.jsx';
 
-// Custom Button Background Pattern
+// Enhanced button pattern with more sophisticated design
 const ButtonPattern = () => (
-  <svg width="32" height="32" viewBox="0 0 32 32" className="absolute inset-0 w-full h-full opacity-10">
-    <pattern id="button-pattern" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
-      <circle cx="4" cy="4" r="0.5" fill="currentColor" />
-    </pattern>
-    <rect width="100%" height="100%" fill="url(#button-pattern)" />
+  <svg width="40" height="40" viewBox="0 0 40 40" className="absolute inset-0 w-full h-full opacity-10">
+    <defs>
+      <pattern id="premium-pattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+        <circle cx="5" cy="5" r="0.5" fill="currentColor" />
+        <circle cx="0" cy="0" r="0.3" fill="currentColor" />
+        <circle cx="10" cy="10" r="0.3" fill="currentColor" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#premium-pattern)" />
   </svg>
 );
 
-// Action Button Component
-const ActionButton = ({ icon: Icon, onClick, isActive }) => {
+// Enhanced Action Button with premium styling
+const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -29,86 +33,107 @@ const ActionButton = ({ icon: Icon, onClick, isActive }) => {
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="relative p-2.5 rounded-xl overflow-hidden group"
+      className="relative p-3 rounded-2xl overflow-hidden group"
     >
-      {/* Base Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-800/80 to-gray-800/50 
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-sky-50 
                      backdrop-blur-md transition-all duration-300" />
 
-      {/* Pattern Background */}
-      <div className="absolute inset-0 text-white/5">
+      {/* Premium Pattern */}
+      <div className="absolute inset-0 text-sky-900/10">
         <ButtonPattern />
       </div>
 
-      {/* Hover Effects */}
+      {/* Dynamic Gradient Animation */}
       <motion.div
         className="absolute inset-0 opacity-0 group-hover:opacity-100"
         animate={{
           background: isHovered
             ? [
-              'linear-gradient(45deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%)',
-              'linear-gradient(45deg, transparent 0%, rgba(59, 130, 246, 0.1) 100%)'
+              'linear-gradient(45deg, rgba(56, 189, 248, 0.15) 0%, transparent 100%)',
+              'linear-gradient(45deg, transparent 0%, rgba(56, 189, 248, 0.15) 100%)'
             ]
             : 'none'
         }}
-        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+        transition={{ duration: 2.5, repeat: Infinity, repeatType: "reverse" }}
       />
 
-      {/* Border Glow */}
+      {/* Premium Border Effect */}
       <motion.div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 rounded-2xl"
         animate={{
           boxShadow: isHovered
             ? [
-              'inset 0 0 0 1px rgba(59, 130, 246, 0.1)',
-              'inset 0 0 0 1px rgba(59, 130, 246, 0.2)',
+              'inset 0 0 0 1px rgba(56, 189, 248, 0.3), 0 4px 12px rgba(56, 189, 248, 0.1)',
+              'inset 0 0 0 1px rgba(56, 189, 248, 0.5), 0 4px 12px rgba(56, 189, 248, 0.2)',
             ]
             : 'none'
         }}
-        transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+        transition={{ duration: 1.8, repeat: Infinity, repeatType: "reverse" }}
       />
 
-      {/* Icon */}
+      {/* Enhanced Icon Animation */}
       <motion.div
         animate={{
-          scale: isHovered ? 1.1 : 1,
-          rotate: isHovered ? [0, 5, -5, 0] : 0
+          scale: isHovered ? 1.15 : 1,
+          rotate: isHovered ? [0, 8, -8, 0] : 0,
+          y: isHovered ? -2 : 0
         }}
         transition={{
-          scale: { duration: 0.2 },
-          rotate: { duration: 0.5, repeat: isHovered ? 0 : Infinity }
+          scale: { duration: 0.3, ease: "easeOut" },
+          rotate: { duration: 0.6, ease: "easeInOut" },
+          y: { duration: 0.2 }
         }}
         className="relative"
       >
-        <Icon className={`w-5 h-5 transition-colors duration-300
-                       ${isHovered ? 'text-blue-500' : 'text-gray-400'}`} />
+        <Icon className={`w-6 h-6 transition-all duration-300
+                       ${isHovered ? 'text-sky-500 filter drop-shadow-lg' : 'text-sky-700'}`} />
       </motion.div>
+
+      {/* Label Animation */}
+      {label && (
+        <AnimatePresence>
+          {isHovered && (
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 5 }}
+              className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 
+                         text-xs font-medium text-sky-600 whitespace-nowrap"
+            >
+              {label}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      )}
     </motion.button>
   );
 };
 
-// Modern Logo Component
+// Enhanced Logo with premium effects
 const Logo = () => (
   <motion.div
     initial={{ opacity: 0, y: -20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="relative"
+    className="relative px-4"
   >
-    <h1 className="text-2xl font-bold">
-      <span className="relative">
-        <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 
+    <h1 className="text-3xl font-bold tracking-tight">
+      <span className="relative inline-block">
+        <span className="bg-gradient-to-r from-sky-600 via-sky-400 to-sky-600 
                       bg-clip-text text-transparent">
-          Shozti
+          Shozati
         </span>
+        {/* Premium Glow Effect */}
         <motion.div
-          className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-blue-400/20 
-                     blur-lg opacity-0"
+          className="absolute -inset-2 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 
+                     blur-xl opacity-0 rounded-full"
           animate={{
-            opacity: [0, 0.5, 0],
-            scale: [0.9, 1.1, 0.9]
+            opacity: [0, 0.6, 0],
+            scale: [0.9, 1.1, 0.9],
+            rotate: [0, 5, 0]
           }}
           transition={{
-            duration: 3,
+            duration: 4,
             repeat: Infinity,
             repeatType: "reverse"
           }}
@@ -118,7 +143,7 @@ const Logo = () => (
   </motion.div>
 );
 
-// Main Header Component
+// Enhanced Header Component
 export const Header = ({ onOrdersClick, onProfileClick }) => {
   const { isAuthenticated, login } = useContext(AuthContext);
   const [showPhoneVerification, setShowPhoneVerification] = useState(false);
@@ -140,16 +165,12 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
   const handlePhoneVerification = async (data) => {
     setIsLoading(true);
     try {
-      // Attempt login and get user data
       const loginSuccess = await login(data.phone_number);
-      
       if (loginSuccess) {
-        // Close the phone verification sheet
-        setShowPhoneVerification(false);        
-        
+        setShowPhoneVerification(false);
       }
     } catch (error) {
-      toast.error(error.message || 'فشل تسجيل الدخول');
+      toast.error(error.message || 'Login failed');
       throw error;
     } finally {
       setIsLoading(false);
@@ -157,27 +178,30 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
   };
 
   return (
-    <motion.div
+    <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       className="sticky top-0 z-40"
     >
-      {/* Glass Background */}
-      <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-lg" />
+      {/* Premium Glass Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-50/95 via-white/90 to-sky-50/95 
+                    backdrop-blur-lg shadow-lg shadow-sky-100/50" />
 
-      {/* Content */}
-      <div className="relative px-5 py-4">
-        <div className="flex justify-between items-center">
+      {/* Enhanced Content Layout */}
+      <div className="relative px-4 py-2">
+        <div className="flex justify-between items-center max-w-6xl mx-auto">
           <ActionButton
             icon={User}
             onClick={() => handleActionClick('profile')}
+            label="Profile"
           />
 
-          <Logo />
+          <Logo/>
 
           <ActionButton
             icon={Package}
             onClick={() => handleActionClick('orders')}
+            label="Orders"
           />
         </div>
       </div>
@@ -190,7 +214,7 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
         loading={isLoading}
         isLogin={true}
       />
-    </motion.div>
+    </motion.header>
   );
 };
 

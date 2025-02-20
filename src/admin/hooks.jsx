@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 // Constants
 const API_BASE_URL = 'https://shozati.pythonanywhere.com/api';
-const API_BASE_URL1 = 'http://localhost:5000/api';
+const API_BASE_URL1 = 'http://127.0.0.1:5004/api';
 
 const ADMIN_PHONE = '0000000000';
 
@@ -82,10 +82,7 @@ export const useAdmin = () => {
 
     // Modified useAdmin hook apiCall implementation
     const apiCall = useCallback(async (endpoint, options = {}) => {
-        if (abortController.current) {
-            abortController.current.abort();
-        }
-        abortController.current = new AbortController();
+        
 
         const makeRequest = async (token) => {
             let headers = {
@@ -101,15 +98,14 @@ export const useAdmin = () => {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
                 headers,
-                signal: abortController.current.signal,
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || errorData.error || 'API request failed');
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
             }
 
-            return await response.json();
+            return await response.text();
         };
 
         try {
@@ -149,6 +145,376 @@ export const useAdmin = () => {
     };
 };
 
+// Enhanced Customers Hook
+export const useCustomers = () => {
+    // Data States
+    const [customers, setCustomers] = useState([]);
+    const [totalCustomers, setTotalCustomers] = useState(0);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+    // Pagination States
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [perPage, setPerPage] = useState(20);
+
+    // Search State
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Loading States
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+
+    // Error States
+    const [error, setError] = useState(null);
+    const [detailsError, setDetailsError] = useState(null);
+
+    const { apiCall } = useAdmin();
+    const searchDebounceTimer = useRef(null);
+
+    // Debounce search
+    useEffect(() => {
+        if (searchDebounceTimer.current) {
+            clearTimeout(searchDebounceTimer.current);
+        }
+
+        searchDebounceTimer.current = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1); // Reset to first page when search changes
+        }, 300);
+
+        return () => {
+            if (searchDebounceTimer.current) {
+                clearTimeout(searchDebounceTimer.current);
+            }
+        };
+    }, [search]);
+
+    // Load customers with search and pagination
+    const loadCustomers = useCallback(async (pageNum = page, searchQuery = debouncedSearch) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const queryParams = new URLSearchParams({
+                page: pageNum,
+                perPage,
+                search: searchQuery,
+            }).toString();
+
+            const response = await apiCall(`/admin/customers?${queryParams}`);
+            if (response?.customers) {
+                setCustomers(response.customers);
+                setTotalCustomers(response.total);
+                setTotalPages(response.pages);
+            }
+            return response;
+        } catch (error) {
+            setError(error.message);
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    }, [apiCall, page, perPage, debouncedSearch]);
+
+    // Load customer details
+    const loadCustomerDetails = useCallback(async (customerId) => {
+        setIsLoadingDetails(true);
+        setDetailsError(null);
+
+        try {
+            const response = await apiCall(`/admin/customers/${customerId}`);
+            if (response) {
+                setSelectedCustomer(response);
+            }
+            return response;
+        } catch (error) {
+            setDetailsError(error.message);
+            return null;
+        } finally {
+            setIsLoadingDetails(false);
+        }
+    }, [apiCall]);
+
+    // Pagination management
+    const nextPage = useCallback(() => {
+        if (page < totalPages) {
+            setPage(prev => prev + 1);
+        }
+    }, [page, totalPages]);
+
+    const previousPage = useCallback(() => {
+        if (page > 1) {
+            setPage(prev => prev - 1);
+        }
+    }, [page]);
+
+    // Load customers when page or search changes
+    useEffect(() => {
+        loadCustomers();
+    }, [page, debouncedSearch, loadCustomers]);
+
+    return {
+        // Data states
+        customers,
+        totalCustomers,
+        selectedCustomer,
+
+        // Pagination states
+        page,
+        totalPages,
+        perPage,
+
+        // Search state
+        search,
+
+        // Loading states
+        isLoading,
+        isLoadingDetails,
+
+        // Error states
+        error,
+        detailsError,
+
+        // Methods
+        setSelectedCustomer,
+        setPage,
+        setPerPage,
+        setSearch,
+        loadCustomers,
+        loadCustomerDetails,
+        nextPage,
+        previousPage,
+    };
+};
+
+export const useCoupons = () => {
+    // Data States
+    const [coupons, setCoupons] = useState([]);
+    const [totalCoupons, setTotalCoupons] = useState(0);
+    const [selectedCoupon, setSelectedCoupon] = useState(null);
+    const [couponStats, setCouponStats] = useState(null);
+
+    // Pagination States
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [perPage, setPerPage] = useState(20);
+
+    // Filter States
+    const [filters, setFilters] = useState({
+        status: '',
+        search: '',
+        type: 'all', // Default to 'all' based on logs
+        isSpecific: null
+    });
+    
+    // Constants for coupon types
+    const COUPON_TYPES = {
+        ALL: 'all',
+        ACTIVE: 'active',
+        EXPIRED: 'expired',
+        PERCENTAGE: 'percentage',
+        FIXED: 'fixed'
+    };
+
+    // Loading States
+    const [isLoading, setIsLoading] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isLoadingStats, setIsLoadingStats] = useState(false);
+
+    // Error States
+    const [error, setError] = useState(null);
+    const [statsError, setStatsError] = useState(null);
+
+    const { apiCall } = useAdmin();
+
+    // Load coupons with filters and pagination
+    const loadCoupons = useCallback(async (pageNum = page) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            // Clean up filters before sending
+            const cleanFilters = {
+                ...filters,
+                type: filters.type === COUPON_TYPES.ALL ? '' : filters.type,
+            };
+
+            const queryParams = new URLSearchParams({
+                page: pageNum,
+                perPage,
+                ...cleanFilters
+            }).toString();
+
+            const response = await apiCall(`/admin/coupons?${queryParams}`);
+            if (response) {
+                setCoupons(response.coupons);
+                setTotalCoupons(response.total);
+                setTotalPages(response.pages);
+            }
+            return response;
+        } catch (err) {
+            setError(err.message);
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    }, [apiCall, page, perPage, filters]);
+
+    // Create new coupon
+    const createCoupon = async (couponData) => {
+        setIsCreating(true);
+        setError(null);
+
+        try {
+            const response = await apiCall('/admin/coupons', {
+                method: 'POST',
+                body: JSON.stringify(couponData)
+            });
+            await loadCoupons(); // Refresh list after creation
+            return response;
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    // Update existing coupon
+    const updateCoupon = async (couponId, updateData) => {
+        setIsUpdating(true);
+        setError(null);
+
+        try {
+            const response = await apiCall(`/admin/coupons/${couponId}`, {
+                method: 'PUT',
+                body: JSON.stringify(updateData)
+            });
+            await loadCoupons(); // Refresh list after update
+            return response;
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    // Delete coupon
+    const deleteCoupon = async (couponId) => {
+        setIsDeleting(true);
+        setError(null);
+
+        try {
+            const response = await apiCall(`/admin/coupons/${couponId}`, {
+                method: 'DELETE'
+            });
+            await loadCoupons(); // Refresh list after deletion
+            return response;
+        } catch (err) {
+            setError(err.message);
+            throw err;
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    // Load coupon statistics
+    const loadCouponStats = async () => {
+        setIsLoadingStats(true);
+        setStatsError(null);
+
+        try {
+            const response = await apiCall('/admin/coupons/stats');
+            if (response) {
+                setCouponStats(response);
+            }
+            return response;
+        } catch (err) {
+            setStatsError(err.message);
+            return null;
+        } finally {
+            setIsLoadingStats(false);
+        }
+    };
+
+    // Update filters
+    const updateFilters = useCallback((newFilters) => {
+        setFilters(prev => ({ ...prev, ...newFilters }));
+        setPage(1); // Reset to first page when filters change
+    }, []);
+
+    // Pagination helpers
+    const nextPage = useCallback(() => {
+        if (page < totalPages) {
+            setPage(prev => prev + 1);
+        }
+    }, [page, totalPages]);
+
+    const previousPage = useCallback(() => {
+        if (page > 1) {
+            setPage(prev => prev - 1);
+        }
+    }, [page]);
+
+    // Load coupons when page or filters change
+    useEffect(() => {
+        loadCoupons();
+    }, [page, filters, loadCoupons]);
+
+    // Load stats initially and set up refresh interval
+    useEffect(() => {
+        loadCouponStats();
+        const statsInterval = setInterval(loadCouponStats, 300000); // Refresh every 5 minutes
+
+        return () => clearInterval(statsInterval);
+    }, []);
+
+    return {
+        // Data states
+        coupons,
+        totalCoupons,
+        selectedCoupon,
+        couponStats,
+        COUPON_TYPES, // Export coupon type constants
+
+        // Pagination states
+        page,
+        totalPages,
+        perPage,
+
+        // Filter states
+        filters,
+
+        // Loading states
+        isLoading,
+        isCreating,
+        isUpdating,
+        isDeleting,
+        isLoadingStats,
+
+        // Error states
+        error,
+        statsError,
+
+        // Methods
+        setSelectedCoupon,
+        setPage,
+        setPerPage,
+        updateFilters,
+        loadCoupons,
+        createCoupon,
+        updateCoupon,
+        deleteCoupon,
+        loadCouponStats,
+        nextPage,
+        previousPage,
+    };
+};
+
 export const useProducts = (config = {}) => {
     // Core States
     const [products, setProducts] = useState([]);
@@ -169,7 +535,7 @@ export const useProducts = (config = {}) => {
         maxPrice: null,
         size: '',
         color: '',
-        code: '',
+        code: config.initialFilters?.code || '', // Initialize with product code if provided
         sort: ''
     });
 
@@ -246,9 +612,11 @@ export const useProducts = (config = {}) => {
                 sort: filterParams.sort
             });
 
-            const response = await apiCall(`/products?${queryParams}`, {
+            const response = await apiCall(`/admin/products?${queryParams}`, {
                 signal: abortController.current.signal
             });
+
+            
 
             if (response) {
                 setProducts(response.products);
@@ -256,6 +624,10 @@ export const useProducts = (config = {}) => {
                 setTotalPages(response.pages);
                 cache.current.set(cacheKey, response);
                 return response;
+            }
+
+            if (filterParams.code && response.products.length === 1) {
+                setSelectedProduct(response.products[0]);
             }
 
         } catch (error) {
@@ -431,8 +803,6 @@ export const useProducts = (config = {}) => {
             setUploadProgress({});
         }
     }, [apiCall, fetchProducts, setError, setLoading, uploadProductImages]);
-
-
 
 
     const deleteProduct = useCallback(async (productId) => {
@@ -708,232 +1078,139 @@ export const useOrders = () => {
     };
 };
 
-// Enhanced Customers Hook
-export const useCustomers = () => {
-    // Data States
-    const [customers, setCustomers] = useState([]);
-    const [totalCustomers, setTotalCustomers] = useState(0);
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-    // Pagination States
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
-    const [perPage, setPerPage] = useState(20);
 
-    // Search State
-    const [search, setSearch] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-
-    // Loading States
-    const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-
-    // Error States
-    const [error, setError] = useState(null);
-    const [detailsError, setDetailsError] = useState(null);
-
-    const { apiCall } = useAdmin();
-    const searchDebounceTimer = useRef(null);
-
-    // Debounce search
-    useEffect(() => {
-        if (searchDebounceTimer.current) {
-            clearTimeout(searchDebounceTimer.current);
-        }
-
-        searchDebounceTimer.current = setTimeout(() => {
-            setDebouncedSearch(search);
-            setPage(1); // Reset to first page when search changes
-        }, 300);
-
-        return () => {
-            if (searchDebounceTimer.current) {
-                clearTimeout(searchDebounceTimer.current);
-            }
-        };
-    }, [search]);
-
-    // Load customers with search and pagination
-    const loadCustomers = useCallback(async (pageNum = page, searchQuery = debouncedSearch) => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const queryParams = new URLSearchParams({
-                page: pageNum,
-                perPage,
-                search: searchQuery,
-            }).toString();
-
-            const response = await apiCall(`/admin/customers?${queryParams}`);
-            if (response?.customers) {
-                setCustomers(response.customers);
-                setTotalCustomers(response.total);
-                setTotalPages(response.pages);
-            }
-            return response;
-        } catch (error) {
-            setError(error.message);
-            return null;
-        } finally {
-            setIsLoading(false);
-        }
-    }, [apiCall, page, perPage, debouncedSearch]);
-
-    // Load customer details
-    const loadCustomerDetails = useCallback(async (customerId) => {
-        setIsLoadingDetails(true);
-        setDetailsError(null);
-
-        try {
-            const response = await apiCall(`/admin/customers/${customerId}`);
-            if (response) {
-                setSelectedCustomer(response);
-            }
-            return response;
-        } catch (error) {
-            setDetailsError(error.message);
-            return null;
-        } finally {
-            setIsLoadingDetails(false);
-        }
-    }, [apiCall]);
-
-    // Pagination management
-    const nextPage = useCallback(() => {
-        if (page < totalPages) {
-            setPage(prev => prev + 1);
-        }
-    }, [page, totalPages]);
-
-    const previousPage = useCallback(() => {
-        if (page > 1) {
-            setPage(prev => prev - 1);
-        }
-    }, [page]);
-
-    // Load customers when page or search changes
-    useEffect(() => {
-        loadCustomers();
-    }, [page, debouncedSearch, loadCustomers]);
-
-    return {
-        // Data states
-        customers,
-        totalCustomers,
-        selectedCustomer,
-
-        // Pagination states
-        page,
-        totalPages,
-        perPage,
-
-        // Search state
-        search,
-
-        // Loading states
-        isLoading,
-        isLoadingDetails,
-
-        // Error states
-        error,
-        detailsError,
-
-        // Methods
-        setSelectedCustomer,
-        setPage,
-        setPerPage,
-        setSearch,
-        loadCustomers,
-        loadCustomerDetails,
-        nextPage,
-        previousPage,
-    };
-};
-
-// Enhanced Slides Hook
+/**
+ * Custom hook for managing slides in the admin interface
+ */
 export const useSlides = () => {
+    // State management
     const [slides, setSlides] = useState([]);
     const [selectedSlide, setSelectedSlide] = useState(null);
-    const [slideOrder, setSlideOrder] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isCreating, setIsCreating] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [isReordering, setIsReordering] = useState(false);
-    const [isTogglingStatus, setIsTogglingStatus] = useState(false);
-    const [error, setError] = useState(null);
-    const [createError, setCreateError] = useState(null);
-    const [updateError, setUpdateError] = useState(null);
-    const [deleteError, setDeleteError] = useState(null);
-
+    const [loading, setLoading] = useState({
+        slides: false,
+        create: false,
+        update: false,
+        delete: false,
+        status: false
+    });
+    const [errors, setErrors] = useState({
+        slides: null,
+        create: null,
+        update: null,
+        delete: null
+    });
+    
     const { apiCall } = useAdmin();
     const previousSlides = useRef([]);
 
-    // Load slides
+    /**
+     * Reset error for a specific operation
+     */
+    const resetError = useCallback((operation) => {
+        setErrors(prev => ({ ...prev, [operation]: null }));
+    }, []);
+
+    /**
+     * Validate slide data before submission
+     */
+    const validateSlideData = useCallback((data) => {
+        const requiredFields = ['title', 'productId'];
+        const missingFields = requiredFields.filter(field => !data[field]);
+        
+        if (missingFields.length > 0) {
+            return {
+                isValid: false,
+                error: `Missing required fields: ${missingFields.join(', ')}`
+            };
+        }
+
+        return { isValid: true };
+    }, []);
+
+    /**
+     * Prepare form data for submission
+     */
+    const prepareFormData = useCallback((slideData) => {
+        const formData = new FormData();
+        
+        Object.entries(slideData).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                if (key === 'image' && value instanceof File) {
+                    formData.append('image', value);
+                } else if (key !== 'image') {
+                    formData.append(key, value);
+                }
+            }
+        });
+
+        return formData;
+    }, []);
+
+    /**
+     * Load all slides
+     */
     const loadSlides = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
+        setLoading(prev => ({ ...prev, slides: true }));
+        resetError('slides');
+
         try {
             const response = await apiCall('/admin/slides');
             if (response) {
                 setSlides(response);
-                setSlideOrder(response.map(slide => slide.id));
                 previousSlides.current = response;
             }
             return response;
         } catch (error) {
-            setError(error.message);
+            setErrors(prev => ({ ...prev, slides: error.message }));
             return null;
         } finally {
-            setIsLoading(false);
+            setLoading(prev => ({ ...prev, slides: false }));
         }
-    }, [apiCall]);
+    }, [apiCall, resetError]);
 
-    // Toggle slide status
-    const toggleSlideStatus = useCallback(async (slideId) => {
-        setIsTogglingStatus(true);
-        setUpdateError(null);
+    /**
+     * Create new slide
+     */
+    const createSlide = useCallback(async (slideData) => {
+        setLoading(prev => ({ ...prev, create: true }));
+        resetError('create');
 
-        const slideIndex = slides.findIndex(slide => slide.id === slideId);
-        if (slideIndex === -1) return;
-
-        const slide = slides[slideIndex];
-        const newStatus = slide.status === 'active' ? 'inactive' : 'active';
-
-        // Optimistic update
-        const updatedSlides = [...slides];
-        updatedSlides[slideIndex] = { ...slide, status: newStatus };
-        setSlides(updatedSlides);
+        // Validate data
+        const validation = validateSlideData(slideData);
+        if (!validation.isValid) {
+            setErrors(prev => ({ ...prev, create: validation.error }));
+            setLoading(prev => ({ ...prev, create: false }));
+            return null;
+        }
 
         try {
-            const response = await apiCall(`/admin/slides/${slideId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: newStatus })
+            const formData = prepareFormData(slideData);
+            
+            const response = await apiCall('/admin/slides', {
+                method: 'POST',
+                body: formData
             });
 
-            if (!response) {
-                setSlides(slides);
-                throw new Error('Failed to update slide status');
+            if (response) {
+                await loadSlides();
             }
-
             return response;
         } catch (error) {
-            setUpdateError(error.message);
-            setSlides(slides);
+            setErrors(prev => ({ ...prev, create: error.message }));
             return null;
         } finally {
-            setIsTogglingStatus(false);
+            setLoading(prev => ({ ...prev, create: false }));
         }
-    }, [apiCall, slides]);
+    }, [apiCall, loadSlides, validateSlideData, prepareFormData, resetError]);
 
-    // Update slide
+    /**
+     * Update existing slide
+     */
     const updateSlide = useCallback(async (slideId, slideData) => {
-        setIsUpdating(true);
-        setUpdateError(null);
+        setLoading(prev => ({ ...prev, update: true }));
+        resetError('update');
+
         const previousState = [...slides];
         const slideIndex = slides.findIndex(slide => slide.id === slideId);
 
@@ -941,19 +1218,9 @@ export const useSlides = () => {
             let requestBody;
             let headers = {};
 
-            // Check if we're dealing with a file upload
             if (slideData.image instanceof File) {
-                const formData = new FormData();
-                Object.entries(slideData).forEach(([key, value]) => {
-                    if (value !== undefined && value !== null) {
-                        formData.append(key, value);
-                    }
-                });
-                requestBody = formData;
-                // Let the browser set the correct content-type with boundary
-                headers = {};
+                requestBody = prepareFormData(slideData);
             } else {
-                // For non-file updates, use JSON
                 requestBody = JSON.stringify(slideData);
                 headers = {
                     'Content-Type': 'application/json'
@@ -961,7 +1228,7 @@ export const useSlides = () => {
             }
 
             // Optimistic update for non-file data
-            if (slideIndex !== -1) {
+            if (slideIndex !== -1 && !(slideData.image instanceof File)) {
                 const updatedSlide = { ...slides[slideIndex], ...slideData };
                 const updatedSlides = [...slides];
                 updatedSlides[slideIndex] = updatedSlide;
@@ -974,105 +1241,35 @@ export const useSlides = () => {
                 body: requestBody
             });
 
-            if (!response) {
-                setSlides(previousState);
-                throw new Error('Failed to update slide');
+            if (response) {
+                await loadSlides();
+                return response;
             }
-
-            await loadSlides();
-            return response;
-        } catch (error) {
-            setUpdateError(error.message);
+            
+            // Revert on failure
             setSlides(previousState);
             return null;
-        } finally {
-            setIsUpdating(false);
-        }
-    }, [apiCall, slides, loadSlides]);
-
-
-    const makeAPICall = async (endpoint, method, body, headers = {}) => {
-        const defaultHeaders = {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-            'Access-Control-Allow-Credentials': 'true'
-        };
-
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            method,
-            body,
-            credentials: 'include',
-            headers: { ...defaultHeaders, ...headers }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || `Request failed with status ${response.status}`);
-        }
-
-        return data;
-    };
-
-    // Create slide
-    const createSlide = useCallback(async (slideData) => {
-        setIsCreating(true);
-        setCreateError(null);
-
-        try {
-            const formData = new FormData();
-
-            // Append other fields
-            Object.entries(slideData).forEach(([key, value]) => {
-                if (key !== 'image' && value !== undefined) {
-                    formData.append(key, value);
-                }
-            });
-
-            // Append image file
-            if (slideData.image instanceof File) {
-                formData.append('image', slideData.image, slideData.image.name);
-            }
-
-
-            // Debug log
-            console.log('Form Data Contents:');
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value instanceof File ? `File: ${value.name} (${value.type})` : value);
-            }
-
-
-
-
-            const data = await makeAPICall('/admin/slides', 'POST', formData);
-
-            if (!data) {
-                throw new Error(data.message || 'Failed to create slide');
-            }
-
-            if (data) {
-                await loadSlides();
-                return data;
-            }
-            return null;
         } catch (error) {
-            console.error('Create slide error:', error);
-            setCreateError(error.message);
+            setSlides(previousState);
+            setErrors(prev => ({ ...prev, update: error.message }));
             return null;
         } finally {
-            setIsCreating(false);
+            setLoading(prev => ({ ...prev, update: false }));
         }
-    }, [loadSlides]);
+    }, [apiCall, slides, loadSlides, prepareFormData, resetError]);
 
-    // Delete slide
+    /**
+     * Delete slide
+     */
     const deleteSlide = useCallback(async (slideId) => {
-        setIsDeleting(true);
-        setDeleteError(null);
+        setLoading(prev => ({ ...prev, delete: true }));
+        resetError('delete');
+        
         const previousState = [...slides];
 
         try {
+            // Optimistic update
             setSlides(slides.filter(slide => slide.id !== slideId));
-            setSlideOrder(slideOrder.filter(id => id !== slideId));
 
             const response = await apiCall(`/admin/slides/${slideId}`, {
                 method: 'DELETE'
@@ -1080,45 +1277,84 @@ export const useSlides = () => {
 
             if (!response) {
                 setSlides(previousState);
-                setSlideOrder(previousState.map(slide => slide.id));
                 throw new Error('Failed to delete slide');
             }
 
             return response;
         } catch (error) {
-            setDeleteError(error.message);
             setSlides(previousState);
-            setSlideOrder(previousState.map(slide => slide.id));
+            setErrors(prev => ({ ...prev, delete: error.message }));
             return null;
         } finally {
-            setIsDeleting(false);
+            setLoading(prev => ({ ...prev, delete: false }));
         }
-    }, [apiCall, slides, slideOrder]);
+    }, [apiCall, slides, resetError]);
 
+    /**
+     * Toggle slide status
+     */
+    const toggleSlideStatus = useCallback(async (slideId) => {
+        setLoading(prev => ({ ...prev, status: true }));
+        resetError('update');
+
+        const slideIndex = slides.findIndex(slide => slide.id === slideId);
+        if (slideIndex === -1) return;
+
+        const slide = slides[slideIndex];
+        const newStatus = slide.status === 'active' ? 'inactive' : 'active';
+        const previousState = [...slides];
+
+        try {
+            // Optimistic update
+            const updatedSlides = [...slides];
+            updatedSlides[slideIndex] = { ...slide, status: newStatus };
+            setSlides(updatedSlides);
+
+            const response = await apiCall(`/admin/slides/${slideId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (!response) {
+                setSlides(previousState);
+                throw new Error('Failed to update slide status');
+            }
+
+            return response;
+        } catch (error) {
+            setSlides(previousState);
+            setErrors(prev => ({ ...prev, update: error.message }));
+            return null;
+        } finally {
+            setLoading(prev => ({ ...prev, status: false }));
+        }
+    }, [apiCall, slides, resetError]);
+
+    // Load slides on mount
     useEffect(() => {
         loadSlides();
     }, [loadSlides]);
 
     return {
+        // State
         slides,
         selectedSlide,
-        slideOrder,
-        isLoading,
-        isCreating,
-        isUpdating,
-        isDeleting,
-        isReordering,
-        isTogglingStatus,
-        error,
-        createError,
-        updateError,
-        deleteError,
+        loading,
+        errors,
+        
+        // Actions
         setSelectedSlide,
         loadSlides,
         createSlide,
-        toggleSlideStatus,
         updateSlide,
         deleteSlide,
+        toggleSlideStatus,
+        
+        // Helpers
+        resetError
     };
 };
 

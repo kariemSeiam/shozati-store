@@ -177,7 +177,6 @@ const Customers = () => {
                         title="إجمالي العملاء"
                         value={totalCustomers}
                         icon={Users}
-                        trend={10}
                         color="emerald"
                     />
                     <StatCard

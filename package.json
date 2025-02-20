@@ -1,17 +1,17 @@
 {
-  "name": "shozati.com",
+  "name": "trendy-corner.org",
   "private": false,
   "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "predeploy": "vite build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
-  "homepage": "https://www.shozati.com/",
+  "homepage": "https://www.trendy-corner.org/",
   "dependencies": {
     "@tailwindcss/forms": "^0.5.9",
     "autoprefixer": "^10.4.20",

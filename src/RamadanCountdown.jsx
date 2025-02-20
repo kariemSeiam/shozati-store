@@ -59,9 +59,9 @@ const RamadanCountdown = () => {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-blue-500"
+        className="text-sky-500"
       />
-      <circle cx="12" cy="12" r="2" fill="currentColor" className="text-purple-500" />
+      <circle cx="12" cy="12" r="2" fill="currentColor" className="text-sky-600" />
     </motion.svg>
   );
 
@@ -80,7 +80,7 @@ const RamadanCountdown = () => {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-blue-500/40"
+        className="text-sky-400/40"
       />
     </motion.svg>
   );
@@ -101,8 +101,8 @@ const RamadanCountdown = () => {
           className="w-full h-full"
           style={{
             backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%),
-              linear-gradient(45deg, rgba(91, 33, 182, 0.1) 0%, transparent 100%)
+              radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%),
+              linear-gradient(45deg, rgba(56, 189, 248, 0.1) 0%, transparent 100%)
             `
           }}
         />
@@ -111,21 +111,21 @@ const RamadanCountdown = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl relative overflow-hidden border border-blue-500/10"
+        className="rounded-2xl relative overflow-hidden border border-sky-200"
         style={{
           background: `
             linear-gradient(110deg, 
-              rgba(59, 130, 246, 0.05) 0%, 
-              rgba(147, 51, 234, 0.05) 25%, 
-              rgba(59, 130, 246, 0.05) 50%,
-              rgba(147, 51, 234, 0.05) 75%,
-              rgba(59, 130, 246, 0.05) 100%
+              rgba(14, 165, 233, 0.05) 0%, 
+              rgba(56, 189, 248, 0.05) 25%, 
+              rgba(14, 165, 233, 0.05) 50%,
+              rgba(56, 189, 248, 0.05) 75%,
+              rgba(14, 165, 233, 0.05) 100%
             )
           `,
           backdropFilter: 'blur(10px)'
         }}
       >
-        <div className="px-5 py-3 flex items-center justify-between relative">
+        <div className="px-4 pr-2 py-3 flex items-center justify-between relative">
           {/* Left side - Moon and Title */}
           <div className="flex items-center gap-3">
             <motion.div
@@ -145,7 +145,7 @@ const RamadanCountdown = () => {
                 }
               }}
             >
-              <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-md" />
+              <div className="absolute inset-0 bg-sky-500/10 rounded-full blur-md" />
               <div className="relative">
                 <CrescentMoon />
               </div>
@@ -159,7 +159,7 @@ const RamadanCountdown = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-xs bg-gradient-to-r from-blue-500 to-purple-500 
+                    className="text-xs bg-gradient-to-r from-sky-500 to-sky-600 
                              bg-clip-text text-transparent font-bold"
                   >
                     اللهم بلغنا رمضان
@@ -170,7 +170,7 @@ const RamadanCountdown = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="text-sm font-bold text-white"
+                    className="text-sm font-bold text-sky-800"
                   >
                     باقي على رمضان
                   </motion.h3>
@@ -190,15 +190,15 @@ const RamadanCountdown = () => {
                   key={unit.value}
                   className="relative px-2 py-1 rounded-lg overflow-hidden"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))'
+                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.1))'
                   }}
                 >
                   <motion.div
                     className="absolute inset-0 opacity-20"
                     animate={{
                       background: [
-                        'linear-gradient(0deg, transparent 0%, rgba(59, 130, 246, 0.2) 50%, transparent 100%)',
-                        'linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.2) 50%, transparent 100%)'
+                        'linear-gradient(0deg, transparent 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%)',
+                        'linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%)'
                       ]
                     }}
                     transition={{
@@ -208,11 +208,11 @@ const RamadanCountdown = () => {
                     }}
                   />
                   <div className="flex items-baseline gap-1 relative">
-                    <span className="text-lg font-bold bg-gradient-to-r from-blue-500 to-purple-500 
+                    <span className="text-lg font-bold bg-gradient-to-r from-sky-600 to-sky-500 
                                    bg-clip-text text-transparent font-mono">
                       {String(unit.value).padStart(2, '0')}
                     </span>
-                    <span className="text-xs text-gray-400 font-medium">{unit.label}</span>
+                    <span className="text-xs text-sky-600/70 font-medium">{unit.label}</span>
                   </div>
                 </motion.div>
                 {index === 0 && (
@@ -226,7 +226,7 @@ const RamadanCountdown = () => {
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}
-                    className="text-purple-500 font-bold"
+                    className="text-sky-500 font-bold"
                   >
                     :
                   </motion.span>
@@ -266,8 +266,8 @@ const RamadanCountdown = () => {
           className="absolute inset-0 pointer-events-none"
           animate={{
             background: [
-              'linear-gradient(0deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%)',
-              'linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%)'
+              'linear-gradient(0deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)',
+              'linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)'
             ]
           }}
           transition={{
