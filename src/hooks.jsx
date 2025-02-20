@@ -818,7 +818,7 @@ export const useSlides = () => {
     const fetchSlides = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await apiRequest('/slides', {}, false);
+            const data = await apiRequest('/slides', false);
             setSlides(data);
         } catch (err) {
             setError(formatError(err));
