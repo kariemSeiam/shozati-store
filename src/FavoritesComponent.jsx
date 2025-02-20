@@ -4,8 +4,6 @@ import { useFavorites } from './hooks';
 import { ProductCard } from './ProductComponent';
 import { motion, AnimatePresence } from 'framer-motion';
 
-
-
 export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed }) => {
   const { favorites, loading, loadMore, pagination, error } = useFavorites();
   const [isExiting, setIsExiting] = useState(false);
@@ -14,7 +12,6 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
 
   const handleClose = useCallback(() => {
     setIsExiting(true);
-    // Short timeout to allow exit animation to play
     setTimeout(onClose, 200);
   }, [onClose]);
 
@@ -24,9 +21,15 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-gray-900 z-40 flex items-center justify-center"
+        className="fixed inset-0 bg-white z-40 flex items-center justify-center"
       >
-        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+        <div className="relative">
+          <div className="w-16 h-16 rounded-full border-4 border-sky-300/30 
+                       animate-spin border-t-sky-500 shadow-lg" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Heart className="w-6 h-6 text-sky-500" />
+          </div>
+        </div>
       </motion.div>
     );
   }
@@ -37,19 +40,23 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 bg-gray-900 z-40"
+      className="fixed inset-0 bg-white z-40"
     >
       <div className="h-full flex flex-col">
-        <div className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-sky-100 shadow-sm">
           <div className="px-4 py-4">
             <div className="flex justify-between items-center">
-              <button 
+              <motion.button 
                 onClick={handleClose}
-                className="p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-xl bg-sky-50 text-sky-500 
+                         hover:bg-sky-100 transition-colors"
               >
                 <X className="w-6 h-6" />
-              </button>
-              <h2 className="text-2xl font-bold text-white">المفضلة</h2>
+              </motion.button>
+              <h2 className="text-2xl font-bold text-sky-900">المفضلة</h2>
+              <div className="w-10" /> {/* Spacer for alignment */}
             </div>
           </div>
         </div>
@@ -80,11 +87,15 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 
                 {loading && (
                   <div className="flex justify-center py-4">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-full border-3 border-sky-200/30 
+                                   animate-spin border-t-sky-500" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Heart className="w-4 h-4 text-sky-500" />
+                      </div>
+                    </div>
                   </div>
                 )}
-                
-                
               </>
             ) : (
               <motion.div 
@@ -93,39 +104,46 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 mx-auto mb-6 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-blue-500/0 animate-spin-slow rounded-full" />
-                  <Heart className="w-12 h-12 text-blue-500 relative z-10" />
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-50 to-white 
+                             mx-auto mb-6 flex items-center justify-center relative overflow-hidden
+                             border border-sky-200 shadow-lg shadow-sky-200/20">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-sky-400/20 to-sky-400/0 
+                               animate-spin-slow rounded-full" />
+                  <Heart className="w-12 h-12 text-sky-500 relative z-10" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-bold text-sky-900 mb-2">
                   قائمة المفضلة فارغة
                 </h3>
-                <p className="text-gray-400 mb-6">
+                <p className="text-sky-600 mb-6">
                   اكتشف منتجاتنا وأضف ما يعجبك إلى المفضلة
                 </p>
-                <button 
+                <motion.button 
                   onClick={handleClose}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl px-8 py-3 font-bold hover:brightness-110 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-blue-500/25"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-gradient-to-r from-sky-500 to-sky-600 text-white 
+                           rounded-xl px-8 py-3 font-bold shadow-lg shadow-sky-500/25 
+                           hover:shadow-xl hover:shadow-sky-500/30 
+                           transition-all duration-300"
                 >
                   تسوق الآن
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </div>
         </motion.div>
       </div>
 
-        {selectedProduct && (
-          <ProductSheet
-            product={selectedProduct}
-            isOpen={true}
-            onClose={() => setSelectedProduct(null)}
-            checkAuthAndProceed={checkAuthAndProceed}
-          />
-        )}
+      {selectedProduct && (
+        <ProductSheet
+          product={selectedProduct}
+          isOpen={true}
+          onClose={() => setSelectedProduct(null)}
+          checkAuthAndProceed={checkAuthAndProceed}
+        />
+      )}
     </motion.div>
   );
 };
-
 
 export default FavoritesView;

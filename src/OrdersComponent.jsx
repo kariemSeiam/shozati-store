@@ -1,42 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef ,useMemo  } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import {
   Package, MapPin, Clock, RefreshCw, X, Phone, MessageCircle,
   ChevronDown, ArrowLeft, Shield, Check, Search, ChevronRight,
   AlertCircle, Building2, Truck, Star, Navigation, Calendar,
-  ShoppingBag, Box, ArrowUpRight
+  ShoppingBag, Box, ArrowUpRight,Tag 
 } from 'lucide-react';
 import { useOrders } from './hooks';
 import { BottomSheet } from './ProfileComponent';
 
-// Enhanced Status Badge Component
+// Enhanced Status Badge Component with Premium Light Theme
 const StatusBadge = ({ status }) => {
   const statusConfig = {
     pending: {
       icon: Clock,
       text: 'قيد التنفيذ',
-      class: 'bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-500 border-blue-500/30'
+      class: 'bg-gradient-to-r from-sky-50 to-sky-100 text-sky-600 border-sky-200',
+      iconClass: 'text-sky-500',
+      shadowClass: 'shadow-sky-200/20'
     },
     processing: {
       icon: Package,
       text: 'جاري التجهيز',
-      class: 'bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-blue-500 border-blue-500/30'
+      class: 'bg-gradient-to-r from-sky-50 to-sky-100 text-sky-600 border-sky-200',
+      iconClass: 'text-sky-500',
+      shadowClass: 'shadow-sky-200/20'
     },
     shipping: {
       icon: Truck,
       text: 'في الطريق',
-      class: 'bg-gradient-to-r from-indigo-500/20 to-indigo-600/20 text-indigo-500 border-indigo-500/30'
+      class: 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-600 border-indigo-200',
+      iconClass: 'text-indigo-500',
+      shadowClass: 'shadow-indigo-200/20'
     },
     delivered: {
       icon: Shield,
       text: 'تم التوصيل',
-      class: 'bg-gradient-to-r from-green-500/20 to-green-600/20 text-green-500 border-green-500/30'
+      class: 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-600 border-emerald-200',
+      iconClass: 'text-emerald-500',
+      shadowClass: 'shadow-emerald-200/20'
     },
     cancelled: {
       icon: X,
       text: 'ملغي',
-      class: 'bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-500 border-red-500/30'
+      class: 'bg-gradient-to-r from-rose-50 to-rose-100 text-rose-600 border-rose-200',
+      iconClass: 'text-rose-500',
+      shadowClass: 'shadow-rose-200/20'
     }
   };
 
@@ -44,15 +54,16 @@ const StatusBadge = ({ status }) => {
   const StatusIcon = config.icon;
 
   return (
-    <div className={`px-4 py-2 rounded-2xl text-sm inline-flex items-center gap-2 border ${config.class}
-                    backdrop-blur-xl shadow-lg`}>
-      <StatusIcon className="w-4 h-4" />
+    <div className={`px-4 py-2 rounded-2xl text-sm inline-flex items-center gap-2 
+                    border shadow-sm hover:shadow-md transition-all duration-300
+                    backdrop-blur-xl ${config.class} ${config.shadowClass}`}>
+      <StatusIcon className={`w-4 h-4 ${config.iconClass}`} />
       <span className="font-medium">{config.text}</span>
     </div>
   );
 };
 
-// Modern Order Card
+// Modern Order Card with Premium Light Theme
 const OrderCard = ({ order, onSelect }) => {
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('ar-EG', {
@@ -64,7 +75,9 @@ const OrderCard = ({ order, onSelect }) => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('ar-EG', {
       style: 'currency',
-      currency: 'EGP'
+      currency: 'EGP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
@@ -76,17 +89,18 @@ const OrderCard = ({ order, onSelect }) => {
       className="group cursor-pointer"
       onClick={() => onSelect(order)}
     >
-      <div className="relative overflow-hidden backdrop-blur-xl rounded-3xl border border-gray-800/50
-                    bg-gradient-to-b from-gray-800/40 to-gray-900/40 p-5
-                    hover:border-blue-500/30 transition-all duration-500">
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 to-purple-500/5 opacity-0 
-                      group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative overflow-hidden backdrop-blur-xl rounded-3xl 
+                    border border-sky-200 bg-gradient-to-b from-white to-sky-50 p-5
+                    hover:border-sky-300 hover:shadow-lg hover:shadow-sky-200/20 
+                    transition-all duration-500">
+        <div className="absolute inset-0 bg-gradient-to-tr from-sky-200/20 to-indigo-200/20 
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <StatusBadge status={order.status} />
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="flex items-center gap-2 text-sky-600">
               <Calendar className="w-4 h-4" />
               <span className="text-sm">{formatDate(order.createdAt)}</span>
             </div>
@@ -96,8 +110,9 @@ const OrderCard = ({ order, onSelect }) => {
           <div className="flex gap-3 mb-6 overflow-x-auto hide-scrollbar py-2">
             {order.items.map((item, idx) => (
               <div key={idx} className="relative flex-shrink-0 group/item">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-gray-700/50 
-                              group-hover:border-blue-500/30 transition-all duration-500">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-sky-200
+                              group-hover:border-sky-300 transition-all duration-500
+                              shadow-sm group-hover:shadow-md">
                   <img 
                     src={item.image || 'http://localhost:5000/uploads/3fdf62c5-d260-4c86-8a24-617fe4035232.png'} 
                     alt={item.productName}
@@ -106,9 +121,9 @@ const OrderCard = ({ order, onSelect }) => {
                   />
                 </div>
                 <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full 
-                              bg-gradient-to-r from-blue-500 to-blue-600
+                              bg-gradient-to-r from-sky-500 to-sky-600
                               flex items-center justify-center text-xs font-bold text-white
-                              shadow-lg shadow-blue-500/25">
+                              shadow-md shadow-sky-400/25">
                   {item.quantity}
                 </div>
               </div>
@@ -116,18 +131,18 @@ const OrderCard = ({ order, onSelect }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-700/50">
+          <div className="flex justify-between items-center pt-4 border-t border-sky-200">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-500/10">
-                <ShoppingBag className="w-4 h-4 text-blue-500" />
+              <div className="p-2 rounded-xl bg-sky-100">
+                <ShoppingBag className="w-4 h-4 text-sky-500" />
               </div>
-              <span className="text-gray-400 text-sm">{order.totalQuantity} منتج</span>
+              <span className="text-sky-600 text-sm">{order.totalQuantity} منتج</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-blue-500 font-bold text-lg">
+              <span className="text-sky-500 font-bold text-lg">
                 {formatCurrency(order.total)}
               </span>
-              <ArrowUpRight className="w-4 h-4 text-blue-500 transform 
+              <ArrowUpRight className="w-4 h-4 text-sky-500 transform 
                                      group-hover:translate-x-1 group-hover:-translate-y-1
                                      transition-transform duration-300" />
             </div>
@@ -138,7 +153,7 @@ const OrderCard = ({ order, onSelect }) => {
   );
 };
 
-// Ultra Modern Timeline Component
+// Ultra Modern Timeline Component with Premium Design
 const OrderTimeline = ({ steps }) => {
   const statusIcons = {
     'pending': Clock,
@@ -148,13 +163,24 @@ const OrderTimeline = ({ steps }) => {
     'cancelled': X
   };
 
+  // Sort steps by timestamp and add visual indicators
+  const sortedSteps = useMemo(() => {
+    return [...steps]
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .map((step, index, array) => ({
+        ...step,
+        isLatest: index === 0,
+        isOldest: index === array.length - 1
+      }));
+  }, [steps]);
+
   return (
     <div className="relative py-4 px-4">
-      {/* Animated Background Line */}
-      <div className="absolute right-12 w-[2px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/0 via-blue-500/50 to-blue-500/0" />
+      {/* Premium Animated Timeline Line */}
+      <div className="absolute right-12 w-0 overflow-hidden h-full">
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-300/0 via-sky-400/50 to-sky-300/0" />
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-b from-blue-500/0 via-blue-500 to-blue-500/0"
+          className="absolute inset-0 bg-gradient-to-b from-sky-300/0 via-sky-400 to-sky-300/0"
           animate={{
             y: ["0%", "200%"],
             opacity: [0, 1, 0]
@@ -167,10 +193,10 @@ const OrderTimeline = ({ steps }) => {
         />
       </div>
 
-      {/* Steps */}
-      {steps.map((step, index) => {
+      {/* Enhanced Timeline Steps */}
+      {sortedSteps.map((step, index) => {
         const isCompleted = step.completed;
-        const isLast = index === steps.length - 1;
+        const isLast = index === sortedSteps.length - 1;
         const StatusIcon = statusIcons[step.status] || Clock;
 
         return (
@@ -181,55 +207,65 @@ const OrderTimeline = ({ steps }) => {
             transition={{ delay: index * 0.15 }}
             className={`relative ${!isLast ? 'mb-6' : ''}`}
           >
-            {/* Content Container */}
             <div className="relative flex gap-6">
-              {/* Step Indicator */}
+              {/* Ultra Premium Step Indicator */}
               <div className="relative">
                 <motion.div
-                  className={`w-8 h-8 rounded-xl relative  z-10
+                  className={`w-8 h-8 rounded-xl relative z-10
                            flex items-center justify-center
-                           transition-colors duration-500 
+                           transition-all duration-500 
                            border-2 ${
                              isCompleted 
-                               ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400' 
-                               : 'bg-gray-800/80 border-gray-700'
-                           }`}
+                               ? 'bg-gradient-to-br from-sky-400 to-sky-500 border-sky-300' 
+                               : 'bg-gradient-to-br from-white to-sky-50 border-sky-200'
+                           }
+                           'ring-4 ring-sky-200/50'
+                           shadow-lg shadow-sky-200/20 hover:shadow-xl hover:shadow-sky-300/30`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <StatusIcon className={`w-4 h-4 ${isCompleted ? 'text-white' : 'text-gray-400'}`} />
+                  <StatusIcon className={`w-4 h-4 text-sky-400`} />
                 </motion.div>
-
+                
+                {/* Time Connection Line */}
+                {!isLast && (
+                  <div className="absolute top-8 right-4 bottom-0 w-px bg-gradient-to-b from-sky-200 to-transparent" />
+                )}
               </div>
 
-              {/* Content Box */}
+              {/* Premium Content Box */}
               <motion.div 
-                className={`flex-1 p-4 rounded-2xl backdrop-blur-sm
+                className={`flex-1 p-4 rounded-2xl backdrop-blur-xl
                          border transition-all duration-300
                          ${isCompleted 
-                           ? 'bg-blue-500/10 border-blue-500/20 hover:border-blue-500/40' 
-                           : 'bg-gray-800/40 border-gray-700/50 hover:border-gray-600/50'
-                         }`}
+                           ? 'bg-gradient-to-br from-sky-50 to-white border-sky-200' 
+                           : 'bg-gradient-to-br from-sky-50 to-white border-sky-200'
+                         }
+                         ${step.isLatest ? 'shadow-lg shadow-sky-200/30' : 'shadow-lg shadow-sky-200/30'}
+                         hover:shadow-xl hover:shadow-sky-300/20
+                         group`}
                 whileHover={{ scale: 1.02, x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Status Badge */}
+                {/* Enhanced Status Badge */}
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-2
-                              text-sm font-medium ${
-                                isCompleted 
-                                  ? 'bg-blue-500/20 text-blue-400' 
-                                  : 'bg-gray-800/50 text-gray-400'
-                              }`}>
+                              text-sm font-medium backdrop-blur-xl
+                              ${isCompleted 
+                                ? 'bg-gradient-to-r from-sky-100 to-sky-50 text-sky-600' 
+                                : 'bg-gradient-to-r from-sky-100 to-sky-50 text-sky-600'
+                              }
+                              shadow-sm group-hover:shadow-md transition-all duration-300`}>
                   <div className={`w-2 h-2 rounded-full ${
-                    isCompleted ? 'bg-blue-400 animate-pulse' : 'bg-gray-500'
+                    isCompleted ? 'bg-sky-500 animate-pulse' : 'bg-sky-500 animate-pulse'
                   }`} />
                   <span>{step.description}</span>
+                  
                 </div>
 
-                {/* Timestamp */}
+                {/* Enhanced Timestamp */}
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className={`w-4 h-4 ${isCompleted ? 'text-blue-400' : 'text-gray-500'}`} />
-                  <span className={`${isCompleted ? 'text-gray-300' : 'text-gray-500'} text-sm`}>
+                  <Calendar className={`w-4 h-4 ${isCompleted ? 'text-sky-500' : 'text-slate-400'}`} />
+                  <span className={`${isCompleted ? 'text-sky-900' : 'text-slate-500'} text-sm`}>
                     {new Intl.DateTimeFormat('ar-EG', {
                       year: 'numeric',
                       month: 'long',
@@ -239,6 +275,13 @@ const OrderTimeline = ({ steps }) => {
                     }).format(new Date(step.timestamp))}
                   </span>
                 </div>
+
+                {/* Time Elapsed (for non-latest steps) */}
+                {!step.isLatest && (
+                  <div className="mt-2 text-xs text-sky-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {formatTimeAgo(step.timestamp)}
+                  </div>
+                )}
               </motion.div>
             </div>
           </motion.div>
@@ -248,23 +291,36 @@ const OrderTimeline = ({ steps }) => {
   );
 };
 
-// Modern Support Actions
+// Utility function to format time ago
+const formatTimeAgo = (timestamp) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays > 0) return `${diffInDays} days ago`;
+  if (diffInHours > 0) return `${diffInHours} hours ago`;
+  if (diffInMinutes > 0) return `${diffInMinutes} minutes ago`;
+  return 'Just now';
+};
+
+// Premium Support Actions
 const SupportActions = () => {
   const actions = [
     {
       icon: MessageCircle,
       label: 'محادثة واتساب',
-      color: 'text-green-500',
-      bgColor: 'bg-gradient-to-r from-green-500/10 to-green-600/10',
-      borderColor: 'border-green-500/20',
+      color: 'text-sky-600',
+      gradient: 'from-sky-50/80 via-sky-100/50 to-white',
       onClick: () => window.open('https://wa.me/+201033939828', '_blank')
     },
     {
       icon: Phone,
       label: 'اتصل بنا',
-      color: 'text-blue-500',
-      bgColor: 'bg-gradient-to-r from-blue-500/10 to-blue-600/10',
-      borderColor: 'border-blue-500/20',
+      color: 'text-sky-600',
+      gradient: 'from-sky-50/80 via-sky-100/50 to-white',
       onClick: () => window.open('tel:+201033939828', '_blank')
     }
   ];
@@ -274,86 +330,95 @@ const SupportActions = () => {
       {actions.map((action, index) => (
         <motion.button
           key={index}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.03, y: -3 }}
+          whileTap={{ scale: 0.97 }}
           onClick={action.onClick}
-          className={`${action.bgColor} rounded-2xl p-4 flex flex-col items-center gap-3
-                     border ${action.borderColor} backdrop-blur-xl
-                     hover:brightness-110 transition-all duration-300 group`}
+          className={`bg-gradient-to-br ${action.gradient} 
+                     rounded-2xl p-4 flex flex-col items-center gap-3
+                     border border-sky-200/60 backdrop-blur-xl 
+                     shadow-lg shadow-sky-200/30
+                     hover:shadow-xl hover:border-sky-300/60
+                     transition-all duration-300 group`}
         >
-          <div className={`p-3 rounded-xl ${action.bgColor} ${action.color}
-                        group-hover:scale-110 transition-transform duration-300`}>
+          <motion.div 
+            className={`p-3 rounded-xl bg-gradient-to-br from-white to-sky-50 ${action.color}
+                       group-hover:scale-110 transition-all duration-300 
+                       shadow-md shadow-sky-200/40 ring-1 ring-sky-100`}
+            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+            transition={{ duration: 0.5 }}
+          >
             <action.icon className="w-6 h-6" />
-          </div>
-          <span className="text-sm text-white font-medium">{action.label}</span>
+          </motion.div>
+          <span className="text-sm text-sky-900 font-medium">{action.label}</span>
         </motion.button>
       ))}
     </div>
   );
 };
 
-// Order Details Content
+// Premium Order Details Content
 const OrderDetailsContent = ({ order, onCancel }) => {
   if (!order) return null;
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('ar-EG', {
       style: 'currency',
-      currency: 'EGP'
+      currency: 'EGP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
   return (
-    <div className="space-y-8 pt-8 pb-0"
-    dir='rtl'>
-
+    <div className="space-y-8 pt-8 pb-0" dir="rtl">
       {order.tracking && order.tracking.length > 0 && (
         <OrderTimeline steps={order.tracking} />
       )}
 
       <div className="px-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white">المنتجات</h3>
-          <span className="text-sm text-gray-400">
+          <h3 className="text-lg font-bold text-sky-900">المنتجات</h3>
+          <span className="text-sm text-sky-600">
             {order.totalQuantity} منتج
           </span>
         </div>
 
-        <div className="space-y-4"
-        dir='ltr'>
+        <div className="space-y-4" dir="ltr">
           {order.items.map((item, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="group bg-gradient-to-b from-gray-800/40 to-gray-900/40 
-                       backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50"
+              className="group bg-gradient-to-br from-sky-50 via-white to-sky-50
+                       backdrop-blur-xl rounded-2xl p-4 border border-sky-200
+                       shadow-lg shadow-sky-200/20 hover:shadow-xl 
+                       hover:shadow-sky-300/20 transition-all duration-300"
             >
               <div className="flex gap-4">
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-gray-700/50
-                              group-hover:border-blue-500/30 transition-all duration-300">
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-sky-200
+                              group-hover:border-sky-300 transition-all duration-300 shadow-md">
                   <img
-                    src={item.image || 'http://localhost:5000/uploads/3fdf62c5-d260-4c86-8a24-617fe4035232.png'}
+                    src={item.image}
                     alt={item.productName}
                     className="w-full h-full object-cover transform group-hover:scale-110 
                              transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-md
-                                rounded-full px-2 py-1 text-xs text-white">
+                  <div className="absolute inset-0 bg-gradient-to-t from-sky-900/30 to-transparent" />
+                  <div className="absolute bottom-2 right-2 bg-sky-900/40 backdrop-blur-md
+                                rounded-full px-2 py-1 text-xs text-white shadow-lg">
                     {item.quantity}×
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between">
-                    <span className="font-bold text-blue-500">
+                    <span className="font-bold text-sky-500">
                       {formatCurrency(item.totalPrice)}
                     </span>
                     <div className="text-right">
-                      <h4 className="font-bold text-white mb-1">{item.productName}</h4>
-                      <p className="text-sm text-gray-400">{item.variant}</p>
-                      <p className="text-sm text-gray-500 mt-1">{item.size}</p>
+                      <h4 className="font-bold text-sky-900 mb-1">{item.productName}</h4>
+                      <p className="text-sm text-sky-600">{item.variant}</p>
+                      <p className="text-sm text-sky-400 mt-1">{item.size}</p>
                     </div>
                   </div>
                 </div>
@@ -364,20 +429,41 @@ const OrderDetailsContent = ({ order, onCancel }) => {
       </div>
 
       <div className="px-6">
-        <div className="bg-gradient-to-b from-gray-800/40 to-gray-900/40 backdrop-blur-xl
-                     rounded-2xl p-5 border border-gray-700/50 space-y-4">
+        <div className="bg-gradient-to-br from-sky-50 via-white to-sky-50 backdrop-blur-xl
+                     rounded-2xl p-5 border border-sky-200 space-y-4 shadow-lg shadow-sky-200/20
+                     hover:shadow-xl hover:shadow-sky-300/20 transition-all duration-300">
           <div className="flex justify-between items-center">
-            <span className="text-gray-400">المجموع</span>
-            <span className="text-white">{formatCurrency(order.subtotal)}</span>
+            <span className="text-sky-600">المجموع</span>
+            <span className="text-sky-900">{formatCurrency(order.subtotal)}</span>
           </div>
+          
+          {order.coupon && (
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Tag className="w-4 h-4 text-teal-500" />
+                <span className="text-teal-600">كوبون {order.coupon.code}</span>
+                <span className="text-sm text-teal-500">
+                  ({order.coupon.discountType === 'percentage' ? `${order.coupon.discountValue}%` : formatCurrency(order.coupon.discountValue)})
+                </span>
+              </div>
+              <span className="text-teal-500 font-medium">
+                - {formatCurrency(order.discount)}
+              </span>
+            </div>
+          )}
+          
           <div className="flex justify-between items-center">
-            <span className="text-gray-400">الشحن</span>
-            <span className="text-green-500">{order.shippingFee === 0 ? 'مجاناً' : formatCurrency(order.shippingFee)}</span>
+            <span className="text-sky-600">الشحن</span>
+            <span className="text-sky-500 font-medium">
+              {order.shippingFee === 0 ? 'مجاناً' : formatCurrency(order.shippingFee)}
+            </span>
           </div>
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
+          
+          <div className="h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
+          
           <div className="flex justify-between items-center">
-            <span className="font-bold text-white">الإجمالي</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 
+            <span className="font-bold text-sky-900">الإجمالي</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-sky-500 to-sky-600 
                            bg-clip-text text-transparent">
               {formatCurrency(order.total)}
             </span>
@@ -391,20 +477,22 @@ const OrderDetailsContent = ({ order, onCancel }) => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onCancel(order.id)}
-            className="w-full bg-gradient-to-r from-red-500/10 to-red-600/10
-                         text-red-500 rounded-2xl py-4 px-6 font-medium
-                         hover:brightness-110 transition-all duration-300
-                         border border-red-500/20 backdrop-blur-xl"
+            className="w-full bg-gradient-to-r from-rose-50 to-rose-100
+                         text-rose-600 rounded-2xl py-4 px-6 font-medium
+                         shadow-lg shadow-rose-200/20 hover:shadow-xl
+                         hover:shadow-rose-300/20 transition-all duration-300
+                         border border-rose-200 backdrop-blur-xl"
           >
             إلغاء الطلب
           </motion.button>
         </div>
       )}
 
-      <SupportActions/>
+      <SupportActions />
     </div>
   );
 };
+
 
 export const OrdersView = ({ onClose, initialOrderId = null }) => {
   const { orders, loading, error, fetchOrders, cancelOrder } = useOrders();
@@ -413,16 +501,6 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
   const [isFiltersVisible, setIsFiltersVisible] = useState(true);
   const lastScrollPosition = useRef(0);
 
-  // Handle scroll to hide/show filters
-  const handleScroll = (e) => {
-    const currentScroll = e.target.scrollTop;
-    if (currentScroll > lastScrollPosition.current && currentScroll > 100) {
-      setIsFiltersVisible(false);
-    } else {
-      setIsFiltersVisible(true);
-    }
-    lastScrollPosition.current = currentScroll;
-  };
 
   useEffect(() => {
     if (initialOrderId && orders.length) {
@@ -436,13 +514,13 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center"
+        className="fixed inset-0 bg-white z-50 flex items-center justify-center"
       >
         <div className="relative">
-          <div className="w-16 h-16 rounded-full border-4 border-blue-500/30 
-                       animate-spin border-t-blue-500" />
+          <div className="w-16 h-16 rounded-full border-4 border-sky-300/30 
+                       animate-spin border-t-sky-500 shadow-lg" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Package className="w-6 h-6 text-blue-500" />
+            <Package className="w-6 h-6 text-sky-500" />
           </div>
         </div>
       </motion.div>
@@ -454,20 +532,21 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center p-4"
-        dir='rtl'
+        className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4"
+        dir="rtl"
       >
-        <div className="max-w-md w-full bg-gray-800/50 backdrop-blur-xl rounded-3xl p-8 
-                     border border-gray-700/50 text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-white mb-2">حدث خطأ</h3>
-          <p className="text-gray-400 mb-6">{error}</p>
+        <div className="max-w-md w-full bg-gradient-to-br from-white to-sky-50 backdrop-blur-xl 
+                     rounded-3xl p-8 border border-sky-200 text-center shadow-xl shadow-sky-200/20">
+          <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-sky-900 mb-2">حدث خطأ</h3>
+          <p className="text-sky-600 mb-6">{error}</p>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={fetchOrders}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white 
-                     rounded-xl px-6 py-3 font-medium hover:brightness-110 
+            className="bg-gradient-to-r from-sky-500 to-sky-600 text-white 
+                     rounded-xl px-6 py-3 font-medium shadow-lg shadow-sky-500/25 
+                     hover:shadow-xl hover:shadow-sky-500/30 
                      transition-all duration-300"
           >
             إعادة المحاولة
@@ -492,12 +571,12 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-gray-900 z-40"
-      >
+      <div className="fixed inset-0 bg-white z-40">
         <div className="h-full flex flex-col">
-          {/* Header */}
+          {/* Enhanced Header */}
           <motion.div 
-            className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50"
+            className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-sky-100
+                      shadow-sm"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -507,17 +586,17 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={onClose}
-                  className="p-2 rounded-xl bg-gray-800/80 text-gray-400 
-                           hover:bg-gray-700 transition-colors"
+                  className="p-2 rounded-xl bg-sky-50 text-sky-500 
+                           hover:bg-sky-100 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </motion.button>
-                <h2 className="text-xl font-bold text-white">طلباتي</h2>
-                <div className="w-9" /> {/* Spacer */}
+                <h2 className="text-xl font-bold text-sky-900">طلباتي</h2>
+                <div className="w-9" />
               </div>
             </div>
 
-            {/* Filter Tabs */}
+            {/* Premium Filter Tabs */}
             <motion.div 
               className="px-4 pb-4 overflow-hidden"
               animate={{ height: isFiltersVisible ? 'auto' : 0 }}
@@ -532,9 +611,9 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                     transition={{ delay: index * 0.05 }}
                     onClick={() => setFilterStatus(tab.id)}
                     className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all
-                              ${filterStatus === tab.id
-                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium'
-                                : 'bg-gray-800/80 text-gray-400 hover:bg-gray-700'}`}
+                              shadow-sm ${filterStatus === tab.id
+                                ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white font-medium shadow-lg shadow-sky-500/25'
+                                : 'bg-sky-50 text-sky-600 hover:bg-sky-100'}`}
                   >
                     {tab.label}
                   </motion.button>
@@ -543,8 +622,8 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
             </motion.div>
           </motion.div>
 
-          {/* Orders List */}
-          <div className="flex-1 overflow-auto hide-scrollbar" >
+          {/* Orders List with Enhanced Styling */}
+          <div className="flex-1 overflow-auto hide-scrollbar">
             <div className="px-4 py-4 space-y-4">
               <AnimatePresence mode="popLayout">
                 {filteredOrders.length > 0 ? (
@@ -569,25 +648,25 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                     className="text-center py-16"
                   >
                     <div className="w-24 h-24 mx-auto mb-6 relative">
-                      <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping" />
+                      <div className="absolute inset-0 bg-sky-400/20 rounded-full animate-ping" />
                       <div className="relative w-full h-full rounded-full bg-gradient-to-b 
-                                  from-gray-800 to-gray-900 flex items-center justify-center
-                                  border border-gray-700/50">
-                        <Package className="w-12 h-12 text-blue-500" />
+                                  from-sky-50 to-white flex items-center justify-center
+                                  border border-sky-200 shadow-lg shadow-sky-200/20">
+                        <Package className="w-12 h-12 text-sky-500" />
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">لا توجد طلبات</h3>
-                    <p className="text-gray-400 mb-8">
+                    <h3 className="text-xl font-bold text-sky-900 mb-2">لا توجد طلبات</h3>
+                    <p className="text-sky-600 mb-8">
                       ابدأ التسوق الآن واستمتع بمجموعتنا المميزة
                     </p>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onClose}
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 
+                      className="bg-gradient-to-r from-sky-500 to-sky-600 
                                text-white rounded-2xl px-8 py-3 font-medium
-                               hover:brightness-110 transition-all duration-300
-                               shadow-lg shadow-blue-500/25"
+                               shadow-lg shadow-sky-500/25 hover:shadow-xl 
+                               hover:shadow-sky-500/30 transition-all duration-300"
                     >
                       تسوق الآن
                     </motion.button>
@@ -610,7 +689,6 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           onCancel={cancelOrder}
         />
       </BottomSheet>
-
     </>
   );
 };

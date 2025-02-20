@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, PackageSearch, Users2, Image, PieChart,
-  Loader2, AlertCircle, LogOut
+  Loader2, AlertCircle, LogOut,
+  Ticket
 } from 'lucide-react';
 
 // Page Components (to be imported)
@@ -10,7 +11,9 @@ import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Customers from './pages/Customers';
 import Slides from './pages/Slides';
+
 import { useAdmin } from './hooks';
+import Coupons from './pages/Coupons';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytics');
@@ -55,7 +58,9 @@ const AdminDashboard = () => {
     { id: 'products', icon: PackageSearch, label: 'المنتجات' },
     { id: 'orders', icon: BarChart3, label: 'الطلبات' },
     { id: 'customers', icon: Users2, label: 'العملاء' },
-    { id: 'slides', icon: Image, label: 'العروض' }
+    { id: 'slides', icon: Image, label: 'العروض' },
+    { id: 'coupons', icon: Ticket, label: 'كوبون' }
+
   ];
 
   const renderContent = () => {
@@ -65,6 +70,8 @@ const AdminDashboard = () => {
       case 'orders': return <Orders />;
       case 'customers': return <Customers />;
       case 'slides': return <Slides />;
+      case 'coupons': return <Coupons />;
+
       default: return <PieChart />;
     }
   };
@@ -82,7 +89,7 @@ const AdminDashboard = () => {
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`flex flex-col items-center gap-2 py-2 px-3 rounded-xl
+                className={`flex flex-col items-center gap-2 py-2 px-2 rounded-xl
                          transition-all duration-300 relative group
                          ${activeTab === id 
                            ? 'text-blue-500' 

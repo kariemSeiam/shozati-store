@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 
 // API Base URL
 const API_BASE_URL = 'https://shozati.pythonanywhere.com/api';
+const API_BASE_URL1 = 'http://127.0.0.1:5004/api';
 
 // Storage Keys
 const STORAGE_KEYS = {
@@ -65,7 +66,6 @@ const apiRequest = async (endpoint, options = {}, requiresAuth = false) => {
     const cachedResponse = apiCache.get(cacheKey);
     const now = Date.now();
 
-    // If cached response exists and it's less than 1 second old, return it
     if (cachedResponse && now - cachedResponse.timestamp < 1000) {
         return cachedResponse.data;
     }
@@ -73,10 +73,14 @@ const apiRequest = async (endpoint, options = {}, requiresAuth = false) => {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
+            credentials: 'include', // Add this line
             headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 ...options.headers,
                 ...createHeaders(requiresAuth),
             },
+            mode: 'cors', // Add this line
         });
 
         if (!response.ok) {
@@ -85,16 +89,15 @@ const apiRequest = async (endpoint, options = {}, requiresAuth = false) => {
         }
 
         const data = await response.json();
-
-        // Store the response in the cache
         apiCache.set(cacheKey, { data, timestamp: now });
-
         return data;
+
     } catch (error) {
         if (error.message === 'Token is invalid or expired') {
             StorageManager.clearAuth();
             window.location.href = '/login';
         }
+        console.error('API Request Error:', error);
         throw error;
     }
 };
@@ -143,6 +146,167 @@ export const useAuth = () => {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
+};
+
+export const useCoupons = () => {
+    // Core state
+    const [validatingCoupon, setValidatingCoupon] = useState(false);
+    const [currentCoupon, setCurrentCoupon] = useState(null);
+    const [error, setError] = useState(null);
+    
+    // Context
+    const { isAuthenticated } = useContext(AuthContext);
+    
+    // Request tracking
+    const pendingValidation = useRef(null);
+    
+    // Enhanced caching system
+    const cache = useRef({
+        validations: new Map(),
+        expiryTime: 5 * 60 * 1000 // 5 minutes
+    });
+
+    // Clear error
+    const clearError = useCallback(() => {
+        setError(null);
+    }, []);
+
+    // Check if cache is valid for a coupon validation
+    const isValidationCached = useCallback((code, subtotal) => {
+        const cacheKey = `${code}-${subtotal}`;
+        const cached = cache.current.validations.get(cacheKey);
+        
+        if (!cached) return false;
+        
+        const isExpired = (Date.now() - cached.timestamp) > cache.current.expiryTime;
+        if (isExpired) {
+            cache.current.validations.delete(cacheKey);
+            return false;
+        }
+        
+        return true;
+    }, []);
+
+    // Get cached validation
+    const getCachedValidation = useCallback((code, subtotal) => {
+        const cacheKey = `${code}-${subtotal}`;
+        return cache.current.validations.get(cacheKey)?.data;
+    }, []);
+
+    // Set cached validation
+    const setCachedValidation = useCallback((code, subtotal, data) => {
+        const cacheKey = `${code}-${subtotal}`;
+        cache.current.validations.set(cacheKey, {
+            data,
+            timestamp: Date.now()
+        });
+    }, []);
+
+    // Validate coupon
+    const validateCoupon = useCallback(async (code, subtotal) => {
+        if (!isAuthenticated) {
+            toast.error('Please login first');
+            return null;
+        }
+
+        if (!code || !subtotal) {
+            setError('Invalid coupon or subtotal');
+            return null;
+        }
+
+        // Cancel any pending validation
+        if (pendingValidation.current) {
+            pendingValidation.current.abort();
+        }
+
+        // Check cache first
+        if (isValidationCached(code, subtotal)) {
+            const cachedResult = getCachedValidation(code, subtotal);
+            setCurrentCoupon(cachedResult);
+            return cachedResult;
+        }
+
+        setValidatingCoupon(true);
+        setError(null);
+
+        try {
+            // Create abort controller for this request
+            const controller = new AbortController();
+            pendingValidation.current = controller;
+
+            const response = await apiRequest('/coupons/validate', {
+                method: 'POST',
+                body: JSON.stringify({
+                    code: code.trim(),
+                    subtotal
+                }),
+                signal: controller.signal
+            }, true);
+
+            // Cache successful validation
+            setCachedValidation(code, subtotal, response);
+            setError(response);
+            
+            // Update current coupon state
+            setCurrentCoupon(response);
+            
+            // Clear error if exists
+            setError(null);
+            
+            return response;
+
+        } catch (err) {
+            // Don't set error if request was aborted
+            if (err.name === 'AbortError') return null;
+
+            const errorMessage = err.message || 'Failed to validate coupon';
+            setError(errorMessage);
+            setCurrentCoupon(null);
+            
+            // Show error toast
+            toast.error(errorMessage);
+            
+            return null;
+        } finally {
+            setValidatingCoupon(false);
+            pendingValidation.current = null;
+        }
+    }, [isAuthenticated, isValidationCached, getCachedValidation, setCachedValidation]);
+
+    // Calculate discount for a given subtotal
+    const calculateDiscount = useCallback((subtotal) => {
+        if (!currentCoupon) return 0;
+
+        if (currentCoupon.discountType === 'percentage') {
+            return Math.round((subtotal * currentCoupon.discountValue / 100) * 100) / 100;
+        }
+        
+        return Math.min(currentCoupon.discountValue, subtotal);
+    }, [currentCoupon]);
+
+    // Clear current coupon
+    const clearCoupon = useCallback(() => {
+        setCurrentCoupon(null);
+        setError(null);
+    }, []);
+
+    // Reset on logout
+    useEffect(() => {
+        if (!isAuthenticated) {
+            clearCoupon();
+            cache.current.validations.clear();
+        }
+    }, [isAuthenticated, clearCoupon]);
+
+    return {
+        currentCoupon,
+        validatingCoupon,
+        error,
+        validateCoupon,
+        calculateDiscount,
+        clearCoupon,
+        clearError
+    };
 };
 
 // Products Hook with Caching
@@ -201,7 +365,7 @@ export const useProducts = (config = {}) => {
         setErrors(prev => ({ ...prev, [key]: value }));
     }, []);
 
-    // API Request Helper with Error Handling
+    // Updated API Request Helper
     const apiRequest = useCallback(async (endpoint, options = {}) => {
         if (abortController.current) {
             abortController.current.abort();
@@ -214,14 +378,18 @@ export const useProducts = (config = {}) => {
         };
 
         try {
-            const response = await fetch(`${config.apiBaseUrl || ''}/api${endpoint}`, {
+            // Remove double slash if endpoint starts with '/'
+            const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+            const url = `${API_BASE_URL}/${cleanEndpoint}`;
+
+            const response = await fetch(url, {
                 ...options,
                 headers: defaultHeaders,
                 signal: abortController.current.signal
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error occurred' }));
                 throw new Error(errorData.message || 'API request failed');
             }
 
@@ -230,14 +398,14 @@ export const useProducts = (config = {}) => {
             if (error.name === 'AbortError') return null;
             throw error;
         }
-    }, [config.apiBaseUrl]);
+    }, []);
 
     // Generate cache key based on filters and pagination
     const getCacheKey = useCallback((pageNum, filterParams) => {
         return JSON.stringify({ page: pageNum, ...filterParams });
     }, []);
 
-    // Fetch Products with Caching
+    // Updated Fetch Products with Caching
     const fetchProducts = useCallback(async (pageNum = page, filterParams = filters) => {
         setLoading('isLoading', true);
         setError('fetchError', null);
@@ -245,7 +413,6 @@ export const useProducts = (config = {}) => {
         const cacheKey = getCacheKey(pageNum, filterParams);
         
         try {
-            // Check cache first
             if (cache.current.has(cacheKey)) {
                 const cachedData = cache.current.get(cacheKey);
                 setProducts(cachedData.products);
@@ -254,7 +421,6 @@ export const useProducts = (config = {}) => {
                 return cachedData;
             }
 
-            // Build query params
             const queryParams = new URLSearchParams({
                 page: pageNum,
                 ...(filterParams.category !== 'all' && { category: filterParams.category }),
@@ -267,16 +433,14 @@ export const useProducts = (config = {}) => {
                 ...(filterParams.sort && { sort: filterParams.sort })
             }).toString();
 
-            const response = await apiRequest(`/products?${queryParams}`);
+            const response = await apiRequest(`products?${queryParams}`);
             
             if (response) {
                 setProducts(response.products);
                 setTotalProducts(response.total);
                 setTotalPages(response.pages);
                 
-                // Cache the results
                 cache.current.set(cacheKey, response);
-                
                 return response;
             }
         } catch (error) {
@@ -286,6 +450,7 @@ export const useProducts = (config = {}) => {
             setLoading('isLoading', false);
         }
     }, [apiRequest, filters, getCacheKey, page, setError, setLoading]);
+
 
     // Create Product
     const createProduct = useCallback(async (productData) => {
@@ -318,7 +483,7 @@ export const useProducts = (config = {}) => {
         setError('updateError', null);
 
         try {
-            const response = await apiRequest(`/admin/products/${productId}`, {
+            const response = await apiRequest(`admin/products/${productId}`, {
                 method: 'PUT',
                 body: JSON.stringify(productData)
             });
@@ -343,7 +508,7 @@ export const useProducts = (config = {}) => {
         setError('deleteError', null);
 
         try {
-            const response = await apiRequest(`/admin/products/${productId}`, {
+            const response = await apiRequest(`admin/products/${productId}`, {
                 method: 'DELETE'
             });
 
@@ -398,7 +563,7 @@ export const useProducts = (config = {}) => {
         setError('updateError', null);
 
         try {
-            const response = await apiRequest(`/admin/products/${productId}/inventory`, {
+            const response = await apiRequest(`admin/products/${productId}/inventory`, {
                 method: 'PUT',
                 body: JSON.stringify(inventoryData)
             });
@@ -627,7 +792,7 @@ export const useProductDetails = (productId) => {
 
         try {
             setLoading(true);
-            const data = await apiRequest(`/products/${productId}`, {}, true);
+            const data = await apiRequest(`products/${productId}`, {}, true);
             setProduct(data);
         } catch (err) {
             setError(formatError(err));
@@ -671,136 +836,124 @@ export const useSlides = () => {
 };
 
 export const useFavorites = () => {
+    // Core state
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [optimisticUpdates, setOptimisticUpdates] = useState(new Map());
-    const [statusCache, setStatusCache] = useState(new Map());
-
     const { isAuthenticated } = useContext(AuthContext);
+
+    // Optimistic updates and operation tracking
+    const [optimisticUpdates, setOptimisticUpdates] = useState(new Map());
     const pendingOperations = useRef(new Set());
     const statusRequests = useRef(new Map());
 
-    // Enhanced cache system
+    // Pagination state to match server
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        perPage: 20
+    });
+
+    // Enhanced caching system
     const cache = useRef({
         favorites: {
             data: null,
             timestamp: 0,
             promise: null,
-            requestCount: 0,
-            maxCachedRequests: 6
+            expiryTime: 5 * 60 * 1000, // 5 minutes
+            lastPage: 1
         },
         status: new Map()
     });
 
-    // Synchronous favorite status check with cache integration
+    // Check if cache is valid
+    const isCacheValid = useCallback(() => {
+        const { data, timestamp, expiryTime } = cache.current.favorites;
+        return data && (Date.now() - timestamp) < expiryTime;
+    }, []);
+
+    // Get favorite status synchronously
     const getFavoriteStatus = useCallback((productId) => {
-        if (!isAuthenticated || productId == null) return false;
-
-        // Check optimistic updates first
+        if (!isAuthenticated || !productId) return false;
+        
+        // Priority 1: Check optimistic updates
         const optimisticStatus = optimisticUpdates.get(productId);
-        if (optimisticStatus !== undefined) {
-            return optimisticStatus;
-        }
-
-        // Check if product is in favorites list
-        const inFavoritesList = favorites.some(f => f.id === productId);
-        if (inFavoritesList) {
-            return true;
-        }
-
-        // Check status cache with enhanced caching
+        if (optimisticStatus !== undefined) return optimisticStatus;
+        
+        // Priority 2: Check favorites list
+        if (favorites.some(f => f.id === productId)) return true;
+        
+        // Priority 3: Check status cache
         const cachedStatus = cache.current.status.get(productId);
-        if (cachedStatus && 
-            cachedStatus.requestCount < cache.current.favorites.maxCachedRequests) {
-            cache.current.status.set(productId, {
-                ...cachedStatus,
-                requestCount: cachedStatus.requestCount + 1
-            });
+        if (cachedStatus && (Date.now() - cachedStatus.timestamp) < cache.current.favorites.expiryTime) {
             return cachedStatus.status;
         }
-
+        
         return false;
     }, [isAuthenticated, favorites, optimisticUpdates]);
 
-    // Main fetch function with enhanced caching
-    const fetchFavorites = useCallback(async () => {
+    // Fetch favorites with pagination
+    const fetchFavorites = useCallback(async (page = 1) => {
         if (!isAuthenticated) {
             setFavorites([]);
             return;
         }
 
-        const favoritesCache = cache.current.favorites;
-
-        // Return ongoing promise if exists
-        if (favoritesCache.promise) {
-            return favoritesCache.promise;
+        // Return cached data if valid and same page
+        if (isCacheValid() && cache.current.favorites.lastPage === page) {
+            return cache.current.favorites.data;
         }
 
-        // Use cached data if within request limit
-        if (favoritesCache.data && 
-            favoritesCache.requestCount < favoritesCache.maxCachedRequests) {
-            favoritesCache.requestCount++;
-            setFavorites(favoritesCache.data);
-            return Promise.resolve(favoritesCache.data);
+        // Return ongoing promise if exists for same page
+        if (cache.current.favorites.promise && cache.current.favorites.lastPage === page) {
+            return cache.current.favorites.promise;
         }
 
         try {
             setLoading(true);
-
-            const fetchPromise = (async () => {
-                try {
-                    const data = await apiRequest('/favorites', {}, true);
-                    
-                    const currentOptimisticUpdates = optimisticUpdates;
-                    
-                    const updatedFavorites = data.favorites.map((favorite) => ({
-                        ...favorite,
-                        isFavorite: currentOptimisticUpdates.get(favorite.id) ?? true
-                    }));
-
-                    // Reset cache with new data
-                    cache.current.favorites = {
-                        data: updatedFavorites,
-                        timestamp: Date.now(),
-                        promise: null,
-                        requestCount: 1,
-                        maxCachedRequests: 6
-                    };
-                    
-                    setFavorites(updatedFavorites);
-                    
-                    // Update status cache
-                    updatedFavorites.forEach(favorite => {
-                        cache.current.status.set(favorite.id, {
-                            status: true,
-                            timestamp: Date.now(),
-                            requestCount: 1
-                        });
-                    });
-
-                    return updatedFavorites;
-                } catch (err) {
-                    setError(formatError(err));
-                    toast.error('Failed to load favorites');
-                    throw err;
-                } finally {
-                    setLoading(false);
-                    cache.current.favorites.promise = null;
-                }
-            })();
-
+            const fetchPromise = apiRequest(`/favorites?page=${page}&perPage=${pagination.perPage}`, {}, true);
             cache.current.favorites.promise = fetchPromise;
-            return fetchPromise;
+
+            const response = await fetchPromise;
+            
+            // Update pagination state
+            setPagination({
+                currentPage: page,
+                totalPages: response.pages,
+                totalItems: response.total,
+                perPage: pagination.perPage
+            });
+
+            // Process favorites with optimistic updates
+            const updatedFavorites = response.favorites.map(favorite => ({
+                ...favorite,
+                isFavorite: optimisticUpdates.get(favorite.id) ?? true
+            }));
+
+            // Update cache
+            cache.current.favorites = {
+                ...cache.current.favorites,
+                data: updatedFavorites,
+                timestamp: Date.now(),
+                promise: null,
+                lastPage: page
+            };
+
+            setFavorites(updatedFavorites);
+            return updatedFavorites;
 
         } catch (err) {
-            setError(formatError(err));
+            setError(err.message);
             toast.error('Failed to load favorites');
+            throw err;
+        } finally {
+            setLoading(false);
             cache.current.favorites.promise = null;
         }
-    }, [isAuthenticated, optimisticUpdates]);
+    }, [isAuthenticated, pagination.perPage, isCacheValid, optimisticUpdates]);
 
-    // Toggle favorite with cache integration
+    // Toggle favorite status
     const toggleFavorite = useCallback(async (productId) => {
         if (!isAuthenticated) {
             toast.error('Please login first');
@@ -814,46 +967,37 @@ export const useFavorites = () => {
         try {
             pendingOperations.current.add(productId);
             const currentStatus = getFavoriteStatus(productId);
-
+            
             // Optimistic update
             setOptimisticUpdates(prev => new Map(prev).set(productId, !currentStatus));
 
-            const response = await apiRequest(`/favorites/${productId}`, {
-                method: !currentStatus ? 'POST' : 'DELETE'
+            // Server request
+            const response = await apiRequest('/favorites', {
+                method: 'POST',
+                body: JSON.stringify({ product_id: productId })
             }, true);
 
-            // Clear optimistic update
-            setOptimisticUpdates(prev => {
-                const updated = new Map(prev);
-                updated.delete(productId);
-                return updated;
-            });
-
-            // Update favorites list and cache
+            // Update cache and state based on server response
+            const isNowFavorite = !currentStatus;
+            
             setFavorites(prev => {
-                const isNowFavorite = !currentStatus;
                 const newFavorites = isNowFavorite
                     ? [...prev, { id: productId, isFavorite: true }]
                     : prev.filter(f => f.id !== productId);
 
-                // Update cache
-                cache.current.favorites = {
-                    ...cache.current.favorites,
-                    data: newFavorites,
-                    requestCount: 1 // Reset counter on update
-                };
-
+                cache.current.favorites.data = newFavorites;
                 return newFavorites;
             });
 
             // Update status cache
             cache.current.status.set(productId, {
-                status: !currentStatus,
-                timestamp: Date.now(),
-                requestCount: 1
+                status: isNowFavorite,
+                timestamp: Date.now()
             });
 
+            toast.success(response.message);
             return true;
+
         } catch (err) {
             // Revert optimistic update
             setOptimisticUpdates(prev => {
@@ -861,30 +1005,34 @@ export const useFavorites = () => {
                 updated.delete(productId);
                 return updated;
             });
-            toast.error(formatError(err));
+            toast.error(err.message);
             return false;
         } finally {
             pendingOperations.current.delete(productId);
+            setOptimisticUpdates(prev => {
+                const updated = new Map(prev);
+                updated.delete(productId);
+                return updated;
+            });
         }
     }, [isAuthenticated, getFavoriteStatus]);
 
-    // Check status with cache integration
+    // Check favorite status with server
     const checkFavoriteStatus = useCallback(async (productId) => {
-        if (!isAuthenticated || productId == null || statusRequests.current.has(productId)) {
+        if (!isAuthenticated || !productId || statusRequests.current.has(productId)) {
             return getFavoriteStatus(productId);
         }
 
         try {
             const promise = apiRequest(`/favorites/${productId}/status`, {}, true);
             statusRequests.current.set(productId, promise);
-
+            
             const response = await promise;
-
-            // Update cache with new status
+            
+            // Update cache with server response
             cache.current.status.set(productId, {
                 status: response.isFavorite,
-                timestamp: Date.now(),
-                requestCount: 1
+                timestamp: Date.now()
             });
 
             return response.isFavorite;
@@ -896,13 +1044,13 @@ export const useFavorites = () => {
         }
     }, [isAuthenticated, getFavoriteStatus]);
 
-    // Force refresh cache
-    const forceFetchFavorites = useCallback(async () => {
-        cache.current.favorites.requestCount = cache.current.favorites.maxCachedRequests;
-        return fetchFavorites();
-    }, [fetchFavorites]);
+    // Force refresh favorites
+    const forceFetchFavorites = useCallback(() => {
+        cache.current.favorites.timestamp = 0;
+        return fetchFavorites(pagination.currentPage);
+    }, [fetchFavorites, pagination.currentPage]);
 
-    // Reset cache on logout
+    // Reset on logout
     useEffect(() => {
         if (!isAuthenticated) {
             cache.current = {
@@ -910,19 +1058,25 @@ export const useFavorites = () => {
                     data: null,
                     timestamp: 0,
                     promise: null,
-                    requestCount: 0,
-                    maxCachedRequests: 6
+                    expiryTime: 5 * 60 * 1000,
+                    lastPage: 1
                 },
                 status: new Map()
             };
             setFavorites([]);
+            setPagination({
+                currentPage: 1,
+                totalPages: 1,
+                totalItems: 0,
+                perPage: 20
+            });
         }
     }, [isAuthenticated]);
 
-    // Initialize favorites on mount if authenticated
+    // Initialize favorites
     useEffect(() => {
         if (isAuthenticated) {
-            fetchFavorites();
+            fetchFavorites(1);
         }
     }, [isAuthenticated, fetchFavorites]);
 
@@ -930,6 +1084,7 @@ export const useFavorites = () => {
         favorites,
         loading,
         error,
+        pagination,
         fetchFavorites,
         forceFetchFavorites,
         getFavoriteStatus,

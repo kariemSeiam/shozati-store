@@ -6,17 +6,22 @@ import App from './App';
 import './index.css';
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import AdminDashboard from './admin/AdminApp';
+import WhatsAppDashboard from './TestThemes';
 
 // Protected route component that checks for valid key
-const ProtectedAdminRoute = ({ children }) => {
+const RouteHandler = () => {
   const [searchParams] = useSearchParams();
   const key = searchParams.get('key');
+  const productCode = searchParams.get('code');
   
-  if (key !== '112233') {
-    return <Navigate to="/" replace />;
+  // If admin key is present, show admin dashboard
+  if (key === '123123') {
+    return <AdminDashboard />;
   }
 
-  return children;
+  // If product code is present, pass it to App component
+  //return <WhatsAppDashboard/>;
+  return <App productCode={productCode} />;
 };
 
 // Enhanced SEO Wrapper with Rich Structured Data
@@ -24,15 +29,15 @@ const SEOWrapper = ({ children }) => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Store",
-    "@id": "https://shozati.com",
+    "@id": "https://trendy-corner.org",
     "name": "شوزاتي | Shozati",
     "alternateName": "Shozati Shoes",
     "description": "متجر شوزاتي - المتجر الرائد للأحذية العصرية في مصر. تشكيلة واسعة من الأحذية النسائية الأنيقة مع ضمان الجودة وخدمة التوصيل السريع لجميع المحافظات",
-    "url": "https://shozati.com",
-    "logo": "https://shozati.com/logo.svg",
+    "url": "https://trendy-corner.org",
+    "logo": "https://trendy-corner.org/logo.svg",
     "image": [
-      "https://shozati.com/storefront.jpg",
-      "https://shozati.com/products.jpg"
+      "https://trendy-corner.org/storefront.jpg",
+      "https://trendy-corner.org/products.jpg"
     ],
     "telephone": "+201033939828",
     "currenciesAccepted": "EGP",
@@ -81,11 +86,11 @@ const SEOWrapper = ({ children }) => {
         
         {/* Open Graph / Facebook - Enhanced */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://shozati.com/" />
+        <meta property="og:url" content="https://trendy-corner.org/" />
         <meta property="og:site_name" content="Shozati شوزاتي" />
         <meta property="og:title" content="شوزاتي | Shozati" />
         <meta property="og:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. أحذية أنيقة بجودة عالية وأسعار مناسبة. توصيل لجميع المحافظات 🚚 ضمان الجودة ✨" />
-        <meta property="og:image" content="https://shozati.com/social-cover.jpg" />
+        <meta property="og:image" content="https://trendy-corner.org/social-cover.jpg" />
         <meta property="og:locale" content="ar_EG" />
         <meta property="og:locale:alternate" content="en_US" />
 
@@ -95,7 +100,7 @@ const SEOWrapper = ({ children }) => {
         <meta name="twitter:creator" content="@shozati" />
         <meta name="twitter:title" content="شوزاتي | Shozati" />
         <meta name="twitter:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. توصيل سريع ✈️ ضمان الجودة 💎 أسعار مناسبة 🏷️" />
-        <meta name="twitter:image" content="https://shozati.com/social-cover.jpg" />
+        <meta name="twitter:image" content="https://trendy-corner.org/social-cover.jpg" />
 
         {/* Mobile & PWA Optimizations */}
         <meta name="theme-color" content="#1f2937" />
@@ -126,10 +131,10 @@ const SEOWrapper = ({ children }) => {
         </script>
 
         {/* Language & Regional */}
-        <link rel="canonical" href="https://shozati.com" />
-        <link rel="alternate" href="https://shozati.com" hrefLang="ar-EG" />
-        <link rel="alternate" href="https://shozati.com/" hrefLang="en" />
-        <link rel="alternate" href="https://shozati.com" hrefLang="x-default" />
+        <link rel="canonical" href="https://trendy-corner.org" />
+        <link rel="alternate" href="https://trendy-corner.org" hrefLang="ar-EG" />
+        <link rel="alternate" href="https://trendy-corner.org/" hrefLang="en" />
+        <link rel="alternate" href="https://trendy-corner.org" hrefLang="x-default" />
         
         {/* Preconnect to Required Origins */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -144,24 +149,15 @@ const SEOWrapper = ({ children }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Main app route */}
-      <Route path="/" element={<App />} />
+      {/* Single route that handles all cases */}
+      <Route path="/" element={<RouteHandler />} />
       
-      {/* Protected admin route */}
-      <Route 
-        path="/admin" 
-        element={
-          <ProtectedAdminRoute>
-            <AdminDashboard />
-          </ProtectedAdminRoute>
-        } 
-      />
-      
-      {/* Catch all route redirects to main app */}
+      {/* Catch all route redirects to main route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
+
 
 // Enhanced Root Component
 const Root = () => {

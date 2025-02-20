@@ -8,6 +8,22 @@ import { useProducts } from '../hooks';
 import { ProductImageUpload, useProductImageUpload } from './ImgUpload';
 import { code } from 'framer-motion/client';
 
+// First, let's define our color options constant
+const COLOR_OPTIONS = [
+  { label: 'أسود', value: 'black', code: '#000000' },
+  { label: 'أبيض', value: 'white', code: '#FFFFFF' },
+  { label: 'أحمر', value: 'red', code: '#FF0000' },
+  { label: 'أخضر', value: 'green', code: '#008000' },
+  { label: 'أزرق', value: 'blue', code: '#0000FF' },
+  { label: 'أصفر', value: 'yellow', code: '#FFFF00' },
+  { label: 'برتقالي', value: 'orange', code: '#FFA500' },
+  { label: 'بنفسجي', value: 'purple', code: '#800080' },
+  { label: 'وردي', value: 'pink', code: '#FFC0CB' },
+  { label: 'رمادي', value: 'gray', code: '#808080' },
+  { label: 'بني', value: 'brown', code: '#A52A2A' },
+  { label: 'ذهبي', value: 'gold', code: '#FFD700' },
+  { label: 'فضي', value: 'silver', code: '#C0C0C0' }
+];
 
 const Products = () => {
   // Core state from hook
@@ -37,7 +53,7 @@ const Products = () => {
 
 
   // Local UI state
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -110,7 +126,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gray-900 pb-20" dir="rtl">
       {/* Stats Grid */}
-      <div className="p-4 grid grid-cols-2 gap-4">
+      <div className="p-4 grid grid-cols-2 pt-0 gap-4">
         <StatCard
           title="إجمالي المنتجات"
           value={stats.total}
@@ -123,23 +139,14 @@ const Products = () => {
           icon={Check}
           color="emerald"
         />
-        <StatCard
-          title="نفذت الكمية"
-          value={stats.outOfStock}
-          icon={AlertCircle}
-          color="red"
-        />
-        <StatCard
-          title="الإيرادات"
-          value={`${stats.revenue.toLocaleString('ar-EG')} جنيه`}
-          icon={BarChart4}
-          color="amber"
-        />
+
       </div>
 
       {/* Actions Bar */}
-      <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4 border-b border-gray-800">
-        <div className="flex items-center justify-between gap-4">
+      <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4 border-b border-gray-800"
+      >
+        <div className="flex items-center justify-between gap-4"
+        >
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white 
@@ -196,13 +203,7 @@ const Products = () => {
             )}
           </div>
 
-          <button
-            className="flex items-center gap-2 px-4 bg-gray-800 rounded-xl
-                     text-gray-400 hover:bg-gray-700 transition-colors"
-          >
-            <Filter className="w-5 h-5" />
-            <span>تصفية</span>
-          </button>
+          
         </div>
 
         {/* Category Filter */}
@@ -271,6 +272,7 @@ const Products = () => {
           onClose={() => setIsCreateModalOpen(false)}
           onSubmit={handleCreateProduct}
           uploadImages={uploadProductImages}
+          ediState ={isEditModalOpen}
         />
       )}
 
@@ -283,6 +285,7 @@ const Products = () => {
           }}
           onSubmit={(data, files) => handleUpdateProduct(selectedProduct.id, data, files)}
           uploadImages={uploadProductImages}
+          editeState={isEditModalOpen}
         />
       )}
 
@@ -302,9 +305,11 @@ const Products = () => {
   );
 };
 
-const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
+const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = true }) => {
+
   // Form initialization with default values 
   const initialFormState = {
+    id: '',
     name: '',
     code: '',
     category: '',
@@ -312,10 +317,12 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
     basePrice: '',
     discountPrice: '',
     status: 'active',
-    features: [''],
+    features: [],
     tag: '',
     tagColor: '',
     variants: [{
+      id: '',
+      product_id: '',
       colorName: '',
       colorCode: '#000000',
       images: [],
@@ -342,6 +349,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
   useEffect(() => {
     if (product) {
       setFormData({
+        id: product.id || '',
         name: product.name,
         code: product.code,
         category: product.category,
@@ -352,8 +360,10 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
         tag: product.tag,
         _imageFiles: {}, // Initialize empty image files storage
         tagColor: product.tagColor,
-        features: product.features.length ? product.features : [''],
+        features: product.features,
         variants: product.variants.map(variant => ({
+          product_id: product.id,
+          id: variant.id,
           colorName: variant.colorName,
           colorCode: variant.colorCode,
           images: variant.images,
@@ -403,6 +413,8 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
   const addVariant = () => setFormData(prev => ({
     ...prev,
     variants: [...prev.variants, {
+      id: '',
+      product_id: '',
       colorName: '',
       colorCode: '#000000',
       images: [],
@@ -450,8 +462,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
     )
   }));
 
-
-  // Form validation
+  // Update the form validation
   const validateForm = () => {
     const newErrors = {};
 
@@ -466,7 +477,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
 
     // Variant validation
     formData.variants.forEach((variant, i) => {
-      if (!variant.colorName) newErrors[`variant${i}Color`] = 'اسم اللون مطلوب';
+      if (!variant.colorName) newErrors[`variant${i}Color`] = 'اللون مطلوب';
 
       variant.sizes.forEach((size, j) => {
         if (!size.size) newErrors[`variant${i}Size${j}`] = 'المقاس مطلوب';
@@ -514,6 +525,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
 
       const submissionData = {
         ...cleanData,
+        id: cleanData.id,
         name: cleanData.name,
         code: cleanData.code,
         category: cleanData.category,
@@ -524,8 +536,10 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
         tag: cleanData.tag,
         imageFiles: cleanData.imageFiles,
         tagColor: cleanData.tagColor,
-        features: cleanData.features.length ? cleanData.features : [''],
+        ...(cleanData.features?.length ? { features: cleanData.features } : {}),
         variants: cleanData.variants.map(variant => ({
+          id: variant.id,
+          product_id: cleanData.id,
           colorName: variant.colorName,
           colorCode: variant.colorCode,
           images: variant.images,
@@ -554,10 +568,11 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative bg-gray-900 rounded-2xl w-full max-w-3xl 
-                    max-h-[90vh] overflow-y-auto hide-scrollbar">
+                    max-h-[95vh] overflow-y-auto hide-scrollbar">
         <form onSubmit={handleSubmit} className="space-y-6 p-6">
           {/* Modal Header */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center"
+          dir='ltr'>
             <button
               type="button"
               onClick={onClose}
@@ -580,14 +595,6 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
               error={errors.name}
             />
 
-            <Input
-              label="كود المنتج"
-              name="code"
-              value={formData.code}
-              onChange={handleChange}
-              error={errors.code}
-            />
-
             <Select
               label="الفئة"
               name="category"
@@ -595,9 +602,8 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
               onChange={handleChange}
               error={errors.category}
               options={[
-                { value: 'clothing', label: 'ملابس' },
-                { value: 'accessories', label: 'إكسسوارات' },
-                { value: 'shoes', label: 'أحذية' },
+                { value: 'men', label: 'رجالي' },
+                { value: 'women', label: 'حريمي' },
                 { value: 'bags', label: 'حقائب' }
               ]}
             />
@@ -660,11 +666,15 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
                 onChange={e => setFormData({ ...formData, tagColor: e.target.value })}
                 error={errors.status}
                 options={[
-                  { value: 'blue', label: 'أزرق' },
-                  { value: 'green', label: 'أخضر' },
-                  { value: 'red', label: 'أحمر' },
-                  { value: 'yellow', label: 'أصفر' },
-                  { value: 'purple', label: 'بنفسجي' },
+                  // Essential colors
+                  { label: 'أزرق', value: '#3B82F6' },    // Blue
+                  { label: 'أخضر', value: '#10B981' },    // Green
+                  { label: 'أحمر', value: '#EF4444' },    // Red
+                  { label: 'أصفر', value: '#F59E0B' },    // Yellow/Orange
+                  { label: 'بنفسجي', value: '#8B5CF6' },  // Purple
+                  { label: 'رمادي', value: '#64748B' },   // Gray
+                  { label: 'وردي', value: '#EC4899' },    // Pink
+                  { label: 'سماوي', value: '#0EA5E9' }    // Sky blue
                 ]}
               />
             </div>
@@ -674,38 +684,35 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
           {/* Features Section */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold text-white">المميزات</h3>
+              <h3 className="text-lg font-bold text-white">المميزات (اختياري)</h3>
               <button
                 type="button"
                 onClick={addFeature}
                 className="p-2 bg-blue-500/10 text-blue-500 rounded-xl
-                         hover:bg-blue-500/20 transition-colors"
+                 hover:bg-blue-500/20 transition-colors"
               >
                 <Plus className="w-5 h-5" />
               </button>
             </div>
 
-            {formData.features.map((feature, index) => (
+            {formData.features?.map((feature, index) => (
               <div key={index} className="flex gap-2">
                 <Input
                   value={feature}
                   onChange={(e) => handleFeatureChange(index, e.target.value)}
                   placeholder="أدخل ميزة المنتج..."
                 />
-                {formData.features.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                             hover:bg-red-500/20 transition-colors"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => removeFeature(index)}
+                  className="p-2 bg-red-500/10 text-red-500 rounded-xl
+                   hover:bg-red-500/20 transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
               </div>
             ))}
           </div>
-
           {/* Variants Section */}
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -725,13 +732,18 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
                 key={variantIndex}
                 className="bg-gray-800/30 rounded-xl p-4 space-y-4"
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start pb-4">
                   <div className="grid grid-cols-2 gap-4 flex-1">
-                    <Input
-                      label="اسم اللون"
+                    <Select
+                      label="اللون"
                       value={variant.colorName}
-                      onChange={(e) => handleVariantChange(variantIndex, 'colorName', e.target.value)}
+                      onChange={(e) => {
+                        const selectedColor = COLOR_OPTIONS.find(color => color.value === e.target.value);
+                        handleVariantChange(variantIndex, 'colorName', e.target.value);
+                        handleVariantChange(variantIndex, 'colorCode', selectedColor?.code || '#000000');
+                      }}
                       error={errors[`variant${variantIndex}Color`]}
+                      options={COLOR_OPTIONS}
                     />
 
                     <Input
@@ -746,22 +758,25 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages }) => {
                       type="button"
                       onClick={() => removeVariant(variantIndex)}
                       className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                              hover:bg-red-500/20 transition-colors ml-4"
+                              hover:bg-red-500/20 transition-colors mr-4"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
                   )}
                 </div>
 
-                <ProductImageUpload
-                  variant={variant}
-                  variantIndex={variantIndex}
-                  onImageUpload={handleImageUpload}
-                  onImageRemove={handleImageRemove}
-                  isUploading={isUploading}
-                  uploadProgress={uploadProgress}
-                  error={uploadErrors[variantIndex]}
-                />
+                {ediState && (
+        <ProductImageUpload
+        variant={variant}
+        variantIndex={variantIndex}
+        onImageUpload={handleImageUpload}
+        onImageRemove={handleImageRemove}
+        isUploading={isUploading}
+        uploadProgress={uploadProgress}
+        error={uploadErrors[variantIndex]}
+      />
+      )}
+                
 
                 {/* Sizes Section */}
                 <div className="space-y-4">
@@ -907,7 +922,7 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
                            transition-colors">
                 {product.name}
               </h3>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-400"dir='rtl'>
                 كود: {product.code}
               </p>
             </div>
@@ -1094,96 +1109,6 @@ const Textarea = ({
     </div>
   );
 };
-const ImageUpload = ({
-  images = [],
-  onUpload,
-  onRemove,
-  isUploading,
-  error,
-  label = "الصور"
-}) => {
-  const handleFileSelect = async (e) => {
-    const files = e.target.files;
-    if (!files?.length) return;
-
-    try {
-      await onUpload(files[0]);
-    } catch (err) {
-      console.error('Upload error:', err);
-    }
-
-    e.target.value = '';
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="block text-sm font-medium text-gray-400">
-          {label}
-        </label>
-        {isUploading && (
-          <span className="text-sm text-blue-500">جاري الرفع...</span>
-        )}
-      </div>
-
-      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-        {/* Existing Images */}
-        {images.map((image, index) => (
-          <div
-            key={index}
-            className="relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden group"
-          >
-            <img
-              src={image}
-              alt={`Product Image ${index + 1}`}
-              className="w-full h-full object-cover transition-transform 
-                       group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 
-                          to-transparent opacity-0 group-hover:opacity-100 
-                          transition-opacity" />
-            <button
-              type="button"
-              onClick={() => onRemove(index)}
-              className="absolute top-1 right-1 p-1.5 bg-black/50 rounded-lg
-                       opacity-0 group-hover:opacity-100 transition-opacity
-                       hover:bg-red-500/20"
-            >
-              <X className="w-4 h-4 text-white group-hover:text-red-500" />
-            </button>
-          </div>
-        ))}
-
-        {/* Upload Button */}
-        <label className={`flex-shrink-0 w-24 h-24 flex items-center justify-center
-                        rounded-xl cursor-pointer group transition-all duration-300
-                        border-2 border-dashed
-                        ${isUploading
-            ? 'bg-blue-500/10 border-blue-500/30'
-            : 'bg-gray-800/50 border-gray-700 hover:border-blue-500'}`}>
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileSelect}
-            disabled={isUploading}
-          />
-          <Upload className={`w-6 h-6 transition-colors duration-300
-                          ${isUploading
-              ? 'text-blue-500 animate-pulse'
-              : 'text-gray-400 group-hover:text-blue-500'}`} />
-        </label>
-      </div>
-
-      {error && (
-        <div className="flex items-center gap-2 text-sm text-red-500">
-          <AlertCircle className="w-4 h-4" />
-          <p>{error}</p>
-        </div>
-      )}
-    </div>
-  );
-};
 
 const Select = ({
   label,
@@ -1193,14 +1118,14 @@ const Select = ({
   ...props
 }) => {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 ">
       {label && (
         <label className="block text-sm font-medium text-gray-400">
           {label}
         </label>
       )}
       <select
-        className={`w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
+        className={`w-full h-12 bg-gray-800/50 rounded-xl px-8 text-white
                    border transition-colors duration-300 text-right
                    ${error
             ? 'border-red-500/50 focus:border-red-500'

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import {
   Heart,
-  ShoppingCart,
-  Lock, Sparkles, Star
+  ShoppingCart, Briefcase, ShoppingBasket,
+  Lock, Sparkles, Star,PackageSearch ,ShoppingBag ,
+  Luggage
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -18,37 +19,137 @@ import { FavoritesView } from './FavoritesComponent';
 import { useProducts, useSlides } from './hooks';
 import { CartSheet } from './CartProductComponent';
 
+
+// Premium Animation Variants
+const buttonVariants = {
+  hover: {
+    scale: 1.05,
+    rotate: [0, -3, 3, 0],
+    transition: {
+      rotate: {
+        repeat: Infinity,
+        duration: 2,
+        repeatType: "reverse"
+      }
+    }
+  },
+  tap: { scale: 0.95 }
+};
+
+// Shared Components
+const GlowEffect = ({ color, scale = 1 }) => (
+  <motion.div
+    className={`absolute inset-0 rounded-full blur-xl ${color}`}
+    animate={{
+      opacity: [0.3, 0.6, 0.3],
+      scale: [0.85 * scale, 1.1 * scale, 0.85 * scale],
+    }}
+    transition={{
+      duration: 3,
+      repeat: Infinity,
+      repeatType: "reverse"
+    }}
+  />
+);
+
+const ShimmerEffect = () => (
+  <motion.div
+    className="absolute inset-0 opacity-30"
+    style={{
+      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+      backgroundSize: '200% 100%'
+    }}
+    animate={{
+      backgroundPosition: ['200% 0', '-200% 0']
+    }}
+    transition={{
+      duration: 3,
+      repeat: Infinity,
+      ease: 'linear'
+    }}
+  />
+);
+
+
+const badgeVariants = {
+  initial: { scale: 0, opacity: 0 },
+  animate: { 
+    scale: 1, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 20 }
+  },
+  exit: { 
+    scale: 0, 
+    opacity: 0,
+    transition: { duration: 0.2 }
+  }
+};
+// Reusable components
+const ButtonGlow = () => (
+  <div className="absolute inset-0 bg-sky-400/20 blur-xl rounded-full" />
+);
+
+const ButtonHighlight = () => (
+  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent 
+                  opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+);
+
+const QuantityBadge = ({ quantity }) => (
+  <div className="absolute -top-2 -right-2">
+    <motion.div
+      variants={badgeVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="relative"
+    >
+      <ButtonGlow />
+      <div className="relative w-6 h-6 rounded-full bg-gradient-to-r from-sky-600 to-sky-700
+                    flex items-center justify-center">
+        <span className="text-white text-xs font-bold">
+          {quantity > 99 ? '99+' : quantity}
+        </span>
+      </div>
+    </motion.div>
+  </div>
+);
+
 const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
   const { cart } = useContext(CartContext);
+  const cartQuantity = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
 
   return (
-    <div className="fixed bottom-6 right-6 flex flex-col gap-4">
+    <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-20" role="group" aria-label="Floating actions">
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
         onClick={onFavoritesClick}
-        className="w-14 h-14 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center shadow-lg shadow-red-500/25"
+        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
+                   flex items-center justify-center shadow-lg group"
+        aria-label="Favorites"
       >
+        <ButtonGlow />
+        <ButtonHighlight />
         <Heart className="w-6 h-6 text-white" />
       </motion.button>
 
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
         onClick={onCartClick}
-        className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 relative"
+        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
+                   flex items-center justify-center shadow-lg group"
+        aria-label={`Cart with ${cartQuantity} items`}
       >
+        <ButtonGlow />
+        <ButtonHighlight />
         <ShoppingCart className="w-6 h-6 text-white" />
-        <AnimatePresence mode='wait'>
-          {cart?.length > 0 && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center"
-            >
-              {cart.length}
-            </motion.span>
+        
+        <AnimatePresence>
+          {cartQuantity > 0 && (
+            <QuantityBadge quantity={cartQuantity} />
           )}
         </AnimatePresence>
       </motion.button>
@@ -56,56 +157,193 @@ const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
   );
 };
 
+// Enhanced Category Selector
 const CategorySelector = ({ selectedCategory, onSelect }) => {
   return (
-    <div className="px-3 py-1.5">
-      <div className="flex gap-4 bg-gray-900/40 p-1 rounded-2xl backdrop-blur-sm">
-        <button
+    <div className="px-4 py-2">
+      <div className="flex gap-4 bg-gradient-to-r from-sky-50/90 to-white/90 p-1.5 rounded-2xl 
+                    backdrop-blur-md shadow-lg shadow-sky-100/50">
+        {/* Women's Category */}
+        <motion.button
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
           onClick={() => onSelect('women')}
-          className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${selectedCategory === 'women'
-            ? 'bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 text-white shadow-lg shadow-blue-500/20 scale-[1.02]'
-            : 'bg-gray-800/30 text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
-            }`}
+          className={`relative flex-1 py-3 rounded-xl text-sm font-medium overflow-hidden
+                     transition-all duration-300 ${
+            selectedCategory === 'women'
+              ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-400/25'
+              : 'bg-sky-50/50 text-sky-700 hover:bg-sky-100/50'
+          }`}
         >
-          <span className="flex items-center justify-center gap-2">
+          {selectedCategory === 'women' && <ShimmerEffect />}
+          <span className="relative flex items-center justify-center gap-2">
             حريمي
             {selectedCategory === 'women' && (
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              <motion.div
+                animate={{ 
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                <Sparkles className="w-4 h-4" />
+              </motion.div>
             )}
           </span>
-        </button>
+        </motion.button>
 
+        {/* Men's Category (Locked) */}
         <button
           disabled
-          className="relative flex-1 py-2.5 rounded-xl text-sm font-medium bg-gray-800/20 text-gray-500 overflow-hidden group"
+          className="relative flex-1 py-3 rounded-xl text-sm font-medium bg-sky-50/30 
+                     text-sky-700/50 overflow-hidden group"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 " />
-
+          <div className="absolute inset-0 bg-gradient-to-r from-sky-300/5 to-sky-400/5" />
           <div className="relative flex items-center justify-center gap-2">
             <span>رجالي</span>
-            <Lock className="w-3.5 h-3.5 opacity-70" />
+            <Lock className="w-4 h-4 opacity-70" />
           </div>
 
-          <div className="absolute -top-0.5 -right-0.5">
+          {/* Coming Soon Badge */}
+          <div className="absolute -top-1 -right-1">
             <div className="relative">
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-spin blur-sm opacity-30" />
-              <div className="relative bg-gray-900/90 text-blue-400 text-[10px] py-0.5 px-1.5 rounded-full font-medium">
+              <motion.div
+                className="absolute -inset-1.5 bg-gradient-to-r from-sky-500 to-sky-600 
+                           rounded-full blur-sm opacity-30"
+                animate={{
+                  rotate: 360,
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 2, repeat: Infinity, repeatType: "reverse" }
+                }}
+              />
+              <div className="relative bg-sky-50/95 text-sky-600 text-[10px] py-0.5 px-2 
+                            rounded-full font-medium shadow-sm">
                 قريباً
               </div>
             </div>
           </div>
-
-          <div className="absolute inset-0 rounded-xl ring-1 ring-white/5" />
+          <div className="absolute inset-0 rounded-xl ring-1 ring-sky-200/20" />
         </button>
       </div>
     </div>
   );
 };
 
-const MainContent = () => {
+// Enhanced Subcategory Selector
+const SubcategorySelector = ({ onSelect }) => {
+  const [selectedType, setSelectedType] = useState('casual');
+
+  const bagTypes = [
+    {
+      id: 'casual',
+      name: 'شنط كاجوال',
+      icon: ShoppingBasket,
+      available: true
+    },
+    {
+      id: 'evening',
+      name: 'شنط سهرة',
+      icon: PackageSearch,
+      available: true
+    },
+    {
+      id: 'travel',
+      name: 'شنط سفر',
+      icon: Luggage,
+      available: false,
+      comingSoon: true
+    }
+  ];
+
+  return (
+    <div className="px-4 py-2">
+      <div className="relative overflow-hidden">
+        {/* Category Label */}
+        <div className="mb-2 flex items-center gap-2">
+          <ShoppingBag className="w-4 h-4 text-sky-600" />
+          <span className="text-sm font-medium text-sky-900">الشنط</span>
+        </div>
+
+        {/* Subcategory List */}
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {bagTypes.map((type) => (
+            <motion.button
+              key={type.id}
+              onClick={() => type.available && onSelect?.(type.id)}
+              variants={buttonVariants}
+              whileHover={type.available ? "hover" : {}}
+              whileTap={type.available ? "tap" : {}}
+              className={`relative flex-none px-4 py-2 rounded-xl text-sm font-medium 
+                         transition-all duration-300 ${
+                type.available
+                  ? selectedType === type.id
+                    ? 'bg-gradient-to-r from-sky-500/10 to-sky-600/10 text-sky-600'
+                    : 'hover:bg-sky-50 text-sky-700'
+                  : 'opacity-80'
+              }`}
+            >
+              {selectedType === type.id && <ShimmerEffect />}
+              
+              <div className="relative flex items-center gap-2">
+                <motion.div
+                  animate={
+                    selectedType === type.id
+                      ? {
+                          rotate: [0, -10, 10, 0],
+                          transition: {
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatType: "reverse"
+                          }
+                        }
+                      : {}
+                  }
+                >
+                  <type.icon className={`w-4 h-4 ${
+                    type.available 
+                      ? selectedType === type.id 
+                        ? 'text-sky-500' 
+                        : 'text-sky-600'
+                      : 'text-sky-400'
+                  }`} />
+                </motion.div>
+
+                <span>{type.name}</span>
+
+                {!type.available && type.comingSoon && (
+                  <div className="relative">
+                    <GlowEffect color="bg-sky-400/20" scale={0.2} />
+                    <Lock className="w-3.5 h-3.5 text-sky-400" />
+                  </div>
+                )}
+              </div>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Fade Edges */}
+        <div className="absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-white to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 w-12 h-full bg-gradient-to-r from-white to-transparent pointer-events-none" />
+      </div>
+    </div>
+  );
+};
+
+
+const MainContent = ({ productCode }) => {
   const { userInfo, isAuthenticated, login, updateAddress, addAddress } = useContext(AuthContext);
   const { isCartOpen, setIsCartOpen } = useContext(CartContext);
-  const { products, loading: productsLoading, loadMore } = useProducts();
+  const { products, loading: productsLoading, loadMore } = useProducts({
+    initialFilters: productCode ? { code: productCode } : {}
+  });
   const { slides, loading: slidesLoading } = useSlides();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -248,22 +486,49 @@ const MainContent = () => {
     }));
   }, []);
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white ">
-      <Toaster position="top-center" />
-
-      {/* Main Layout */}
-      <Header
-        onOrdersClick={handleOrdersClick}
-        onProfileClick={handleProfileClick}
-      />
-
-      <CategorySelector
-        selectedCategory={uiState.selectedCategory}
-        onSelect={(category) =>
-          setUiState(prev => ({ ...prev, selectedCategory: category }))
+  // Effect to handle initial product code
+  useEffect(() => {
+    const handleInitialProductCode = async () => {
+      if (productCode && products.length > 0) {
+        // Find the product with matching code
+        const matchingProduct = products.find(p => p.code === productCode);
+        if (matchingProduct) {
+          setUiState(prev => ({ ...prev, selectedProduct: matchingProduct }));
         }
+      }
+    };
+
+    handleInitialProductCode();
+  }, [productCode, products]);
+  
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white to-sky-50">
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          className: 'bg-white shadow-xl rounded-xl px-4 py-3',
+          duration: 3000,
+        }} 
       />
+
+    {/* Premium Header */}
+    <header >
+        <Header
+          onOrdersClick={handleOrdersClick}
+          onProfileClick={handleProfileClick}
+        />
+      </header>
+
+     {/* Category Navigation */}
+     <nav>
+        <CategorySelector
+          selectedCategory={uiState.selectedCategory}
+          onSelect={(category) =>
+            setUiState(prev => ({ ...prev, selectedCategory: category }))
+          }
+        />
+      </nav>
 
       <main className="pb-24">
         <RamadanCountdown />
@@ -275,8 +540,6 @@ const MainContent = () => {
           onSelect={handleProductSelect}
         />
         </div>
-
-        
 
         <ProductGrid
           products={products}
@@ -371,11 +634,11 @@ const MainContent = () => {
 };
 
 
-const App = () => {
+const App = ({ productCode }) => {
   return (
     <AuthProvider>
       <CartProvider>
-        <MainContent />
+        <MainContent productCode={productCode} />
       </CartProvider>
     </AuthProvider>
   );
