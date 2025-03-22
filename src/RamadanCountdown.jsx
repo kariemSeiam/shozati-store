@@ -86,7 +86,6 @@ const RamadanToEidProgress = () => {
   
   // Inspirational messages
   const messages = useMemo(() => [
-    "استغل الأيام المتبقية من رمضان",
     "اللهم بلغنا ليلة القدر",
     "اجتهد في العشر الأواخر",
     "العيد قادم ان شاء الله"
