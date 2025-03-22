@@ -18,6 +18,7 @@ import { OrdersView } from './OrdersComponent';
 import { FavoritesView } from './FavoritesComponent';
 import { useProducts, useSlides } from './hooks';
 import { CartSheet } from './CartProductComponent';
+import HorizontalCategoryScroller from './HorizontalCategoryScroller';
 
 
 // Premium Animation Variants
@@ -157,199 +158,29 @@ const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
   );
 };
 
-// Enhanced Category Selector
-const CategorySelector = ({ selectedCategory, onSelect }) => {
-  return (
-    <div className="px-4 py-2">
-      <div className="flex gap-4 bg-gradient-to-r from-sky-50/90 to-white/90 p-1.5 rounded-2xl 
-                    backdrop-blur-md shadow-lg shadow-sky-100/50">
-        {/* Women's Category */}
-        <motion.button
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          onClick={() => onSelect('women')}
-          className={`relative flex-1 py-3 rounded-xl text-sm font-medium overflow-hidden
-                     transition-all duration-300 ${
-            selectedCategory === 'women'
-              ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-400/25'
-              : 'bg-sky-50/50 text-sky-700 hover:bg-sky-100/50'
-          }`}
-        >
-          {selectedCategory === 'women' && <ShimmerEffect />}
-          <span className="relative flex items-center justify-center gap-2">
-            حريمي
-            {selectedCategory === 'women' && (
-              <motion.div
-                animate={{ 
-                  rotate: [0, 10, -10, 0],
-                  scale: [1, 1.2, 1]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-              >
-                <Sparkles className="w-4 h-4" />
-              </motion.div>
-            )}
-          </span>
-        </motion.button>
-
-        {/* Men's Category (Locked) */}
-        <button
-          disabled
-          className="relative flex-1 py-3 rounded-xl text-sm font-medium bg-sky-50/30 
-                     text-sky-700/50 overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-sky-300/5 to-sky-400/5" />
-          <div className="relative flex items-center justify-center gap-2">
-            <span>رجالي</span>
-            <Lock className="w-4 h-4 opacity-70" />
-          </div>
-
-          {/* Coming Soon Badge */}
-          <div className="absolute -top-1 -right-1">
-            <div className="relative">
-              <motion.div
-                className="absolute -inset-1.5 bg-gradient-to-r from-sky-500 to-sky-600 
-                           rounded-full blur-sm opacity-30"
-                animate={{
-                  rotate: 360,
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 2, repeat: Infinity, repeatType: "reverse" }
-                }}
-              />
-              <div className="relative bg-sky-50/95 text-sky-600 text-[10px] py-0.5 px-2 
-                            rounded-full font-medium shadow-sm">
-                قريباً
-              </div>
-            </div>
-          </div>
-          <div className="absolute inset-0 rounded-xl ring-1 ring-sky-200/20" />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Enhanced Subcategory Selector
-const SubcategorySelector = ({ onSelect }) => {
-  const [selectedType, setSelectedType] = useState('casual');
-
-  const bagTypes = [
-    {
-      id: 'casual',
-      name: 'شنط كاجوال',
-      icon: ShoppingBasket,
-      available: true
-    },
-    {
-      id: 'evening',
-      name: 'شنط سهرة',
-      icon: PackageSearch,
-      available: true
-    },
-    {
-      id: 'travel',
-      name: 'شنط سفر',
-      icon: Luggage,
-      available: false,
-      comingSoon: true
-    }
-  ];
-
-  return (
-    <div className="px-4 py-2">
-      <div className="relative overflow-hidden">
-        {/* Category Label */}
-        <div className="mb-2 flex items-center gap-2">
-          <ShoppingBag className="w-4 h-4 text-sky-600" />
-          <span className="text-sm font-medium text-sky-900">الشنط</span>
-        </div>
-
-        {/* Subcategory List */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {bagTypes.map((type) => (
-            <motion.button
-              key={type.id}
-              onClick={() => type.available && onSelect?.(type.id)}
-              variants={buttonVariants}
-              whileHover={type.available ? "hover" : {}}
-              whileTap={type.available ? "tap" : {}}
-              className={`relative flex-none px-4 py-2 rounded-xl text-sm font-medium 
-                         transition-all duration-300 ${
-                type.available
-                  ? selectedType === type.id
-                    ? 'bg-gradient-to-r from-sky-500/10 to-sky-600/10 text-sky-600'
-                    : 'hover:bg-sky-50 text-sky-700'
-                  : 'opacity-80'
-              }`}
-            >
-              {selectedType === type.id && <ShimmerEffect />}
-              
-              <div className="relative flex items-center gap-2">
-                <motion.div
-                  animate={
-                    selectedType === type.id
-                      ? {
-                          rotate: [0, -10, 10, 0],
-                          transition: {
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }
-                        }
-                      : {}
-                  }
-                >
-                  <type.icon className={`w-4 h-4 ${
-                    type.available 
-                      ? selectedType === type.id 
-                        ? 'text-sky-500' 
-                        : 'text-sky-600'
-                      : 'text-sky-400'
-                  }`} />
-                </motion.div>
-
-                <span>{type.name}</span>
-
-                {!type.available && type.comingSoon && (
-                  <div className="relative">
-                    <GlowEffect color="bg-sky-400/20" scale={0.2} />
-                    <Lock className="w-3.5 h-3.5 text-sky-400" />
-                  </div>
-                )}
-              </div>
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Fade Edges */}
-        <div className="absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-white to-transparent pointer-events-none" />
-        <div className="absolute top-0 left-0 w-12 h-full bg-gradient-to-r from-white to-transparent pointer-events-none" />
-      </div>
-    </div>
-  );
-};
 
 
 const MainContent = ({ productCode }) => {
   const { userInfo, isAuthenticated, login, updateAddress, addAddress } = useContext(AuthContext);
   const { isCartOpen, setIsCartOpen } = useContext(CartContext);
-  const { products, loading: productsLoading, loadMore } = useProducts({
-    initialFilters: productCode ? { code: productCode } : {}
+  const { 
+    products, 
+    loading: productsLoading, 
+    loadMore,
+    updateFilters,
+    filters,
+    setPage,
+    page,
+    totalPages
+  } = useProducts({
+    initialFilters: productCode ? { code: productCode } : { category: 'all' } // Default to all products
   });
   const { slides, loading: slidesLoading } = useSlides();
   
   const [isLoading, setIsLoading] = useState(false);
 
   const [uiState, setUiState] = useState({
-    selectedCategory: 'women',
+    selectedCategory: 'all',
     showProfile: false,
     showOrders: false,
     showFavorites: false,
@@ -478,6 +309,39 @@ const MainContent = ({ productCode }) => {
     }));
   }, []);
 
+    // Enhanced category selection handler for the horizontal chip scroller
+    const handleCategorySelect = useCallback((category) => {
+      setUiState(prev => ({ ...prev, selectedCategory: category }));
+      
+      // Update filters to trigger a product fetch with the selected category
+      updateFilters({ 
+        category: category === 'all' ? '' : category, // 'all' means no category filter
+        // Reset other filters when changing categories for a clean slate
+        search: '',
+        minPrice: null,
+        maxPrice: null,
+        size: '',
+        color: ''
+      });
+      
+      // Return to the first page when changing categories
+      setPage(1);
+      
+      // Show loading toast to improve UX for slower connections
+      let categoryName;
+      switch(category) {
+        case 'women': categoryName = 'حريمي'; break;
+        case 'men': categoryName = 'رجالي'; break;
+        case 'all': categoryName = 'كل المنتجات'; break;
+        default: categoryName = category;
+      }
+      
+      toast.loading(`جاري تحميل ${categoryName}...`, {
+        id: 'category-loading',
+        duration: 1000
+      });
+    }, [updateFilters, setPage]);
+
   const handleModalClose = useCallback((modalType) => {
     setUiState(prev => ({
       ...prev,
@@ -502,6 +366,7 @@ const MainContent = ({ productCode }) => {
   }, [productCode, products]);
   
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-sky-50">
       <Toaster 
@@ -520,13 +385,11 @@ const MainContent = ({ productCode }) => {
         />
       </header>
 
-     {/* Category Navigation */}
-     <nav>
-        <CategorySelector
+     {/* NEW: Horizontal Category Scroller - replaces both category and subcategory selectors */}
+     <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm shadow-sm">
+        <HorizontalCategoryScroller
           selectedCategory={uiState.selectedCategory}
-          onSelect={(category) =>
-            setUiState(prev => ({ ...prev, selectedCategory: category }))
-          }
+          onSelect={handleCategorySelect}
         />
       </nav>
 
@@ -541,13 +404,60 @@ const MainContent = ({ productCode }) => {
         />
         </div>
 
-        <ProductGrid
-          products={products}
-          loading={productsLoading}
-          onLoadMore={loadMore}
-          onProductSelect={handleProductSelect}
-          checkAuthAndProceed={checkAuthAndProceed}
-        />
+       {/* Product Grid with Category Indicator */}
+       <div className="px-6 pt-4 flex items-center justify-between" dir='rtl'>
+          <h2 className="text-lg font-bold text-sky-900">
+            {uiState.selectedCategory === 'all' 
+              ? 'كل المنتجات' 
+              : uiState.selectedCategory === 'women' 
+                ? 'منتجات حريمي' 
+                : uiState.selectedCategory === 'men' 
+                  ? 'منتجات رجالي'
+                  : `منتجات ${uiState.selectedCategory}`}
+          </h2>
+          
+          {/* Products count */}
+          {products.length > 0 && (
+            <div className="text-sm text-sky-600">
+              {totalPages > 1 ? `${products.length} من ${totalPages * products.length}` : `${products.length} منتج`}
+            </div>
+          )}
+        </div>
+
+        {/* Empty state message when no products are found */}
+        {!productsLoading && products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <ShoppingBag className="w-16 h-16 text-sky-200 mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 mb-2">لا توجد منتجات</h3>
+            <p className="text-gray-600 text-center mb-6">
+              لم نتمكن من العثور على منتجات في هذه الفئة
+            </p>
+            <button
+              onClick={() => {
+                // Reset filters to show all products
+                updateFilters({ 
+                  category: '',
+                  subcategory: '',
+                  search: '' 
+                });
+                setUiState(prev => ({ ...prev, selectedCategory: 'all' }));
+              }}
+              className="px-6 py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 
+                        transition-all duration-300 shadow-lg"
+            >
+              عرض كل المنتجات
+            </button>
+          </div>
+        ) : (
+          <ProductGrid
+            products={products}
+            loading={productsLoading}
+            onLoadMore={loadMore}
+            onProductSelect={handleProductSelect}
+            checkAuthAndProceed={checkAuthAndProceed}
+            currentCategory={uiState.selectedCategory}
+          />
+        )}
       </main>
 
       <FloatingActions

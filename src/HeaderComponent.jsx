@@ -117,29 +117,28 @@ const Logo = () => (
     animate={{ opacity: 1, y: 0 }}
     className="relative px-4"
   >
-    <h1 className="text-3xl font-bold tracking-tight">
-      <span className="relative inline-block">
-        <span className="bg-gradient-to-r from-sky-600 via-sky-400 to-sky-600 
-                      bg-clip-text text-transparent">
-          Shozati
-        </span>
-        {/* Premium Glow Effect */}
-        <motion.div
-          className="absolute -inset-2 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 
-                     blur-xl opacity-0 rounded-full"
-          animate={{
-            opacity: [0, 0.6, 0],
-            scale: [0.9, 1.1, 0.9],
-            rotate: [0, 5, 0]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-      </span>
-    </h1>
+    <div className="relative inline-block">
+      <img 
+        src="/logo.png" 
+        alt="Shozati Logo" 
+        className="h-10 w-auto" 
+      />
+      {/* Premium Glow Effect */}
+      <motion.div
+        className="absolute -inset-2 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 
+                   blur-xl opacity-0 rounded-full"
+        animate={{
+          opacity: [0, 0.6, 0],
+          scale: [0.9, 1.1, 0.9],
+          rotate: [0, 5, 0]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      />
+    </div>
   </motion.div>
 );
 

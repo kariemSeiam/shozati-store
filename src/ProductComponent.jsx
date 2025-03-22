@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useCallback, memo, useRef, useMemo } from 'react';
-import { motion, AnimatePresence ,useMotionValue  } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import {
     Heart, Star, Tag, Share2, ChevronDown, Plus, Minus, Check,
-    Package, Shield, Clock, X, ArrowRight, Loader2, Palette,Hash ,
+    Package, Shield, Clock, X, ArrowRight, Loader2, Palette, Hash,
     Ruler, ShoppingBag, MessageCircle, AlertCircle, ArrowDown,
-    ClipboardList,Eye 
+    ClipboardList, Eye
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { AuthContext, CartContext, useFavorites, useProducts } from './hooks';
@@ -26,6 +26,58 @@ const calculateDiscount = (basePrice, discountPrice) => {
     return Math.round(((basePrice - discountPrice) / basePrice) * 100);
 };
 
+// New image preloader utility
+const ImagePreloader = {
+    _cache: new Set(),
+    
+    // Preload a single image and return a promise
+    preload(src) {
+        if (!src || this._cache.has(src)) return Promise.resolve();
+        
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                this._cache.add(src);
+                resolve(src);
+            };
+            img.onerror = reject;
+            img.src = src;
+        });
+    },
+    
+    // Preload multiple images with priority queue
+    preloadBatch(sources = [], priority = []) {
+        if (!sources.length) return Promise.resolve();
+        
+        // Preload priority images first
+        const priorityPromises = priority.map(src => this.preload(src));
+        
+        // Then preload the rest with lower priority
+        const regularSources = sources.filter(src => !priority.includes(src));
+        const regularPromises = regularSources.map(src => 
+            new Promise(resolve => {
+                // Fixed requestIdleCallback implementation
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(() => {
+                        this.preload(src).then(resolve).catch(() => resolve());
+                    });
+                } else {
+                    setTimeout(() => {
+                        this.preload(src).then(resolve).catch(() => resolve());
+                    }, 50);
+                }
+            })
+        );
+        
+        return Promise.all([...priorityPromises, ...regularPromises]);
+    },
+    
+    // Check if an image is already loaded
+    isLoaded(src) {
+        return this._cache.has(src);
+    }
+};
+
 
 export const ColorSelector = memo(({
     variants,
@@ -38,6 +90,13 @@ export const ColorSelector = memo(({
     const hasMoreColors = showCollapsed && variants.length > maxVisible;
     const visibleVariants = isExpanded ? variants : variants.slice(0, maxVisible);
     const remainingCount = variants.length - maxVisible;
+
+    // Preload the first image of each variant to ensure smooth color switching
+    useEffect(() => {
+        // Extract first image from each variant
+        const imagesToPreload = variants.map(variant => variant.images[0]);
+        ImagePreloader.preloadBatch(imagesToPreload, [selectedVariant?.images[0]]);
+    }, [variants, selectedVariant]);
 
     return (
         <div className="relative">
@@ -92,7 +151,7 @@ export const ColorSelector = memo(({
                         className="flex items-center justify-center px-2 rounded-full 
                             hover:bg-gray-100 transition-colors"
                     >
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
                     </motion.button>
                 )}
             </div>
@@ -168,8 +227,8 @@ export const SizeSelector = memo(({ sizes, selectedSize, onSizeSelect }) => {
 ColorSelector.displayName = 'ColorSelector';
 SizeSelector.displayName = 'SizeSelector';
 
-
-const Badges = ({ rating, tag, tagColor }) => {
+// Optimized badges component
+const Badges = memo(({ rating, tag, tagColor }) => {
     // Function to determine text color based on background
     const getTextColor = (bgColor) => {
       // Convert hex to RGB
@@ -184,12 +243,14 @@ const Badges = ({ rating, tag, tagColor }) => {
       return luminance > 0.5 ? 'text-white' : 'text-white';
     };
   
-    // Function to generate lighter and darker shades
-    const generateShades = (hex) => {
+    // Function to generate lighter and darker shades - memoized
+    const shades = useMemo(() => {
+      if (!tagColor) return null;
+      
       // Convert to RGB
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
+      const r = parseInt(tagColor.slice(1, 3), 16);
+      const g = parseInt(tagColor.slice(3, 5), 16);
+      const b = parseInt(tagColor.slice(5, 7), 16);
       
       // Generate lighter shade (20% lighter)
       const lighter = `rgba(${r + (255 - r) * 0.2}, ${g + (255 - g) * 0.2}, ${b + (255 - b) * 0.2}, 0.9)`;
@@ -198,10 +259,11 @@ const Badges = ({ rating, tag, tagColor }) => {
       const darker = `rgba(${r * 0.8}, ${g * 0.8}, ${b * 0.8}, 1)`;
       
       return { lighter, darker };
-    };
+    }, [tagColor]);
   
-    const shades = tagColor ? generateShades(tagColor) : null;
-    const textColorClass = tagColor ? getTextColor(tagColor) : 'text-white';
+    const textColorClass = useMemo(() => 
+      tagColor ? getTextColor(tagColor) : 'text-white'
+    , [tagColor]);
   
     return (
       <div className="absolute top-4 right-3 flex flex-col gap-2 z-10">
@@ -211,6 +273,7 @@ const Badges = ({ rating, tag, tagColor }) => {
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, type: "spring" }}
             className="bg-gradient-to-r from-white/95 to-white/85
                        backdrop-blur-md rounded-full px-3 py-1.5
                        shadow-lg shadow-amber-100/30 
@@ -220,23 +283,7 @@ const Badges = ({ rating, tag, tagColor }) => {
                        flex items-center gap-1.5
                        transition-all duration-300"
           >
-            <div className="relative">
-              <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
-              <motion.div
-                className="absolute inset-0 text-amber-400/50"
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 0.8, 0.5]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <Sparkles className="w-4 h-4" />
-              </motion.div>
-            </div>
+            <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
             <span className="text-sm font-semibold bg-gradient-to-r 
                            from-amber-600 to-amber-500
                            bg-clip-text text-transparent">
@@ -251,6 +298,7 @@ const Badges = ({ rating, tag, tagColor }) => {
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, type: "spring" }}
             className="relative overflow-hidden"
           >
             <div
@@ -259,38 +307,99 @@ const Badges = ({ rating, tag, tagColor }) => {
                          hover:shadow-xl transition-all duration-300
                          flex items-center gap-2"
               style={{
-                background: `linear-gradient(to right, ${tagColor}, ${shades.lighter})`,
+                background: `linear-gradient(to right, ${tagColor}, ${shades?.lighter})`,
                 boxShadow: `0 4px 6px -1px ${tagColor}20, 0 2px 4px -1px ${tagColor}10`
               }}
             >
-              <motion.div
-                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: `linear-gradient(to right, ${shades.darker}, ${tagColor})`
-                }}
-              />
               <span className={`relative ${textColorClass}`}>
                 {tag}
               </span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                animate={{
-                  x: ['0%', '100%', '0%'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
             </div>
           </motion.div>
         )}
       </div>
     );
-  };
+});
 
-  
+Badges.displayName = 'Badges';
+
+// Optimized LazyImage component with loading state management
+const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingClass = "" }) => {
+    const [isLoading, setIsLoading] = useState(!ImagePreloader.isLoaded(src));
+    const [error, setError] = useState(false);
+    const imgRef = useRef(null);
+    
+    useEffect(() => {
+        setIsLoading(!ImagePreloader.isLoaded(src));
+        setError(false);
+        
+        const handleLoad = () => {
+            setIsLoading(false);
+            if (onLoad) onLoad();
+        };
+        
+        const handleError = () => {
+            setIsLoading(false);
+            setError(true);
+        };
+        
+        const imgEl = imgRef.current;
+        if (imgEl) {
+            imgEl.addEventListener('load', handleLoad);
+            imgEl.addEventListener('error', handleError);
+            
+            return () => {
+                imgEl.removeEventListener('load', handleLoad);
+                imgEl.removeEventListener('error', handleError);
+            };
+        }
+    }, [src, onLoad]);
+    
+    // Use intersection observer for lazy loading
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    ImagePreloader.preload(src)
+                        .then(() => setIsLoading(false))
+                        .catch(() => setError(true));
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1, rootMargin: '200px' }
+        );
+        
+        if (imgRef.current) {
+            observer.observe(imgRef.current);
+        }
+        
+        return () => observer.disconnect();
+    }, [src]);
+    
+    return (
+        <div className={`relative ${className}`}>
+            {isLoading && (
+                <div className={`absolute inset-0 flex items-center justify-center bg-gray-100/50 ${loadingClass}`}>
+                    <div className="w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
+            
+            <img
+                ref={imgRef}
+                src={src}
+                alt={alt}
+                className={`w-full h-full object-cover ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+                loading="lazy"
+            />
+            
+            {error && fallback}
+        </div>
+    );
+});
+
+LazyImage.displayName = 'LazyImage';
+
+// Optimized ProductCard component
 export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => {
     const { isAuthenticated } = useContext(AuthContext);
     const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
@@ -298,28 +407,59 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     const [isChangingVariant, setIsChangingVariant] = useState(false);
     const [isPressed, setIsPressed] = useState(false);
     const [showGallery, setShowGallery] = useState(false);
+    const [imagesLoaded, setImagesLoaded] = useState({});
 
     const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
     const isFavorite = getFavoriteStatus(product.id);
     const isLoading = isPending(product.id);
-
-    // Enhanced motion values for sophisticated animations
-    const glassOpacity = useMotionValue(0);
-    const glassScale = useMotionValue(1);
-    const hoverScale = useMotionValue(1);
-
+    
+    const preloaderTimeoutRef = useRef(null);
+    
+    // Enhanced image preloading strategy
     useEffect(() => {
-        if (selectedVariant.images.length > 1) {
-            const interval = setInterval(() => {
-                if (!showGallery) {
-                    setCurrentImageIndex(prev => (prev + 1) % selectedVariant.images.length);
-                }
-            }, 3000);
-            return () => clearInterval(interval);
+        // Preload the current image immediately
+        const currentImage = selectedVariant.images[currentImageIndex];
+        ImagePreloader.preload(currentImage);
+        
+        // Clear any existing timeout to prevent race conditions
+        if (preloaderTimeoutRef.current) {
+            clearTimeout(preloaderTimeoutRef.current);
         }
-    }, [selectedVariant.images.length, showGallery]);
+        
+        // Preload next image with a small delay to prioritize current image
+        if (selectedVariant.images.length > 1) {
+            const nextIndex = (currentImageIndex + 1) % selectedVariant.images.length;
+            preloaderTimeoutRef.current = setTimeout(() => {
+                ImagePreloader.preload(selectedVariant.images[nextIndex]);
+            }, 300);
+        }
+        
+        return () => {
+            if (preloaderTimeoutRef.current) {
+                clearTimeout(preloaderTimeoutRef.current);
+            }
+        };
+    }, [selectedVariant, currentImageIndex]);
+    
+    // Image rotation timer with optimized checks
+    useEffect(() => {
+        if (selectedVariant.images.length <= 1 || showGallery || isChangingVariant) {
+            return; // No need for interval
+        }
+        
+        const interval = setInterval(() => {
+            setCurrentImageIndex(prev => (prev + 1) % selectedVariant.images.length);
+        }, 3000);
+        
+        return () => clearInterval(interval);
+    }, [selectedVariant.images.length, showGallery, isChangingVariant]);
 
-    const handleFavoriteClick = async (e) => {
+    // Mark image as loaded
+    const handleImageLoad = useCallback((imageUrl) => {
+        setImagesLoaded(prev => ({...prev, [imageUrl]: true}));
+    }, []);
+
+    const handleFavoriteClick = useCallback(async (e) => {
         e.stopPropagation();
         const canProceed = await checkAuthAndProceed({
             requiresAuth: true,
@@ -328,14 +468,38 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             }
         });
         if (!canProceed) return;
-    };
+    }, [checkAuthAndProceed, product.id, toggleFavorite]);
 
-    const handlePressStart = () => setIsPressed(true);
-    const handlePressEnd = () => setIsPressed(false);
+    const handlePressStart = useCallback(() => setIsPressed(true), []);
+    const handlePressEnd = useCallback(() => setIsPressed(false), []);
 
-    const navigateImage = (direction) => {
+    const navigateImage = useCallback((direction) => {
         const newIndex = (currentImageIndex + direction + selectedVariant.images.length) % selectedVariant.images.length;
         setCurrentImageIndex(newIndex);
+    }, [currentImageIndex, selectedVariant.images.length]);
+    
+    const handleVariantSelect = useCallback((variant) => {
+        if (variant.id === selectedVariant.id) return;
+        
+        setIsChangingVariant(true);
+        // Preload the first image of the new variant
+        ImagePreloader.preload(variant.images[0])
+            .then(() => {
+                setSelectedVariant(variant);
+                setCurrentImageIndex(0);
+                setTimeout(() => setIsChangingVariant(false), 300);
+            })
+            .catch(() => {
+                // Still switch even if preload fails
+                setSelectedVariant(variant);
+                setCurrentImageIndex(0);
+                setTimeout(() => setIsChangingVariant(false), 300);
+            });
+    }, [selectedVariant]);
+
+    // Using CSS property will-change to hint the browser about animations
+    const cardStyle = {
+        willChange: 'transform, opacity'
     };
 
     return (
@@ -353,6 +517,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             onTapEnd={handlePressEnd}
             className="relative overflow-hidden group"
             onClick={() => onSelect(product)}
+            style={cardStyle}
         >
             {/* Main Card Container */}
             <div className="relative bg-gradient-to-br from-white via-sky-50/30 to-sky-100/20
@@ -365,21 +530,32 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                     <motion.div
                         animate={{
                             scale: isPressed ? 1.05 : 1,
-                            transition: { duration: 0.4 }
+                            transition: { duration: 0.4, type: "spring" }
                         }}
                         className="absolute inset-0"
                     >
                         <AnimatePresence mode="wait">
-                            <motion.img
+                            <motion.div
                                 key={`${selectedVariant.id}-${currentImageIndex}`}
-                                src={selectedVariant.images[currentImageIndex]}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                                initial={{ opacity: 0, scale: 1.1 }}
+                                initial={{ opacity: 0, scale: 1.05 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.4 }}
-                            />
+                                transition={{ duration: 0.3, type: "spring" }}
+                                className="w-full h-full"
+                            >
+                                <LazyImage
+                                    src={selectedVariant.images[currentImageIndex]}
+                                    alt={product.name}
+                                    className="w-full h-full"
+                                    onLoad={() => handleImageLoad(selectedVariant.images[currentImageIndex])}
+                                    loadingClass="bg-gray-100/80"
+                                    fallback={
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                            <div className="text-gray-400">صورة غير متوفرة</div>
+                                        </div>
+                                    }
+                                />
+                            </motion.div>
                         </AnimatePresence>
                     </motion.div>
 
@@ -395,7 +571,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 
                                       flex justify-between px-2 opacity-0 group-hover:opacity-100
                                       transition-opacity duration-300">
-                            {[ChevronLeft, ChevronRight].map((Icon, idx) => (
+                            {[ChevronDown, ChevronDown].map((Icon, idx) => (
                                 <motion.button
                                     key={idx}
                                     whileHover={{ scale: 1.1 }}
@@ -407,16 +583,16 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                     className="bg-white/80 backdrop-blur-md p-2 rounded-full
                                              shadow-lg shadow-sky-100/30 border border-sky-100/60"
                                 >
-                                    <Icon className="w-5 h-5 text-sky-600" />
+                                    <Icon className={`w-5 h-5 text-sky-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
                                 </motion.button>
                             ))}
                         </div>
                     )}
 
                     <Badges
-                    rating={product.rating}
-                    tag={product.tag}
-                    tagColor={product.tagColor}
+                        rating={product.rating}
+                        tag={product.tag}
+                        tagColor={product.tagColor}
                     />
 
                     {/* Enhanced Favorite Button */}
@@ -454,12 +630,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                             <ColorSelector
                                 variants={product.variants}
                                 selectedVariant={selectedVariant}
-                                onVariantSelect={(variant) => {
-                                    setIsChangingVariant(true);
-                                    setSelectedVariant(variant);
-                                    setCurrentImageIndex(0);
-                                    setTimeout(() => setIsChangingVariant(false), 300);
-                                }}
+                                onVariantSelect={handleVariantSelect}
                                 showCollapsed={true}
                                 maxVisible={3}
                             />
@@ -478,7 +649,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                     </motion.div>
 
                     {/* Price Display */}
-                    <div className="flex items-baseline gap-2  justify-end">
+                    <div className="flex items-baseline gap-2 justify-end">
                         <motion.span 
                             className="text-lg font-bold bg-gradient-to-r 
                                      from-sky-600 to-sky-500
@@ -496,7 +667,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                 </div>
             </div>
 
-            {/* Touch Ripple Effect */}
+            {/* Touch Ripple Effect - Optimized using CSS transforms only */}
             <motion.div
                 className="absolute inset-0 bg-sky-100/20 rounded-3xl pointer-events-none"
                 initial={{ scale: 0, opacity: 0 }}
@@ -504,18 +675,55 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                     scale: isPressed ? 1.2 : 0,
                     opacity: isPressed ? 1 : 0
                 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.3, type: "spring" }}
+                style={{ willChange: 'transform, opacity' }}
             />
         </motion.div>
     );
 });
-// Premium Enhanced Product Grid Component
+
+ProductCard.displayName = 'ProductCard';
+
+// Optimized React.memo with explicit comparison to avoid unnecessary re-renders
+const areProductsEqual = (prevProps, nextProps) => {
+    // Check if products array references changed
+    if (prevProps.products !== nextProps.products) {
+        // If length changed, definitely re-render
+        if (prevProps.products?.length !== nextProps.products?.length) {
+            return false;
+        }
+        
+        // If product IDs are different, re-render
+        for (let i = 0; i < prevProps.products.length; i++) {
+            if (prevProps.products[i].id !== nextProps.products[i].id) {
+                return false;
+            }
+        }
+    }
+    
+    // Compare other props
+    return (
+        prevProps.loading === nextProps.loading &&
+        prevProps.error === nextProps.error &&
+        prevProps.onLoadMore === nextProps.onLoadMore &&
+        prevProps.onProductSelect === nextProps.onProductSelect &&
+        prevProps.checkAuthAndProceed === nextProps.checkAuthAndProceed
+    );
+};
+
+// Premium Enhanced Product Grid Component with Virtualization for large lists
 export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProductSelect, checkAuthAndProceed }) => {
     const observerRef = useRef(null);
     const loadingRef = useRef(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const { refresh } = useProducts();
-
+    const containerRef = useRef(null);
+    const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
+    
+    // Virtualization logic for large product lists
+    const isLargeList = products?.length > 20;
+    
+    // Use intersection observer for infinite loading
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -523,7 +731,7 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
                     onLoadMore();
                 }
             },
-            { threshold: 0.1 }
+            { threshold: 0.1, rootMargin: '200px' }
         );
 
         const currentLoadingRef = loadingRef.current;
@@ -537,15 +745,57 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
             }
         };
     }, [loading, onLoadMore]);
+    
+    // Virtualization scroll handler for very large lists
+    useEffect(() => {
+        if (!isLargeList || !containerRef.current) return;
+        
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+            
+            const scrollTop = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const containerTop = containerRef.current.offsetTop;
+            
+            // Calculate which items should be visible based on scroll position
+            const itemHeight = 350; // Approximate height of a product card
+            const buffer = 5; // Number of items to render above/below visible area
+            
+            const start = Math.max(0, Math.floor((scrollTop - containerTop) / itemHeight) - buffer);
+            const end = Math.min(
+                products.length,
+                Math.ceil((scrollTop - containerTop + viewportHeight) / itemHeight) + buffer
+            );
+            
+            setVisibleRange({ start, end });
+        };
+        
+        // Initial calculation
+        handleScroll();
+        
+        // Add scroll listener
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleScroll);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
+        };
+    }, [isLargeList, products?.length]);
 
     const handleProductSelection = useCallback((product) => {
         setSelectedProduct(product);
     }, []);
+    
+    // Determine which products to render - either all or virtualized subset
+    const productsToRender = useMemo(() => {
+        if (!isLargeList || !products) return products || [];
+        return products.slice(visibleRange.start, visibleRange.end);
+    }, [products, isLargeList, visibleRange.start, visibleRange.end]);
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-96 p-8 
-                          ">
+            <div className="flex flex-col items-center justify-center min-h-96 p-8">
                 <AlertCircle className="w-12 h-12 text-rose-500 mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-3">حدث خطأ</h3>
                 <p className="text-gray-600 text-center mb-6">{error}</p>
@@ -572,9 +822,16 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
     }
 
     return (
-        <div className="">
-            <div className="grid grid-cols-2 gap-6 p-6">
-                {products.map(product => (
+        <div className="" ref={containerRef}>
+            <div className="grid grid-cols-2 gap-6 p-6" style={{ 
+                minHeight: isLargeList ? products.length * (350 / 2) : 'auto' // Approximate height calculation
+            }}>
+                {/* For virtualized lists, we need placeholder spaces */}
+                {isLargeList && visibleRange.start > 0 && (
+                    <div style={{ gridColumn: "span 2", height: visibleRange.start * (350 / 2) }} />
+                )}
+                
+                {productsToRender.map(product => (
                     <ProductCard
                         key={product.id}
                         product={product}
@@ -607,9 +864,11 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
             )}
         </div>
     );
-});
+}, areProductsEqual);
 
+ProductGrid.displayName = 'ProductGrid';
 
+// Optimized Product Sheet component with better image handling
 export const ProductSheet = memo(({
     product,
     isOpen,
@@ -617,25 +876,59 @@ export const ProductSheet = memo(({
     checkAuthAndProceed
 }) => {
     const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
-    const isFavorite = getFavoriteStatus(product.id);
-    const isLoading = isPending(product.id);
+    const isFavorite = getFavoriteStatus(product?.id);
+    const isLoading = isPending(product?.id);
     const { addToCart } = useContext(CartContext);
-    const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
+    const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showImageViewer, setShowImageViewer] = useState(false);
-
+    const [isImageLoading, setIsImageLoading] = useState(true);
+    
+    // Reset state when product changes
     useEffect(() => {
         if (isOpen && product) {
-            setSelectedVariant(product.variants[0]);
+            const initialVariant = product.variants[0];
+            setSelectedVariant(initialVariant);
             setSelectedSize(null);
             setQuantity(1);
             setCurrentImageIndex(0);
+            
+            // Preload all images for this product to ensure smooth browsing
+            if (initialVariant) {
+                // First prioritize current variant images
+                const currentVariantImages = initialVariant.images || [];
+                ImagePreloader.preloadBatch(currentVariantImages, [currentVariantImages[0]]);
+                
+                // Then preload first image of each other variant
+                const otherVariantImages = product.variants
+                    .filter(v => v.id !== initialVariant.id)
+                    .map(v => v.images[0]);
+                
+                if (otherVariantImages.length > 0) {
+                    // Fixed requestIdleCallback implementation
+                    if (window.requestIdleCallback) {
+                        window.requestIdleCallback(() => {
+                            ImagePreloader.preloadBatch(otherVariantImages);
+                        });
+                    } else {
+                        setTimeout(() => {
+                            ImagePreloader.preloadBatch(otherVariantImages);
+                        }, 1000);
+                    }
+                }
+            }
         }
     }, [isOpen, product]);
+    
+    const handleImageLoad = useCallback(() => {
+        setIsImageLoading(false);
+    }, []);
 
-    const handleFavoriteToggle = async () => {
+    const handleFavoriteToggle = useCallback(async () => {
+        if (!product) return;
+        
         const canProceed = await checkAuthAndProceed({
             requiresAuth: true,
             onSuccess: async () => {
@@ -643,10 +936,45 @@ export const ProductSheet = memo(({
             }
         });
         if (!canProceed) return;
-    };
+    }, [checkAuthAndProceed, product, toggleFavorite]);
+    
+    const handleVariantSelect = useCallback((variant) => {
+        if (!variant || variant.id === selectedVariant?.id) return;
+        
+        setIsImageLoading(true);
+        
+        // Preload the images of the selected variant
+        const imagesToPreload = variant.images || [];
+        if (imagesToPreload.length > 0) {
+            ImagePreloader.preload(imagesToPreload[0])
+                .then(() => {
+                    setSelectedVariant(variant);
+                    setSelectedSize(null);
+                    setCurrentImageIndex(0);
+                    setIsImageLoading(false);
+                    
+                    // Preload the rest of the images after setting the variant
+                    if (imagesToPreload.length > 1) {
+                        ImagePreloader.preloadBatch(imagesToPreload.slice(1));
+                    }
+                })
+                .catch(() => {
+                    // Still set variant even if preload fails
+                    setSelectedVariant(variant);
+                    setSelectedSize(null);
+                    setCurrentImageIndex(0);
+                    setIsImageLoading(false);
+                });
+        } else {
+            setSelectedVariant(variant);
+            setSelectedSize(null);
+            setCurrentImageIndex(0);
+            setIsImageLoading(false);
+        }
+    }, [selectedVariant]);
 
     const handleAddToCart = useCallback(() => {
-        if (!selectedSize) {
+        if (!product || !selectedVariant || !selectedSize) {
             toast.error('يرجى اختيار المقاس');
             return;
         }
@@ -657,10 +985,7 @@ export const ProductSheet = memo(({
 
     if (!product || !isOpen) return null;
 
-    const discountPercentage = useMemo(() =>
-        calculateDiscount(product.basePrice, product.discountPrice),
-        [product.basePrice, product.discountPrice]
-    );
+    const discountPercentage = calculateDiscount(product.basePrice, product.discountPrice);
 
     return (
         <>
@@ -670,16 +995,39 @@ export const ProductSheet = memo(({
                 title="تفاصيل المنتج"
             >
                 <div className="p-6 space-y-6 bg-gray-50" dir="rtl">
-                    {/* Image Gallery */}
+                    {/* Image Gallery with optimized loading */}
                     <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
-                        <img
-                            src={selectedVariant?.images[currentImageIndex]}
-                            alt={product.name}
-                            onClick={() => setShowImageViewer(true)}
-                            className="w-full h-full object-cover cursor-zoom-in"
-                        />
+                        {selectedVariant && (
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={`${selectedVariant.id}-${currentImageIndex}`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="w-full h-full"
+                                >
+                                    <LazyImage
+                                        src={selectedVariant.images[currentImageIndex]}
+                                        alt={product.name}
+                                        className="w-full h-full cursor-zoom-in"
+                                        onLoad={handleImageLoad}
+                                        loadingClass="bg-gray-100/80 backdrop-blur-sm"
+                                        fallback={
+                                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                                <div className="text-gray-400">صورة غير متوفرة</div>
+                                            </div>
+                                        }
+                                    />
+                                    <div
+                                        className="absolute inset-0"
+                                        onClick={() => setShowImageViewer(true)}
+                                    />
+                                </motion.div>
+                            </AnimatePresence>
+                        )}
 
-                        {/* Image Navigation */}
+                        {/* Image Navigation Indicators */}
                         {selectedVariant?.images.length > 1 && (
                             <div className="absolute bottom-4 inset-x-4 flex justify-center gap-2">
                                 {selectedVariant.images.map((_, index) => (
@@ -785,17 +1133,13 @@ export const ProductSheet = memo(({
                         <ColorSelector
                             variants={product.variants}
                             selectedVariant={selectedVariant}
-                            onVariantSelect={(variant) => {
-                                setSelectedVariant(variant);
-                                setSelectedSize(null);
-                                setCurrentImageIndex(0);
-                            }}
+                            onVariantSelect={handleVariantSelect}
                             showCollapsed={false}
                         />
                     </div>
 
                     {/* Size Selection */}
-                    {selectedVariant?.sizes.length > 0 && (
+                    {selectedVariant?.sizes?.length > 0 && (
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
@@ -916,18 +1260,24 @@ export const ProductSheet = memo(({
                 </div>
             </BottomSheet>
 
-            {/* Image Viewer */}
-            {showImageViewer && (
+            {/* Image Viewer with preloading */}
+            {showImageViewer && selectedVariant && (
                 <ImageViewer
                     isOpen={showImageViewer}
                     onClose={() => setShowImageViewer(false)}
-                    imageUrl={selectedVariant?.images[currentImageIndex]}
+                    imageUrl={selectedVariant.images[currentImageIndex]}
                     className="bg-white"
+                    onBeforeShow={() => {
+                        // Ensure the high resolution image is preloaded
+                        return ImagePreloader.preload(selectedVariant.images[currentImageIndex]);
+                    }}
                 />
             )}
         </>
     );
 });
+
+ProductSheet.displayName = 'ProductSheet';
 
 export default {
     ProductCard,
