@@ -587,7 +587,8 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
                 </div>
               )}
 
-              <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+              <div className="flex justify-between items-center pt-3 border-t border-gray-100"
+              dir='ltr'>
                 <span className="text-xl font-bold text-sky-600">
                   {formatCurrency(finalTotal)}
                 </span>

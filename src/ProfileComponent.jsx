@@ -10,6 +10,26 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthContext } from './hooks';
 
+
+// Define animation variants outside component
+const backdropVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 }
+};
+
+const sheetVariants = {
+  hidden: { y: '100%' },
+  visible: { 
+    y: 0,
+    transition: {
+      type: "spring",
+      damping: 25,
+      stiffness: 350,
+      mass: 0.8
+    }
+  }
+};
+
 // Memoized Header Component
 const SheetHeader = memo(({ onClose, title, hideSupport, onSupportClick }) => (
   <div className="pt-8 px-4 pb-4 border-b border-sky-100 flex-shrink-0">
@@ -62,75 +82,58 @@ export const BottomSheet = ({
   // Early return if not open
   if (!isOpen) return null;
 
-  // Optimized animation variants
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
-  };
-
-  const sheetVariants = {
-    hidden: { y: '100%' },
-    visible: { 
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 350,
-        mass: 0.8
-      }
-    }
-  };
-
   return (
     <>
       <AnimatePresence mode="wait">
-        <motion.div
-          key="backdrop"
-          variants={backdropVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          transition={{ duration: 0.15 }}
-          className="fixed inset-0 bg-sky-950/20 backdrop-blur-[2px] z-50"
-          onClick={handleBackdropClick}
-        >
-          <motion.div 
-            key="sheet"
-            variants={sheetVariants}
+        {isOpen && (
+          <motion.div
+            key="backdrop"
+            variants={backdropVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="fixed inset-x-0 bottom-0 transform will-change-transform"
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 bg-sky-950/20 backdrop-blur-[2px] z-50"
+            onClick={handleBackdropClick}
           >
-            <div 
-              className="bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-xl border-t border-sky-100"
-              style={{
-                maxHeight,
-                background: 'linear-gradient(180deg, rgb(248, 250, 252) 0%, rgb(255, 255, 255) 100%)'
-              }}
+            <motion.div 
+              key="sheet"
+              variants={sheetVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="fixed inset-x-0 bottom-0 transform will-change-transform"
             >
-              {/* Drag Handle */}
-              <div className="absolute inset-x-0 top-0 h-7 flex justify-center items-start">
-                <div className="w-12 h-1 rounded-full bg-sky-200 mt-3" />
-              </div>
-              
-              {/* Memoized Header */}
-              <SheetHeader 
-                onClose={onClose}
-                title={title}
-                hideSupport={hideSupport}
-                onSupportClick={handleSupportClick}
-              />
-
-              {/* Content with reduced motion */}
               <div 
-                className="overflow-y-auto overscroll-contain hide-scrollbar flex-1 bg-gradient-to-b from-transparent to-white"
+                className="bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-xl border-t border-sky-100"
+                style={{
+                  maxHeight,
+                  background: 'linear-gradient(180deg, rgb(248, 250, 252) 0%, rgb(255, 255, 255) 100%)'
+                }}
               >
-                {children}
+                {/* Drag Handle */}
+                <div className="absolute inset-x-0 top-0 h-7 flex justify-center items-start">
+                  <div className="w-12 h-1 rounded-full bg-sky-200 mt-3" />
+                </div>
+                
+                {/* Memoized Header */}
+                <SheetHeader 
+                  onClose={onClose}
+                  title={title}
+                  hideSupport={hideSupport}
+                  onSupportClick={handleSupportClick}
+                />
+
+                {/* Content with reduced motion */}
+                <div 
+                  className="overflow-y-auto overscroll-contain hide-scrollbar flex-1 bg-gradient-to-b from-transparent to-white"
+                >
+                  {children}
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Support Sheet */}

@@ -6,7 +6,6 @@ import App from './App';
 import './index.css';
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import AdminDashboard from './admin/AdminApp';
-import WhatsAppDashboard from './TestThemes';
 
 // Protected route component that checks for valid key
 const RouteHandler = () => {
@@ -18,34 +17,31 @@ const RouteHandler = () => {
   if (key === '123123') {
     return <AdminDashboard />;
   }
-
   // If product code is present, pass it to App component
-  //return <WhatsAppDashboard/>;
   return <App productCode={productCode} />;
 };
 
-// Enhanced SEO Wrapper with Rich Structured Data
+// Enhanced SEO Wrapper with Bilingual Structured Data
 const SEOWrapper = ({ children }) => {
+  // Note: Only the logo is used for images throughout
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Store",
     "@id": "https://trendy-corner.org",
-    "name": "شوزاتي | Shozati",
-    "alternateName": "Shozati Shoes",
-    "description": "متجر شوزاتي - المتجر الرائد للأحذية العصرية في مصر. تشكيلة واسعة من الأحذية النسائية الأنيقة مع ضمان الجودة وخدمة التوصيل السريع لجميع المحافظات",
+    "name": "تريندي كورنر | Trendy Corner",
+    "alternateName": "Trendy Corner Egypt",
+    "description": "تريندي كورنر - الوجهة الأولى للأناقة في مصر. تشكيلة واسعة من الأحذية والإكسسوارات العصرية للرجال والنساء بجودة فائقة وتوصيل سريع لجميع أنحاء مصر. Trendy Corner - Your premier fashion destination in Egypt. Discover modern footwear and accessories for men & women with nationwide delivery.",
     "url": "https://trendy-corner.org",
-    "logo": "https://trendy-corner.org/logo.svg",
-    "image": [
-      "https://trendy-corner.org/storefront.jpg",
-      "https://trendy-corner.org/products.jpg"
-    ],
-    "telephone": "+201033939828",
+    "logo": "https://trendy-corner.org/icon.svg",
+    "image": "https://trendy-corner.org/icon.svg",
+    "telephone": "+20123456789",
     "currenciesAccepted": "EGP",
     "paymentAccepted": ["Cash on Delivery", "Credit Card", "Debit Card"],
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "EG",
-      "addressRegion": "Cairo"
+      "addressRegion": "Cairo",
+      "streetAddress": "Downtown Mall, Talaat Harb Street"
     },
     "geo": {
       "@type": "GeoCoordinates",
@@ -54,76 +50,48 @@ const SEOWrapper = ({ children }) => {
     },
     "openingHoursSpecification": {
       "@type": "OpeningHoursSpecification",
-      "dayOfWeek": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
-      "opens": "10:00",
-      "closes": "23:00"
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "00:00",
+      "closes": "24:00"
     },
-    "priceRange": "$$",
-    "hasMap": "https://g.page/shozati",
+    "priceRange": "$$$",
+    "hasMap": "https://goo.gl/maps/example",
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "1250"
+      "ratingValue": "4.9",
+      "reviewCount": "1500"
     }
   };
 
   return (
     <>
       <Helmet>
-        {/* Enhanced Primary Meta Tags */}
-        <title>شوزاتي  | Shozati</title>
-        <meta name="title" content="شوزاتي | Shozati" />
-        <meta name="description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. أحذية أنيقة بجودة عالية وأسعار مناسبة. توصيل سريع لجميع المحافظات، ضمان الجودة، وخدمة عملاء متميزة. تسوقي الآن!" />
-        <meta name="keywords" content="احذية نسائية, احذية حريمي, شوزات, متجر احذية, احذية مصر, شوزاتي" />
-        
-        {/* Open Graph / Facebook - Enhanced */}
+        {/* Bilingual Meta Tags */}
+        <title>تريندي كورنر | Trendy Corner</title>
+        <meta name="title" content="تريندي كورنر | Trendy Corner" />
+        <meta name="description" content="اكتشف أحدث صيحات الموضة في مصر من تريندي كورنر! أحذية وإكسسوارات عالية الجودة للرجال والنساء. توصيل سريع - دفع عند الاستلام - ضمان الجودة. Discover the latest fashion trends at Trendy Corner Egypt. Premium quality footwear & accessories for men & women. Fast delivery - Cash on Delivery - Quality assurance." />
+        <meta name="keywords" content="أحذية رجالي, أحذية نسائي, إكسسوارات موضة, تريندي كورنر, موضة مصرية, Trendy Corner Egypt, mens shoes, womens footwear, fashion accessories, Egyptian fashion" />
+
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://trendy-corner.org/" />
-        <meta property="og:site_name" content="Shozati شوزاتي" />
-        <meta property="og:title" content="شوزاتي | Shozati" />
-        <meta property="og:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. أحذية أنيقة بجودة عالية وأسعار مناسبة. توصيل لجميع المحافظات 🚚 ضمان الجودة ✨" />
-        <meta property="og:image" content="https://trendy-corner.org/social-cover.jpg" />
+        <meta property="og:site_name" content="Trendy Corner" />
+        <meta property="og:title" content="تريندي كورنر | Trendy Corner - أزياء عصرية للجميع" />
+        <meta property="og:description" content="تسوق الآن أحدث تشكيلات الأحذية والإكسسوارات للرجال والنساء من تريندي كورنر. جودة عالمية - أسعار مناسبة - توصيل لجميع المحافظات. Shop now at Trendy Corner for premium footwear & accessories. Worldwide quality - Competitive prices - Nationwide delivery." />
+        <meta property="og:image" content="https://trendy-corner.org/icon.svg" />
         <meta property="og:locale" content="ar_EG" />
         <meta property="og:locale:alternate" content="en_US" />
 
-        {/* Twitter - Enhanced */}
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@shozati" />
-        <meta name="twitter:creator" content="@shozati" />
-        <meta name="twitter:title" content="شوزاتي | Shozati" />
-        <meta name="twitter:description" content="اكتشفي أحدث تشكيلات الأحذية النسائية العصرية في مصر. توصيل سريع ✈️ ضمان الجودة 💎 أسعار مناسبة 🏷️" />
-        <meta name="twitter:image" content="https://trendy-corner.org/social-cover.jpg" />
+        <meta name="twitter:site" content="@trendycorner_eg" />
+        <meta name="twitter:title" content="Trendy Corner | تريندي كورنر" />
+        <meta name="twitter:description" content="أحدث صيحات الموضة للرجال والنساء في مصر 🇪🇬 توصيل سريع ✈️ ضمان الجودة 💎 أسعار تنافسية 💵 Latest fashion trends in Egypt for men & women 🚚 Fast delivery ✨ Quality assurance" />
+        <meta name="twitter:image" content="https://trendy-corner.org/icon.svg" />
 
         {/* Mobile & PWA Optimizations */}
-        <meta name="theme-color" content="#1f2937" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="شوزاتي" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="شوزاتي" />
-        
-        {/* Additional SEO Optimizations */}
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-TileColor" content="#1f2937" />
-        <meta name="msapplication-tap-highlight" content="no" />
-
-        {/* Fonts with Display Swap */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-          media="print"
-          onLoad="this.media='all'"
-        />
+        <meta name="theme-color" content="#2d3748" />
+        <meta name="apple-mobile-web-app-title" content="Trendy Corner" />
 
         {/* Enhanced Structured Data */}
         <script type="application/ld+json">
@@ -131,14 +99,11 @@ const SEOWrapper = ({ children }) => {
         </script>
 
         {/* Language & Regional */}
-        <link rel="canonical" href="https://trendy-corner.org" />
-        <link rel="alternate" href="https://trendy-corner.org" hrefLang="ar-EG" />
-        <link rel="alternate" href="https://trendy-corner.org/" hrefLang="en" />
-        <link rel="alternate" href="https://trendy-corner.org" hrefLang="x-default" />
-        
-        {/* Preconnect to Required Origins */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="alternate" href="https://trendy-corner.org/ar" hrefLang="ar-EG" />
+        <link rel="alternate" href="https://trendy-corner.org/en" hrefLang="en-US" />
+
+        {/* Preload Critical Assets */}
+        <link rel="preload" href="/icon.svg" as="image" />
       </Helmet>
       {children}
     </>
@@ -146,31 +111,23 @@ const SEOWrapper = ({ children }) => {
 };
 
 // Main Routes component
-const AppRoutes = () => {
-  return (
-    <Routes>
-      {/* Single route that handles all cases */}
-      <Route path="/" element={<RouteHandler />} />
-      
-      {/* Catch all route redirects to main route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-};
-
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<RouteHandler />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
+  </Routes>
+);
 
 // Enhanced Root Component
-const Root = () => {
-  return (
-    <BrowserRouter basename="/">
-      <StrictMode>
-        <SEOWrapper>
-          <AppRoutes />
-        </SEOWrapper>
-      </StrictMode>
-    </BrowserRouter>
-  );
-};
+const Root = () => (
+  <BrowserRouter basename="/">
+    <StrictMode>
+      <SEOWrapper>
+        <AppRoutes />
+      </SEOWrapper>
+    </StrictMode>
+  </BrowserRouter>
+);
 
 // Initialize App
 createRoot(document.getElementById('root')).render(<Root />);

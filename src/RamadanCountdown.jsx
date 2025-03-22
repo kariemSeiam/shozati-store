@@ -1,133 +1,153 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Star, Gift, Heart } from 'lucide-react';
+import { Moon, Star, Gift, Sparkles } from 'lucide-react';
 
-const RamadanCountdown = () => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0
-  });
+// Optimized sub-components
+const MemoizedMoon = memo(({ size = 20 }) => (
+  <motion.svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    animate={{
+      rotate: [0, 10, 0],
+      scale: [1, 1.05, 1]
+    }}
+    transition={{
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }}
+  >
+    <path
+      d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="rgba(14, 165, 233, 0.1)"
+      className="text-sky-500"
+    />
+    <circle cx="12" cy="12" r="2" fill="currentColor" className="text-sky-600" />
+  </motion.svg>
+));
+
+const MemoizedStar = memo(({ size = 12, delay = 0, className = "" }) => (
+  <motion.svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    animate={{
+      scale: [0.8, 1, 0.8],
+      opacity: [0.6, 1, 0.6]
+    }}
+    transition={{
+      duration: 2,
+      repeat: Infinity,
+      delay,
+      ease: "easeInOut"
+    }}
+  >
+    <path
+      d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="rgba(14, 165, 233, 0.1)"
+      className="text-sky-400"
+    />
+  </motion.svg>
+));
+
+// Main component
+const RamadanToEidProgress = () => {
+  // Current Ramadan day (hardcoded to 22 as per requirement)
+  const currentDay = 22;
+  const totalDays = 30;
+  const remainingDays = totalDays - currentDay;
   
-  const ramadanStart = new Date('2025-03-01');
-  const [showBlessing, setShowBlessing] = useState(false);
+  // Messages for inspiration
+  const [messageIndex, setMessageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-
+  
+  // Pre-compute days array for performance
+  const daysArray = useMemo(() => 
+    Array.from({ length: totalDays }, (_, i) => ({
+      day: i + 1,
+      completed: i + 1 <= currentDay,
+      current: i + 1 === currentDay,
+      eid: i + 1 === totalDays
+    })), [currentDay]);
+  
+  // Inspirational messages
+  const messages = useMemo(() => [
+    "استغل الأيام المتبقية من رمضان",
+    "اللهم بلغنا ليلة القدر",
+    "اجتهد في العشر الأواخر",
+    "العيد قادم ان شاء الله"
+  ], []);
+  
+  // Event handlers
+  const handleHoverStart = useCallback(() => setIsHovered(true), []);
+  const handleHoverEnd = useCallback(() => setIsHovered(false), []);
+  
+  // Cycle through messages
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const difference = ramadanStart - new Date();
-      return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24)
-      };
-    };
-
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    const blessingTimer = setInterval(() => {
-      setShowBlessing(prev => !prev);
-    }, 4000);
-
-    return () => {
-      clearInterval(timer);
-      clearInterval(blessingTimer);
-    };
-  }, []);
-
-  // Custom Crescent Moon SVG
-  const CrescentMoon = () => (
-    <motion.svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      animate={{
-        rotate: [0, 15, 0],
-        scale: [1, 1.1, 1]
-      }}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }}
-    >
-      <path
-        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-sky-500"
-      />
-      <circle cx="12" cy="12" r="2" fill="currentColor" className="text-sky-600" />
-    </motion.svg>
-  );
-
-  // Custom Star SVG
-  const IslamicStar = () => (
-    <motion.svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-sky-400/40"
-      />
-    </motion.svg>
-  );
+    const interval = setInterval(() => {
+      setMessageIndex(prev => (prev + 1) % messages.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [messages]);
 
   return (
-    <motion.div 
-      className="relative p-4 pb-5"
-      dir='rtl'
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+    <motion.div
+      dir="rtl"
+      className="relative px-4 pb-0 pt-4 overflow-hidden"
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
     >
-      <div className="absolute inset-0 flex justify-center overflow-hidden">
+      {/* Background effect */}
+      <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
-            scale: isHovered ? 1.1 : 1,
-            opacity: isHovered ? 0.2 : 0.1
+            scale: isHovered ? 1.05 : 1,
+            opacity: isHovered ? 0.15 : 0.1
           }}
           className="w-full h-full"
           style={{
             backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%),
+              radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.2) 0%, transparent 70%),
               linear-gradient(45deg, rgba(56, 189, 248, 0.1) 0%, transparent 100%)
             `
           }}
         />
       </div>
-
+      
+      {/* Main container */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl relative overflow-hidden border border-sky-200"
+        className="h-12 rounded-xl border border-sky-200 relative overflow-hidden shadow-sm"
         style={{
           background: `
-            linear-gradient(110deg, 
-              rgba(14, 165, 233, 0.05) 0%, 
-              rgba(56, 189, 248, 0.05) 25%, 
-              rgba(14, 165, 233, 0.05) 50%,
-              rgba(56, 189, 248, 0.05) 75%,
-              rgba(14, 165, 233, 0.05) 100%
+            linear-gradient(90deg, 
+              rgba(14, 165, 233, 0.03) 0%, 
+              rgba(56, 189, 248, 0.03) 50%,
+              rgba(14, 165, 233, 0.03) 100%
             )
           `,
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(5px)'
         }}
       >
-        <div className="px-4 pr-2 py-3 flex items-center justify-between relative">
-          {/* Left side - Moon and Title */}
-          <div className="flex items-center gap-3">
+        <div className="h-full px-3 flex items-center justify-between">
+          {/* Left: Icon and current day */}
+          <div className="flex items-center gap-1.5 h-full">
             <motion.div
               className="relative"
               animate={{
@@ -145,129 +165,145 @@ const RamadanCountdown = () => {
                 }
               }}
             >
-              <div className="absolute inset-0 bg-sky-500/10 rounded-full blur-md" />
-              <div className="relative">
-                <CrescentMoon />
-              </div>
+              <div className="absolute inset-0 bg-sky-500/10 rounded-full blur-sm" />
+              <MemoizedMoon size={18} />
             </motion.div>
-
-            <div className="relative">
-              <AnimatePresence mode="wait">
-                {showBlessing ? (
-                  <motion.p
-                    key="blessing"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-xs bg-gradient-to-r from-sky-500 to-sky-600 
-                             bg-clip-text text-transparent font-bold"
-                  >
-                    اللهم بلغنا رمضان
-                  </motion.p>
-                ) : (
-                  <motion.h3
-                    key="countdown"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="text-sm font-bold text-sky-800"
-                  >
-                    باقي على رمضان
-                  </motion.h3>
-                )}
-              </AnimatePresence>
+            
+            <div className="flex flex-col justify-center h-full">
+              <div className="flex items-baseline">
+                <span className="text-xs font-semibold text-sky-600">
+                  {currentDay === totalDays ? "عيد مبارك" : `رمضان ${currentDay}`}
+                </span>
+              </div>
             </div>
           </div>
-
-          {/* Right side - Counter */}
-          <div className="flex items-center gap-3">
-            {[
-              { value: timeLeft.days, label: 'يوم' },
-              { value: timeLeft.hours, label: 'ساعة' }
-            ].map((unit, index) => (
-              <div key={unit.label} className="flex items-center gap-1">
-                <motion.div
-                  key={unit.value}
-                  className="relative px-2 py-1 rounded-lg overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.1))'
-                  }}
-                >
+          
+          {/* Middle: Progress bar and days */}
+          <div className="flex-grow mx-3 h-full relative flex items-center">
+            {/* Progress line */}
+            <div className="h-1 bg-sky-100 rounded-full w-full absolute">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-full"
+                style={{ width: `${(currentDay / totalDays) * 100}%` }}
+                initial={{ width: 0 }}
+                animate={{ width: `${(currentDay / totalDays) * 100}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              />
+            </div>
+            
+            {/* Days markers */}
+            <div className="w-full h-full absolute flex justify-between items-center px-1">
+              {daysArray.map((day, index) => {
+                // Only show a subset of day markers for compactness
+                if (index % 5 !== 0 && !day.current && index !== totalDays - 1) return null;
+                
+                return (
                   <motion.div
-                    className="absolute inset-0 opacity-20"
+                    key={day.day}
+                    className={`relative ${day.current ? 'z-10' : ''}`}
                     animate={{
-                      background: [
-                        'linear-gradient(0deg, transparent 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%)',
-                        'linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.2) 50%, transparent 100%)'
-                      ]
+                      scale: day.current ? [1, 1.2, 1] : 1
                     }}
                     transition={{
                       duration: 2,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  />
-                  <div className="flex items-baseline gap-1 relative">
-                    <span className="text-lg font-bold bg-gradient-to-r from-sky-600 to-sky-500 
-                                   bg-clip-text text-transparent font-mono">
-                      {String(unit.value).padStart(2, '0')}
-                    </span>
-                    <span className="text-xs text-sky-600/70 font-medium">{unit.label}</span>
-                  </div>
-                </motion.div>
-                {index === 0 && (
-                  <motion.span
-                    animate={{
-                      opacity: [1, 0.3, 1],
-                      scale: [1, 0.9, 1]
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
+                      repeat: day.current ? Infinity : 0,
                       ease: "easeInOut"
                     }}
-                    className="text-sky-500 font-bold"
                   >
-                    :
-                  </motion.span>
-                )}
-              </div>
-            ))}
+                    <motion.div
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        day.eid ? 'bg-gradient-to-r from-sky-500 to-sky-400' :
+                        day.completed ? 'bg-sky-500' : 'bg-sky-200'
+                      }`}
+                      style={{
+                        boxShadow: day.current ? '0 0 5px rgba(14, 165, 233, 0.5)' : 'none'
+                      }}
+                    />
+                    
+                    {day.current && (
+                      <motion.div
+                        className="absolute -inset-1"
+                        animate={{
+                          boxShadow: ['0 0 0px rgba(14, 165, 233, 0)', '0 0 8px rgba(14, 165, 233, 0.5)', '0 0 0px rgba(14, 165, 233, 0)']
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      />
+                    )}
+                    
+                    {(day.eid || index % 10 === 0) && (
+                      <span className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-[8px] text-sky-600">
+                        {day.day}
+                      </span>
+                    )}
+                    
+                    {day.eid && (
+                      <>
+                        <MemoizedStar size={10} className="absolute -top-2.5 -right-2.5" />
+                        <MemoizedStar size={10} delay={0.3} className="absolute -top-2.5 -left-2.5" />
+                      </>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
-
-          {/* Decorative Elements */}
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              style={{
-                top: `${20 + i * 25}%`,
-                right: `${-10 + i * 5}px`,
-              }}
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
-                opacity: [0.3, 0.6, 0.3]
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                delay: i * 2,
-                ease: "easeInOut"
-              }}
-            >
-              <IslamicStar />
-            </motion.div>
-          ))}
+          
+          {/* Right: Countdown & message */}
+          <div className="flex items-center gap-1.5">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={messageIndex}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="text-xs"
+              >
+                <span className="bg-gradient-to-r from-sky-600 to-sky-500 
+                               bg-clip-text text-transparent font-medium">
+                  {messages[messageIndex]}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+            
+            {remainingDays > 0 ? (
+              <div className="flex items-baseline gap-1 bg-gradient-to-r from-sky-50 to-sky-100 
+                            px-2 py-0.5 rounded-md border border-sky-200">
+                <span className="text-xs font-bold text-sky-600">
+                  {remainingDays}
+                </span>
+                <span className="text-[10px] text-sky-500">
+                  {remainingDays === 1 ? 'يوم' : 'أيام'}
+                </span>
+              </div>
+            ) : (
+              <motion.div
+                animate={{
+                  scale: [1, 1.05, 1],
+                  rotate: [-1, 1, -1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Gift size={18} className="text-sky-500" />
+              </motion.div>
+            )}
+          </div>
         </div>
-
-        {/* Animated Border */}
+        
+        {/* Animated flowing highlight */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
           animate={{
             background: [
-              'linear-gradient(0deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)',
-              'linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)'
+              'linear-gradient(90deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)',
+              'linear-gradient(270deg, transparent 0%, rgba(14, 165, 233, 0.1) 50%, transparent 100%)'
             ]
           }}
           transition={{
@@ -276,9 +312,31 @@ const RamadanCountdown = () => {
             ease: "linear"
           }}
         />
+        
+        {/* Day 22 highlight effect */}
+        {daysArray.findIndex(d => d.current) > 0 && (
+          <motion.div
+            className="absolute"
+            style={{
+              left: `${(currentDay / totalDays) * 100}%`,
+              top: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+            animate={{
+              opacity: [0.7, 0, 0.7]
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <div className="w-4 h-4 rounded-full bg-sky-400/20 blur-sm" />
+          </motion.div>
+        )}
       </motion.div>
     </motion.div>
   );
 };
 
-export default RamadanCountdown;
+export default RamadanToEidProgress;
