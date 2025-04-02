@@ -12,7 +12,6 @@ import { AuthContext, AuthProvider, CartContext, CartProvider } from './hooks';
 import { Header } from './HeaderComponent';
 import { ProductGrid, ProductSheet } from './ProductComponent';
 import { LocationInputSheet, PhoneVerificationSheet, ProfileSheet } from './ProfileComponent';
-import RamadanCountdown from './RamadanCountdown';
 import PromotionalSlider from './PromotionalSlider';
 import { OrdersView } from './OrdersComponent';
 import { FavoritesView } from './FavoritesComponent';
@@ -394,8 +393,7 @@ const MainContent = ({ productCode }) => {
       </nav>
 
       <main className="pb-24">
-        <RamadanCountdown />
-
+        
         <div className= 'p-4 pt-2 pb-2'>
         <PromotionalSlider
           slides={slides}

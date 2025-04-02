@@ -1287,9 +1287,7 @@ const EmptyState = () => (
 const CATEGORIES = [
   { id: 'all', label: 'الكل', icon: Box },
   { id: 'men', label: 'رجالي', icon: Tag },
-  { id: 'women', label: 'حريمي', icon: Archive },
-  { id: 'shoes', label: 'أحذية', icon: Box },
-  { id: 'bags', label: 'حقائب', icon: Archive }
+  { id: 'women', label: 'حريمي', icon: Archive }
 ];
 
 export default Products;
