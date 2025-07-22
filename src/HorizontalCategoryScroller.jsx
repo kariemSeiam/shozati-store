@@ -95,17 +95,17 @@ const HorizontalCategoryScroller = memo(({ selectedCategory, onSelect }) => {
                 className={`relative min-w-max flex items-center gap-2 px-4 py-2.5 rounded-full 
                           text-sm font-medium transition-all duration-300 ${
                   category.locked 
-                    ? 'bg-sky-50/30 text-sky-700/50 opacity-80'
+                    ? 'bg-primary-50/30 text-primary-600/50 opacity-80'
                     : selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-400/25'
-                      : 'bg-sky-50/80 text-sky-700 hover:bg-sky-100/80 hover:shadow'
+                      ? 'bg-gradient-primary text-white shadow-lg shadow-primary-500/25'
+                      : 'bg-gray-50 text-slate-700 hover:bg-gray-100 hover:shadow-sm'
                 }`}
                 disabled={category.locked}
               >
                 {/* Background effects */}
                 {selectedCategory === category.id && !category.locked && <ShimmerEffect />}
                 {category.locked && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-sky-300/5 to-sky-400/5 rounded-full" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-300/5 to-primary-400/5 rounded-full" />
                 )}
                 
                 {/* Icon */}
@@ -125,10 +125,10 @@ const HorizontalCategoryScroller = memo(({ selectedCategory, onSelect }) => {
                 >
                   <category.icon className={`w-4 h-4 ${
                     category.locked 
-                      ? 'text-sky-400/70' 
+                      ? 'text-primary-400/70' 
                       : selectedCategory === category.id 
                         ? 'text-white' 
-                        : 'text-sky-600'
+                        : 'text-primary-600'
                   }`} />
                 </motion.div>
                 
@@ -138,12 +138,12 @@ const HorizontalCategoryScroller = memo(({ selectedCategory, onSelect }) => {
                 {/* Coming Soon Indicator */}
                 {category.comingSoon && (
                   <div className="flex items-center gap-1">
-                    <Lock className="w-3.5 h-3.5 text-sky-400" />
-                    <span className="text-xs text-sky-400">قريباً</span>
+                    <Lock className="w-3.5 h-3.5 text-primary-400" />
+                    <span className="text-xs text-primary-400">قريباً</span>
                     
                     {/* Subtle Glow Effect for Lock Icon */}
                     <motion.div
-                      className="absolute top-[50%] right-[14%] w-6 h-6 bg-sky-400/10 rounded-full blur-md"
+                      className="absolute top-[50%] right-[14%] w-6 h-6 bg-primary-400/10 rounded-full blur-md"
                       animate={{
                         scale: [1, 1.5, 1],
                         opacity: [0.2, 0.4, 0.2]

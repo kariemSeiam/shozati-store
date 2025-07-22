@@ -50,9 +50,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="group relative bg-white rounded-2xl p-3 sm:p-4 
-                border border-gray-100 shadow-sm 
-                hover:shadow-lg hover:border-sky-100
+      className="group relative card p-3 sm:p-4 
                 transition-all duration-300"
       dir="rtl"
     >
@@ -69,14 +67,14 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
           >
             <div className="flex flex-col items-center gap-3 p-4 text-center">
               <AlertCircle className="w-8 h-8 text-red-500" />
-              <p className="text-gray-700 font-medium">هل تريد حذف هذا المنتج؟</p>
+              <p className="text-slate-800 font-medium">هل تريد حذف هذا المنتج؟</p>
               <div className="flex gap-2 mt-2">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleRemove}
-                  className="px-4 py-2 bg-red-500 text-white rounded-xl
-                            font-medium hover:bg-red-600 
+                  className="px-4 py-2 bg-rose-500 text-white rounded-xl
+                            font-medium hover:bg-rose-600 
                             transition-colors duration-200"
                 >
                   تأكيد الحذف
@@ -85,9 +83,7 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowConfirm(false)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl
-                            font-medium hover:bg-gray-200
-                            transition-colors duration-200"
+                  className="btn-secondary"
                 >
                   إلغاء
                 </motion.button>
