@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Helmet } from 'react-helmet';
-import App from './App';
 import './index.css';
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
-import AdminDashboard from './admin/AdminApp';
+
+// Lazy load components for better performance
+const App = lazy(() => import('./App'));
+const AdminDashboard = lazy(() => import('./admin/AdminApp'));
+
+// Performance optimized loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-gray-600 text-sm">جاري التحميل...</p>
+    </div>
+  </div>
+);
 
 // Protected route component that checks for valid key
 const RouteHandler = () => {
@@ -110,12 +122,14 @@ const SEOWrapper = ({ children }) => {
   );
 };
 
-// Main Routes component
+// Main Routes component with Suspense for lazy loading
 const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<RouteHandler />} />
-    <Route path="*" element={<Navigate to="/" replace />} />
-  </Routes>
+  <Suspense fallback={<LoadingSpinner />}>
+    <Routes>
+      <Route path="/" element={<RouteHandler />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  </Suspense>
 );
 
 // Enhanced Root Component

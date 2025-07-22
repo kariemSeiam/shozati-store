@@ -124,7 +124,7 @@ const Products = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-900 pb-20" dir="rtl">
+    <div className="min-h-screen bg-secondary-900 pb-20" dir="rtl">
       {/* Stats Grid */}
       <div className="p-4 grid grid-cols-2 pt-0 gap-4">
         <StatCard
@@ -143,7 +143,7 @@ const Products = () => {
       </div>
 
       {/* Actions Bar */}
-      <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4 border-b border-gray-800"
+              <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4 border-b border-secondary-800"
       >
         <div className="flex items-center justify-between gap-4"
         >

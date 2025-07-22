@@ -8,7 +8,7 @@ import {
   Loader2, AlertCircle, ArrowUpRight, ArrowDownRight, DollarSign,
   ShoppingBag, TrendingDown, Clock, CheckCircle, Ban
 } from 'lucide-react';
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 import { useAnalytics } from '../hooks';
 
 const Analytics = () => {
@@ -83,7 +83,7 @@ const Analytics = () => {
   }, [analytics?.ordersByStatus]);
 
   return (
-    <div className="min-h-screen bg-gray-900 pr-4 pl-4 space-y-4" dir="rtl">
+    <div className="min-h-screen bg-secondary-900 pr-4 pl-4 space-y-4" dir="rtl">
       {isLoading ? (
         <LoadingState />
       ) : error ? (

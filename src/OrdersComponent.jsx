@@ -16,37 +16,37 @@ const StatusBadge = ({ status }) => {
     pending: {
       icon: Clock,
       text: 'قيد التنفيذ',
-      class: 'bg-gradient-to-r from-sky-50 to-sky-100 text-sky-600 border-sky-200',
-      iconClass: 'text-sky-500',
-      shadowClass: 'shadow-sky-200/20'
+      class: 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-600 border-primary-200',
+      iconClass: 'text-primary-500',
+      shadowClass: 'shadow-primary-200/20'
     },
     processing: {
       icon: Package,
       text: 'جاري التجهيز',
-      class: 'bg-gradient-to-r from-sky-50 to-sky-100 text-sky-600 border-sky-200',
-      iconClass: 'text-sky-500',
-      shadowClass: 'shadow-sky-200/20'
+      class: 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-600 border-primary-200',
+      iconClass: 'text-primary-500',
+      shadowClass: 'shadow-primary-200/20'
     },
     shipping: {
       icon: Truck,
       text: 'في الطريق',
-      class: 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-600 border-indigo-200',
-      iconClass: 'text-indigo-500',
-      shadowClass: 'shadow-indigo-200/20'
+      class: 'bg-gradient-to-r from-warning-50 to-warning-100 text-warning-600 border-warning-200',
+      iconClass: 'text-warning-500',
+      shadowClass: 'shadow-warning-200/20'
     },
     delivered: {
       icon: Shield,
       text: 'تم التوصيل',
-      class: 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-600 border-emerald-200',
-      iconClass: 'text-emerald-500',
-      shadowClass: 'shadow-emerald-200/20'
+      class: 'bg-gradient-to-r from-success-50 to-success-100 text-success-600 border-success-200',
+      iconClass: 'text-success-500',
+      shadowClass: 'shadow-success-200/20'
     },
     cancelled: {
       icon: X,
       text: 'ملغي',
-      class: 'bg-gradient-to-r from-rose-50 to-rose-100 text-rose-600 border-rose-200',
-      iconClass: 'text-rose-500',
-      shadowClass: 'shadow-rose-200/20'
+      class: 'bg-gradient-to-r from-error-50 to-error-100 text-error-600 border-error-200',
+      iconClass: 'text-error-500',
+      shadowClass: 'shadow-error-200/20'
     }
   };
 
@@ -90,10 +90,10 @@ const OrderCard = ({ order, onSelect }) => {
       onClick={() => onSelect(order)}
     >
       <div className="relative overflow-hidden backdrop-blur-xl rounded-3xl 
-                    border border-sky-200 bg-gradient-to-b from-white to-sky-50 p-5
-                    hover:border-sky-300 hover:shadow-lg hover:shadow-sky-200/20 
+                    border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-5
+                    hover:border-gray-300 hover:shadow-lg
                     transition-all duration-500">
-        <div className="absolute inset-0 bg-gradient-to-tr from-sky-200/20 to-indigo-200/20 
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/20 to-indigo-100/20 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         <div className="relative">

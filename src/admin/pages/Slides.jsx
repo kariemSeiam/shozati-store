@@ -32,10 +32,10 @@ const Slides = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4 pt-0 pb-20" dir="rtl">
+    <div className="min-h-screen bg-secondary-900 p-4 pt-0 pb-20" dir="rtl">
       {/* Header */}
-      <div className="sticky top-0 z-30 -mx-4 bg-gray-900/95 backdrop-blur-xl px-4 py-3 
-                    border-b border-gray-800/50 pt-0">
+              <div className="sticky top-0 z-30 -mx-4 bg-secondary-900/95 backdrop-blur-xl px-4 py-3 
+                      border-b border-secondary-800/50 pt-0">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">إدارة العروض</h1>
           <button

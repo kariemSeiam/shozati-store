@@ -250,8 +250,8 @@ const ImageViewer = ({ isOpen, onClose, imageUrl }) => {
     <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg">
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 p-2 rounded-full bg-gray-800/50 text-white
-                 hover:bg-gray-700/50 transition-colors z-50"
+        className="absolute top-4 right-4 p-2 rounded-full bg-black/20 text-white
+                 hover:bg-black/30 transition-all duration-200 z-50 hover:scale-105"
       >
         <X className="w-6 h-6" />
       </button>
@@ -260,16 +260,18 @@ const ImageViewer = ({ isOpen, onClose, imageUrl }) => {
         <button
           onClick={handleZoomOut}
           disabled={transform.scale === 1}
-          className="p-3 rounded-full bg-gray-800/50 text-white hover:bg-gray-700/50 
-                   transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-3 rounded-full bg-black/20 text-white hover:bg-black/30 
+                   transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+                   hover:scale-105"
         >
           <ZoomOut className="w-6 h-6" />
         </button>
         <button
           onClick={handleZoomIn}
           disabled={transform.scale === 5}
-          className="p-3 rounded-full bg-gray-800/50 text-white hover:bg-gray-700/50 
-                   transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-3 rounded-full bg-black/20 text-white hover:bg-black/30 
+                   transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+                   hover:scale-105"
         >
           <ZoomIn className="w-6 h-6" />
         </button>
