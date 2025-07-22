@@ -8,7 +8,7 @@ import {
     Receipt
 } from 'lucide-react';
 import { useOrders } from '../hooks';
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 
 const Orders = () => {
     const {
@@ -47,7 +47,7 @@ const Orders = () => {
     }, [orders]);
 
     return (
-        <div className="min-h-screen bg-gray-900 pb-20">
+        <div className="min-h-screen bg-secondary-900 pb-20">
             {/* Analytics Overview */}
             <div className="p-4 pt-0 grid grid-cols-2 gap-4">
                 <StatCard
@@ -77,7 +77,7 @@ const Orders = () => {
             </div>
 
             {/* Filters */}
-            <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4">
+            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
                 <SearchBar
                     value={filters.search}
                     onChange={value => updateFilters({ search: value })}

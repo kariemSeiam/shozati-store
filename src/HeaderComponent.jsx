@@ -36,11 +36,11 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
       className="relative p-3 rounded-2xl overflow-hidden group"
     >
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-sky-50 
-                     backdrop-blur-md transition-all duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white 
+                     backdrop-blur-xl transition-all duration-300" />
 
       {/* Premium Pattern */}
-      <div className="absolute inset-0 text-sky-900/10">
+      <div className="absolute inset-0 text-blue-500/10">
         <ButtonPattern />
       </div>
 
@@ -50,8 +50,8 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         animate={{
           background: isHovered
             ? [
-              'linear-gradient(45deg, rgba(56, 189, 248, 0.15) 0%, transparent 100%)',
-              'linear-gradient(45deg, transparent 0%, rgba(56, 189, 248, 0.15) 100%)'
+              'linear-gradient(45deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%)',
+              'linear-gradient(45deg, transparent 0%, rgba(59, 130, 246, 0.15) 100%)'
             ]
             : 'none'
         }}
@@ -64,8 +64,8 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         animate={{
           boxShadow: isHovered
             ? [
-              'inset 0 0 0 1px rgba(56, 189, 248, 0.3), 0 4px 12px rgba(56, 189, 248, 0.1)',
-              'inset 0 0 0 1px rgba(56, 189, 248, 0.5), 0 4px 12px rgba(56, 189, 248, 0.2)',
+              'inset 0 0 0 1px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(59, 130, 246, 0.1)',
+              'inset 0 0 0 1px rgba(59, 130, 246, 0.5), 0 4px 12px rgba(59, 130, 246, 0.2)',
             ]
             : 'none'
         }}
@@ -87,7 +87,7 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         className="relative"
       >
         <Icon className={`w-6 h-6 transition-all duration-300
-                       ${isHovered ? 'text-sky-500 filter drop-shadow-lg' : 'text-sky-700'}`} />
+                       ${isHovered ? 'text-blue-500 filter drop-shadow-lg' : 'text-blue-600'}`} />
       </motion.div>
 
       {/* Label Animation */}
