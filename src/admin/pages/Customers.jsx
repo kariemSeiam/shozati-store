@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { useCustomers } from '../hooks';
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 
 const Customers = () => {
     const {

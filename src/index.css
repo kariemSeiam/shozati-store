@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600&display=swap&text=أبجدهوزحطيكلمنسعفصقرشتثخذضظغ0123456789');
 
 @tailwind base;
 @tailwind components;
@@ -252,6 +252,21 @@ select {
 
 .status-error {
   @apply bg-rose-50 text-rose-700 border-rose-200;
+}
+
+/* Performance optimized utility classes */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+.active\:scale-98:active {
+  transform: scale(0.98);
+}
+
+/* Image optimization */
+img {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px 200px;
 }
 
 /* Improved Accessibility */

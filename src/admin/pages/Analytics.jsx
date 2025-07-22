@@ -8,7 +8,7 @@ import {
   Loader2, AlertCircle, ArrowUpRight, ArrowDownRight, DollarSign,
   ShoppingBag, TrendingDown, Clock, CheckCircle, Ban
 } from 'lucide-react';
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 import { useAnalytics } from '../hooks';
 
 const Analytics = () => {

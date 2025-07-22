@@ -4,7 +4,7 @@ import {
     Copy, CheckCircle, ExternalLink, ChevronLeft
 } from 'lucide-react';
 
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 
 import { X, Upload } from 'lucide-react';
 

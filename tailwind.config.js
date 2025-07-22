@@ -2,7 +2,11 @@
 export default {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
+    './index.html'
   ],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
