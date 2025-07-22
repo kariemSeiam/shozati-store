@@ -45,31 +45,12 @@ const ImagePreloader = {
         });
     },
     
-    // Preload multiple images with priority queue
+    // Simplified batch preload for better performance
     preloadBatch(sources = [], priority = []) {
         if (!sources.length) return Promise.resolve();
         
-        // Preload priority images first
-        const priorityPromises = priority.map(src => this.preload(src));
-        
-        // Then preload the rest with lower priority
-        const regularSources = sources.filter(src => !priority.includes(src));
-        const regularPromises = regularSources.map(src => 
-            new Promise(resolve => {
-                // Fixed requestIdleCallback implementation
-                if (window.requestIdleCallback) {
-                    window.requestIdleCallback(() => {
-                        this.preload(src).then(resolve).catch(() => resolve());
-                    });
-                } else {
-                    setTimeout(() => {
-                        this.preload(src).then(resolve).catch(() => resolve());
-                    }, 50);
-                }
-            })
-        );
-        
-        return Promise.all([...priorityPromises, ...regularPromises]);
+        // Only preload priority images to reduce network load
+        return Promise.all(priority.map(src => this.preload(src)));
     },
     
     // Check if an image is already loaded

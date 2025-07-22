@@ -20,144 +20,74 @@ import { CartSheet } from './CartProductComponent';
 import HorizontalCategoryScroller from './HorizontalCategoryScroller';
 
 
-// Premium Animation Variants
+// Optimized Animation Variants - reduced complexity for performance
 const buttonVariants = {
-  hover: {
-    scale: 1.05,
-    rotate: [0, -3, 3, 0],
-    transition: {
-      rotate: {
-        repeat: Infinity,
-        duration: 2,
-        repeatType: "reverse"
-      }
-    }
-  },
-  tap: { scale: 0.95 }
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 }
 };
 
-// Shared Components
-const GlowEffect = ({ color, scale = 1 }) => (
-  <motion.div
-    className={`absolute inset-0 rounded-full blur-xl ${color}`}
-    animate={{
-      opacity: [0.3, 0.6, 0.3],
-      scale: [0.85 * scale, 1.1 * scale, 0.85 * scale],
-    }}
-    transition={{
-      duration: 3,
-      repeat: Infinity,
-      repeatType: "reverse"
-    }}
-  />
-);
 
-const ShimmerEffect = () => (
-  <motion.div
-    className="absolute inset-0 opacity-30"
-    style={{
-      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-      backgroundSize: '200% 100%'
-    }}
-    animate={{
-      backgroundPosition: ['200% 0', '-200% 0']
-    }}
-    transition={{
-      duration: 3,
-      repeat: Infinity,
-      ease: 'linear'
-    }}
-  />
-);
-
-
+// Simplified variants for better performance
 const badgeVariants = {
-  initial: { scale: 0, opacity: 0 },
-  animate: { 
-    scale: 1, 
-    opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
-  },
-  exit: { 
-    scale: 0, 
-    opacity: 0,
-    transition: { duration: 0.2 }
-  }
+  initial: { scale: 0.8, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  exit: { scale: 0.8, opacity: 0 }
 };
-// Reusable components
-const ButtonGlow = () => (
-  <div className="absolute inset-0 bg-sky-400/20 blur-xl rounded-full" />
-);
 
-const ButtonHighlight = () => (
-  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent 
-                  opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-);
-
-const QuantityBadge = ({ quantity }) => (
+// Optimized badge component with reduced animations
+const QuantityBadge = React.memo(({ quantity }) => (
   <div className="absolute -top-2 -right-2">
     <motion.div
       variants={badgeVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      className="relative"
+      className="w-6 h-6 rounded-full bg-gradient-primary
+                flex items-center justify-center shadow-lg"
     >
-      <div className="absolute inset-0 bg-primary-500/20 blur-md rounded-full" />
-      <div className="relative w-6 h-6 rounded-full bg-gradient-primary
-                    flex items-center justify-center shadow-lg shadow-primary-500/25">
-        <span className="text-white text-xs font-bold">
-          {quantity > 99 ? '99+' : quantity}
-        </span>
-      </div>
+      <span className="text-white text-xs font-bold">
+        {quantity > 99 ? '99+' : quantity}
+      </span>
     </motion.div>
   </div>
-);
+));
 
-const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
+// Optimized FloatingActions with memoization and reduced animations
+const FloatingActions = React.memo(({ onFavoritesClick, onCartClick }) => {
   const { cart } = useContext(CartContext);
-  const cartQuantity = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
+  const cartQuantity = React.useMemo(() => 
+    cart?.reduce((total, item) => total + item.quantity, 0) || 0, 
+    [cart]
+  );
 
   return (
     <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-20" role="group" aria-label="Floating actions">
-      <motion.button
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
+      <button
         onClick={onFavoritesClick}
-        className="relative w-14 h-14 rounded-full bg-gradient-primary 
-                   flex items-center justify-center shadow-floating shadow-primary-500/25
-                   hover:shadow-glow group"
+        className="w-14 h-14 rounded-full bg-gradient-primary 
+                   flex items-center justify-center shadow-floating
+                   hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label="Favorites"
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent 
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
-        <Heart className="w-6 h-6 text-white relative z-10" />
-      </motion.button>
+        <Heart className="w-6 h-6 text-white" />
+      </button>
 
-      <motion.button
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
+      <button
         onClick={onCartClick}
         className="relative w-14 h-14 rounded-full bg-gradient-primary 
-                   flex items-center justify-center shadow-floating shadow-primary-500/25
-                   hover:shadow-glow group"
+                   flex items-center justify-center shadow-floating
+                   hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label={`Cart with ${cartQuantity} items`}
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent 
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
-        <ShoppingCart className="w-6 h-6 text-white relative z-10" />
+        <ShoppingCart className="w-6 h-6 text-white" />
         
-        <AnimatePresence>
-          {cartQuantity > 0 && (
-            <QuantityBadge quantity={cartQuantity} />
-          )}
-        </AnimatePresence>
-      </motion.button>
+        {cartQuantity > 0 && (
+          <QuantityBadge quantity={cartQuantity} />
+        )}
+      </button>
     </div>
   );
-};
+});
 
 
 

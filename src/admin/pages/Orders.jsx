@@ -8,7 +8,7 @@ import {
     Receipt
 } from 'lucide-react';
 import { useOrders } from '../hooks';
-import _ from 'lodash';
+// Removed lodash import for performance - using native JS alternatives
 
 const Orders = () => {
     const {
