@@ -205,9 +205,9 @@ export const SizeSelector = memo(({ sizes, selectedSize, onSizeSelect }) => {
                     className={`relative p-4 mb-6 rounded-xl font-bold text-sm transition-all
                         ${sizeObj.inStock
                             ? selectedSize?.size === sizeObj.size
-                                ? 'bg-sky-500 text-white ring-2 ring-sky-500/50 shadow-md'
-                                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
-                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-100'
+                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-2 ring-blue-500/50 shadow-lg'
+                                : 'bg-white text-slate-800 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
                         }`}
                 >
                     {sizeObj.size}

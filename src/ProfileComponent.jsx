@@ -32,21 +32,21 @@ const sheetVariants = {
 
 // Memoized Header Component
 const SheetHeader = memo(({ onClose, title, hideSupport, onSupportClick }) => (
-  <div className="pt-8 px-4 pb-4 border-b border-sky-100 flex-shrink-0">
+  <div className="pt-8 px-4 pb-4 border-b border-gray-200 flex-shrink-0">
     <div className="flex items-center justify-between">
       <button
         onClick={onClose}
-        className="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors"
+        className="p-2 rounded-xl bg-gray-50 text-slate-600 hover:bg-gray-100 hover:text-slate-800 transition-all duration-200"
       >
         <X className="w-5 h-5" />
       </button>
 
-      <h3 className="text-xl font-bold text-sky-800">{title}</h3>
+      <h3 className="text-xl font-bold text-slate-800">{title}</h3>
 
       {!hideSupport ? (
         <button
           onClick={onSupportClick}
-          className="p-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 transition-colors"
+          className="p-2 rounded-xl bg-gray-50 text-slate-600 hover:bg-gray-100 hover:text-slate-800 transition-all duration-200"
         >
           <MessageCircle className="w-5 h-5" />
         </button>
@@ -93,7 +93,7 @@ export const BottomSheet = ({
             animate="visible"
             exit="hidden"
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-sky-950/20 backdrop-blur-[2px] z-50"
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-[2px] z-50"
             onClick={handleBackdropClick}
           >
             <motion.div 

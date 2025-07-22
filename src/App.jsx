@@ -103,9 +103,9 @@ const QuantityBadge = ({ quantity }) => (
       exit="exit"
       className="relative"
     >
-      <ButtonGlow />
-      <div className="relative w-6 h-6 rounded-full bg-gradient-to-r from-sky-600 to-sky-700
-                    flex items-center justify-center">
+      <div className="absolute inset-0 bg-primary-500/20 blur-md rounded-full" />
+      <div className="relative w-6 h-6 rounded-full bg-gradient-primary
+                    flex items-center justify-center shadow-lg shadow-primary-500/25">
         <span className="text-white text-xs font-bold">
           {quantity > 99 ? '99+' : quantity}
         </span>
@@ -125,13 +125,14 @@ const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
         whileHover="hover"
         whileTap="tap"
         onClick={onFavoritesClick}
-        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
-                   flex items-center justify-center shadow-lg group"
+        className="relative w-14 h-14 rounded-full bg-gradient-primary 
+                   flex items-center justify-center shadow-floating shadow-primary-500/25
+                   hover:shadow-glow group"
         aria-label="Favorites"
       >
-        <ButtonGlow />
-        <ButtonHighlight />
-        <Heart className="w-6 h-6 text-white" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+        <Heart className="w-6 h-6 text-white relative z-10" />
       </motion.button>
 
       <motion.button
@@ -139,13 +140,14 @@ const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
         whileHover="hover"
         whileTap="tap"
         onClick={onCartClick}
-        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
-                   flex items-center justify-center shadow-lg group"
+        className="relative w-14 h-14 rounded-full bg-gradient-primary 
+                   flex items-center justify-center shadow-floating shadow-primary-500/25
+                   hover:shadow-glow group"
         aria-label={`Cart with ${cartQuantity} items`}
       >
-        <ButtonGlow />
-        <ButtonHighlight />
-        <ShoppingCart className="w-6 h-6 text-white" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+        <ShoppingCart className="w-6 h-6 text-white relative z-10" />
         
         <AnimatePresence>
           {cartQuantity > 0 && (
@@ -367,13 +369,18 @@ const MainContent = ({ productCode }) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-sky-50">
+    <div className="min-h-screen bg-white">
       <Toaster 
         position="top-center"
-        toastOptions={{
-          className: 'bg-white shadow-xl rounded-xl px-4 py-3',
-          duration: 3000,
-        }} 
+                  toastOptions={{
+            className: 'bg-white backdrop-blur-xl border border-gray-200 rounded-2xl px-6 py-4 shadow-lg',
+            duration: 3000,
+            style: {
+              color: '#1e293b',
+              fontSize: '14px',
+              fontWeight: '500'
+            }
+          }} 
       />
 
     {/* Premium Header */}
@@ -385,7 +392,7 @@ const MainContent = ({ productCode }) => {
       </header>
 
      {/* NEW: Horizontal Category Scroller - replaces both category and subcategory selectors */}
-     <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm shadow-sm">
+     <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-200">
         <HorizontalCategoryScroller
           selectedCategory={uiState.selectedCategory}
           onSelect={handleCategorySelect}
@@ -404,7 +411,7 @@ const MainContent = ({ productCode }) => {
 
        {/* Product Grid with Category Indicator */}
        <div className="px-6 pt-4 flex items-center justify-between" dir='rtl'>
-          <h2 className="text-lg font-bold text-sky-900">
+          <h2 className="text-lg font-bold text-slate-800">
             {uiState.selectedCategory === 'all' 
               ? 'كل المنتجات' 
               : uiState.selectedCategory === 'women' 
@@ -416,7 +423,7 @@ const MainContent = ({ productCode }) => {
           
           {/* Products count */}
           {products.length > 0 && (
-            <div className="text-sm text-sky-600">
+            <div className="text-sm text-slate-600">
               {totalPages > 1 ? `${products.length} من ${totalPages * products.length}` : `${products.length} منتج`}
             </div>
           )}
@@ -425,9 +432,11 @@ const MainContent = ({ productCode }) => {
         {/* Empty state message when no products are found */}
         {!productsLoading && products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
-            <ShoppingBag className="w-16 h-16 text-sky-200 mb-4" />
-            <h3 className="text-xl font-bold text-gray-800 mb-2">لا توجد منتجات</h3>
-            <p className="text-gray-600 text-center mb-6">
+            <div className="p-4 rounded-full bg-primary-50 mb-4">
+              <ShoppingBag className="w-16 h-16 text-primary-400" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">لا توجد منتجات</h3>
+            <p className="text-slate-600 text-center mb-6 max-w-sm">
               لم نتمكن من العثور على منتجات في هذه الفئة
             </p>
             <button
@@ -440,8 +449,7 @@ const MainContent = ({ productCode }) => {
                 });
                 setUiState(prev => ({ ...prev, selectedCategory: 'all' }));
               }}
-              className="px-6 py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 
-                        transition-all duration-300 shadow-lg"
+              className="btn-primary"
             >
               عرض كل المنتجات
             </button>
