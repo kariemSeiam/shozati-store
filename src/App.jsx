@@ -20,142 +20,74 @@ import { CartSheet } from './CartProductComponent';
 import HorizontalCategoryScroller from './HorizontalCategoryScroller';
 
 
-// Premium Animation Variants
+// Optimized Animation Variants - reduced complexity for performance
 const buttonVariants = {
-  hover: {
-    scale: 1.05,
-    rotate: [0, -3, 3, 0],
-    transition: {
-      rotate: {
-        repeat: Infinity,
-        duration: 2,
-        repeatType: "reverse"
-      }
-    }
-  },
-  tap: { scale: 0.95 }
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 }
 };
 
-// Shared Components
-const GlowEffect = ({ color, scale = 1 }) => (
-  <motion.div
-    className={`absolute inset-0 rounded-full blur-xl ${color}`}
-    animate={{
-      opacity: [0.3, 0.6, 0.3],
-      scale: [0.85 * scale, 1.1 * scale, 0.85 * scale],
-    }}
-    transition={{
-      duration: 3,
-      repeat: Infinity,
-      repeatType: "reverse"
-    }}
-  />
-);
 
-const ShimmerEffect = () => (
-  <motion.div
-    className="absolute inset-0 opacity-30"
-    style={{
-      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-      backgroundSize: '200% 100%'
-    }}
-    animate={{
-      backgroundPosition: ['200% 0', '-200% 0']
-    }}
-    transition={{
-      duration: 3,
-      repeat: Infinity,
-      ease: 'linear'
-    }}
-  />
-);
-
-
+// Simplified variants for better performance
 const badgeVariants = {
-  initial: { scale: 0, opacity: 0 },
-  animate: { 
-    scale: 1, 
-    opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
-  },
-  exit: { 
-    scale: 0, 
-    opacity: 0,
-    transition: { duration: 0.2 }
-  }
+  initial: { scale: 0.8, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  exit: { scale: 0.8, opacity: 0 }
 };
-// Reusable components
-const ButtonGlow = () => (
-  <div className="absolute inset-0 bg-sky-400/20 blur-xl rounded-full" />
-);
 
-const ButtonHighlight = () => (
-  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent 
-                  opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-);
-
-const QuantityBadge = ({ quantity }) => (
+// Optimized badge component with reduced animations
+const QuantityBadge = React.memo(({ quantity }) => (
   <div className="absolute -top-2 -right-2">
     <motion.div
       variants={badgeVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      className="relative"
+      className="w-6 h-6 rounded-full bg-gradient-primary
+                flex items-center justify-center shadow-lg"
     >
-      <ButtonGlow />
-      <div className="relative w-6 h-6 rounded-full bg-gradient-to-r from-sky-600 to-sky-700
-                    flex items-center justify-center">
-        <span className="text-white text-xs font-bold">
-          {quantity > 99 ? '99+' : quantity}
-        </span>
-      </div>
+      <span className="text-white text-xs font-bold">
+        {quantity > 99 ? '99+' : quantity}
+      </span>
     </motion.div>
   </div>
-);
+));
 
-const FloatingActions = ({ onFavoritesClick, onCartClick }) => {
+// Optimized FloatingActions with memoization and reduced animations
+const FloatingActions = React.memo(({ onFavoritesClick, onCartClick }) => {
   const { cart } = useContext(CartContext);
-  const cartQuantity = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
+  const cartQuantity = React.useMemo(() => 
+    cart?.reduce((total, item) => total + item.quantity, 0) || 0, 
+    [cart]
+  );
 
   return (
     <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-20" role="group" aria-label="Floating actions">
-      <motion.button
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
+      <button
         onClick={onFavoritesClick}
-        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
-                   flex items-center justify-center shadow-lg group"
+        className="w-14 h-14 rounded-full bg-gradient-primary 
+                   flex items-center justify-center shadow-floating
+                   hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label="Favorites"
       >
-        <ButtonGlow />
-        <ButtonHighlight />
         <Heart className="w-6 h-6 text-white" />
-      </motion.button>
+      </button>
 
-      <motion.button
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
+      <button
         onClick={onCartClick}
-        className="relative w-14 h-14 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 
-                   flex items-center justify-center shadow-lg group"
+        className="relative w-14 h-14 rounded-full bg-gradient-primary 
+                   flex items-center justify-center shadow-floating
+                   hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label={`Cart with ${cartQuantity} items`}
       >
-        <ButtonGlow />
-        <ButtonHighlight />
         <ShoppingCart className="w-6 h-6 text-white" />
         
-        <AnimatePresence>
-          {cartQuantity > 0 && (
-            <QuantityBadge quantity={cartQuantity} />
-          )}
-        </AnimatePresence>
-      </motion.button>
+        {cartQuantity > 0 && (
+          <QuantityBadge quantity={cartQuantity} />
+        )}
+      </button>
     </div>
   );
-};
+});
 
 
 
@@ -367,13 +299,18 @@ const MainContent = ({ productCode }) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-sky-50">
+    <div className="min-h-screen bg-white">
       <Toaster 
         position="top-center"
-        toastOptions={{
-          className: 'bg-white shadow-xl rounded-xl px-4 py-3',
-          duration: 3000,
-        }} 
+                  toastOptions={{
+            className: 'bg-white backdrop-blur-xl border border-gray-200 rounded-2xl px-6 py-4 shadow-lg',
+            duration: 3000,
+            style: {
+              color: '#1e293b',
+              fontSize: '14px',
+              fontWeight: '500'
+            }
+          }} 
       />
 
     {/* Premium Header */}
@@ -385,7 +322,7 @@ const MainContent = ({ productCode }) => {
       </header>
 
      {/* NEW: Horizontal Category Scroller - replaces both category and subcategory selectors */}
-     <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm shadow-sm">
+     <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-200">
         <HorizontalCategoryScroller
           selectedCategory={uiState.selectedCategory}
           onSelect={handleCategorySelect}
@@ -404,7 +341,7 @@ const MainContent = ({ productCode }) => {
 
        {/* Product Grid with Category Indicator */}
        <div className="px-6 pt-4 flex items-center justify-between" dir='rtl'>
-          <h2 className="text-lg font-bold text-sky-900">
+          <h2 className="text-lg font-bold text-slate-800">
             {uiState.selectedCategory === 'all' 
               ? 'كل المنتجات' 
               : uiState.selectedCategory === 'women' 
@@ -416,7 +353,7 @@ const MainContent = ({ productCode }) => {
           
           {/* Products count */}
           {products.length > 0 && (
-            <div className="text-sm text-sky-600">
+            <div className="text-sm text-slate-600">
               {totalPages > 1 ? `${products.length} من ${totalPages * products.length}` : `${products.length} منتج`}
             </div>
           )}
@@ -425,9 +362,11 @@ const MainContent = ({ productCode }) => {
         {/* Empty state message when no products are found */}
         {!productsLoading && products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
-            <ShoppingBag className="w-16 h-16 text-sky-200 mb-4" />
-            <h3 className="text-xl font-bold text-gray-800 mb-2">لا توجد منتجات</h3>
-            <p className="text-gray-600 text-center mb-6">
+            <div className="p-4 rounded-full bg-primary-50 mb-4">
+              <ShoppingBag className="w-16 h-16 text-primary-400" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">لا توجد منتجات</h3>
+            <p className="text-slate-600 text-center mb-6 max-w-sm">
               لم نتمكن من العثور على منتجات في هذه الفئة
             </p>
             <button
@@ -440,8 +379,7 @@ const MainContent = ({ productCode }) => {
                 });
                 setUiState(prev => ({ ...prev, selectedCategory: 'all' }));
               }}
-              className="px-6 py-3 bg-sky-500 text-white rounded-xl hover:bg-sky-600 
-                        transition-all duration-300 shadow-lg"
+              className="btn-primary"
             >
               عرض كل المنتجات
             </button>

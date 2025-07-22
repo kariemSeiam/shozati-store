@@ -21,10 +21,10 @@ const AdminDashboard = () => {
 
   if (!isInitialized || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary-900 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto" />
-          <p className="text-gray-400 text-lg">جاري تحميل لوحة التحكم...</p>
+          <Loader2 className="w-12 h-12 text-primary-500 animate-spin mx-auto" />
+          <p className="text-secondary-400 text-lg">جاري تحميل لوحة التحكم...</p>
         </div>
       </div>
     );
@@ -32,11 +32,11 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-secondary-900 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
+          <AlertCircle className="w-16 h-16 text-error-500 mx-auto" />
           <h1 className="text-xl font-bold text-white">عذراً، حدث خطأ ما</h1>
-          <p className="text-gray-400">{error}</p>
+          <p className="text-secondary-400">{error}</p>
         </div>
       </div>
     );
@@ -44,10 +44,10 @@ const AdminDashboard = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-secondary-900 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-white">تسجيل الدخول مطلوب</h1>
-          <p className="text-gray-400">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
+          <p className="text-secondary-400">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
         </div>
       </div>
     );
@@ -77,10 +77,10 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
+    <div className="min-h-screen bg-secondary-900 text-white relative">
       {/* Top Navigation */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-gray-900/95 backdrop-blur-xl 
-                    border-b border-gray-800/50">
+      <nav className="fixed top-0 inset-x-0 z-50 bg-secondary-900/95 backdrop-blur-xl 
+                    border-b border-secondary-800/50">
         <div className="px-4 py-3">
         
           {/* Tabs */}
@@ -92,8 +92,8 @@ const AdminDashboard = () => {
                 className={`flex flex-col items-center gap-2 py-2 px-2 rounded-xl
                          transition-all duration-300 relative group
                          ${activeTab === id 
-                           ? 'text-blue-500' 
-                           : 'text-gray-400 hover:text-gray-300'}`}
+                           ? 'text-primary-500' 
+                           : 'text-secondary-400 hover:text-secondary-300'}`}
               >
                 <div className="relative">
                   <Icon className={`w-6 h-6 transition-transform duration-300
