@@ -168,7 +168,7 @@ const Customers = () => {
     }, [customers, filters]);
 
     return (
-        <div className="min-h-screen bg-gray-900 pb-20">
+        <div className="min-h-screen bg-secondary-900 pb-20">
             {/* Analytics Dashboard */}
             <div className="p-4 space-y-6 pt-0">
                 {/* Key Metrics */}
@@ -236,7 +236,7 @@ const Customers = () => {
             </div>
 
             {/* Search and Filters */}
-            <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4">
+            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
                 <div className="relative">
                     <input
                         type="text"

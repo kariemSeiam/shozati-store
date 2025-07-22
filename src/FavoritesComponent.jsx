@@ -24,10 +24,10 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
         className="fixed inset-0 bg-white z-40 flex items-center justify-center"
       >
         <div className="relative">
-          <div className="w-16 h-16 rounded-full border-4 border-sky-300/30 
-                       animate-spin border-t-sky-500 shadow-lg" />
+          <div className="w-16 h-16 rounded-full border-4 border-primary-200 
+                       animate-spin border-t-primary-500 shadow-lg" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Heart className="w-6 h-6 text-sky-500" />
+            <Heart className="w-6 h-6 text-primary-500" />
           </div>
         </div>
       </motion.div>
@@ -43,19 +43,19 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
       className="fixed inset-0 bg-white z-40"
     >
       <div className="h-full flex flex-col">
-        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-sky-100 shadow-sm">
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm">
           <div className="px-4 py-4">
             <div className="flex justify-between items-center">
               <motion.button 
                 onClick={handleClose}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-xl bg-sky-50 text-sky-500 
-                         hover:bg-sky-100 transition-colors"
+                className="p-2 rounded-xl bg-gray-50 text-slate-600 
+                         hover:bg-gray-100 hover:text-slate-800 transition-all duration-200"
               >
                 <X className="w-6 h-6" />
               </motion.button>
-              <h2 className="text-2xl font-bold text-sky-900">المفضلة</h2>
+              <h2 className="text-2xl font-bold text-slate-800">المفضلة</h2>
               <div className="w-10" /> {/* Spacer for alignment */}
             </div>
           </div>
@@ -88,10 +88,10 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 {loading && (
                   <div className="flex justify-center py-4">
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full border-3 border-sky-200/30 
-                                   animate-spin border-t-sky-500" />
+                      <div className="w-10 h-10 rounded-full border-3 border-primary-200 
+                                   animate-spin border-t-primary-500" />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <Heart className="w-4 h-4 text-sky-500" />
+                        <Heart className="w-4 h-4 text-primary-500" />
                       </div>
                     </div>
                   </div>
@@ -104,27 +104,24 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-50 to-white 
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-50 to-white 
                              mx-auto mb-6 flex items-center justify-center relative overflow-hidden
-                             border border-sky-200 shadow-lg shadow-sky-200/20">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-sky-400/20 to-sky-400/0 
+                             border border-primary-200 shadow-lg shadow-primary-200/20">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-primary-400/20 to-primary-400/0 
                                animate-spin-slow rounded-full" />
-                  <Heart className="w-12 h-12 text-sky-500 relative z-10" />
+                  <Heart className="w-12 h-12 text-primary-500 relative z-10" />
                 </div>
-                <h3 className="text-xl font-bold text-sky-900 mb-2">
+                <h3 className="text-xl font-bold text-slate-800 mb-2">
                   قائمة المفضلة فارغة
                 </h3>
-                <p className="text-sky-600 mb-6">
+                <p className="text-slate-600 mb-6">
                   اكتشف منتجاتنا وأضف ما يعجبك إلى المفضلة
                 </p>
                 <motion.button 
                   onClick={handleClose}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-gradient-to-r from-sky-500 to-sky-600 text-white 
-                           rounded-xl px-8 py-3 font-bold shadow-lg shadow-sky-500/25 
-                           hover:shadow-xl hover:shadow-sky-500/30 
-                           transition-all duration-300"
+                  className="btn-primary"
                 >
                   تسوق الآن
                 </motion.button>

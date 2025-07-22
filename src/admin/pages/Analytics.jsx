@@ -83,7 +83,7 @@ const Analytics = () => {
   }, [analytics?.ordersByStatus]);
 
   return (
-    <div className="min-h-screen bg-gray-900 pr-4 pl-4 space-y-4" dir="rtl">
+    <div className="min-h-screen bg-secondary-900 pr-4 pl-4 space-y-4" dir="rtl">
       {isLoading ? (
         <LoadingState />
       ) : error ? (
