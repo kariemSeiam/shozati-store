@@ -34,7 +34,10 @@ const Orders = () => {
         if (!orders.length) return null;
 
         const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-        const statusCounts = _.countBy(orders, 'status');
+        const statusCounts = orders.reduce((acc, order) => {
+            acc[order.status] = (acc[order.status] || 0) + 1;
+            return acc;
+        }, {});
         const avgOrderValue = totalRevenue / orders.length;
 
         return {
