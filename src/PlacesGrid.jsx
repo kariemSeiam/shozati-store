@@ -24,20 +24,20 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`group relative isolate bg-gradient-to-br 
-                 from-gray-900/90 via-gray-800/90 to-gray-900/90
-                 backdrop-blur-xl border border-gray-800/50 rounded-3xl 
+                 from-secondary-900/90 via-secondary-800/90 to-secondary-900/90
+                 backdrop-blur-xl border border-secondary-800/50 rounded-3xl 
                  overflow-hidden transition-all duration-500 
                  hover:scale-[1.02] hover:shadow-2xl
-                 ${place.status === 'not_connected' ? 'ring-2 ring-yellow-500/20' : ''}
-                 hover:border-blue-500/20 hover:shadow-blue-500/5`}
+                 ${place.status === 'not_connected' ? 'ring-2 ring-amber-500/20' : ''}
+                 hover:border-primary-500/20 hover:shadow-primary-500/5`}
         >
             {/* Dynamic Background Glow */}
             <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 
                       transition-opacity duration-500 ${place.status === 'connected'
-                    ? 'bg-gradient-conic from-green-500/30 via-transparent to-green-500/30' :
+                    ? 'bg-gradient-conic from-emerald-500/30 via-transparent to-emerald-500/30' :
                     place.status === 'unsupported'
-                        ? 'bg-gradient-conic from-red-500/30 via-transparent to-red-500/30' :
-                        'bg-gradient-conic from-yellow-500/30 via-transparent to-yellow-500/30'
+                        ? 'bg-gradient-conic from-rose-500/30 via-transparent to-rose-500/30' :
+                        'bg-gradient-conic from-amber-500/30 via-transparent to-amber-500/30'
                 }`} />
 
             {/* Status Indicator Light */}
@@ -46,7 +46,7 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
                       transition-all duration-300 ${place.status === 'connected'
                     ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
                     place.status === 'unsupported'
-                        ? 'bg-red-500/10 text-red-400 border-red-500/30' :
+                        ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
                         'bg-amber-500/10 text-amber-400 border-amber-500/30'
                 }`}>
                 <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
@@ -61,7 +61,7 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
             <div className="relative p-6 space-y-6">
                 {/* Header */}
                 <div className="space-y-4">
-                    <h3 className="font-medium text-md text-white group-hover:text-blue-400 
+                    <h3 className="font-medium text-md text-white group-hover:text-primary-400 
                        transition-colors line-clamp-2 pt-[-10px] ">
                         {place.name}
                     </h3>
@@ -70,18 +70,18 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
                     <div className="space-y-2">
                         <button
                             onClick={() => copyToClipboard(place.phone)}
-                            className="flex items-center gap-2 w-full text-gray-400 
-                       bg-gray-800/40 hover:bg-gray-800/60 px-4 py-2.5 
+                            className="flex items-center gap-2 w-full text-secondary-400 
+                       bg-secondary-800/40 hover:bg-secondary-800/60 px-4 py-2.5 
                        rounded-xl text-sm transition-all group/phone
                        relative overflow-hidden"
                         >
                             <Phone size={16} className="shrink-0" />
                             <span className="font-mono flex-1 text-right">{place.phone}</span>
-                            <div className={`absolute inset-0 bg-green-500/10 
+                            <div className={`absolute inset-0 bg-emerald-500/10 
                            transition-transform duration-500 ease-out
                            ${copiedPhone ? 'translate-x-0' : 'translate-x-full'}`} />
                             {copiedPhone ? (
-                                <CheckCircle size={16} className="text-green-400 shrink-0 relative" />
+                                <CheckCircle size={16} className="text-emerald-400 shrink-0 relative" />
                             ) : (
                                 <Copy size={16} className="opacity-0 group-hover/phone:opacity-100 
                                        transition-opacity relative" />
@@ -93,8 +93,8 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
                                 href={place.facebook_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-blue-400 
-                         bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2.5 
+                                className="flex items-center gap-2 text-primary-400 
+                         bg-primary-500/10 hover:bg-primary-500/20 px-4 py-2.5 
                          rounded-xl text-sm transition-all group/fb"
                             >
                                 <Facebook size={16} className="shrink-0" />

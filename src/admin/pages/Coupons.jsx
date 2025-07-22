@@ -35,7 +35,7 @@ const Coupons = () => {
     const [isStatsSheetOpen, setIsStatsSheetOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-900 pb-20">
+        <div className="min-h-screen bg-secondary-900 pb-20">
             {/* Stats Overview */}
             {couponStats && (
                 <div className="p-4 grid grid-cols-2 gap-4">
@@ -67,7 +67,7 @@ const Coupons = () => {
             )}
 
             {/* Actions Bar */}
-            <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm p-4 space-y-4">
+            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
                 {/* Search */}
                 <div className="relative">
                     <input
