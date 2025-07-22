@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [
-    react()
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react'
+    })
   ],
   base: '/',
   build: {
@@ -40,9 +43,6 @@ export default defineConfig({
             }
             return 'vendor';
           }
-          if (id.includes('src/admin/')) {
-            return 'admin';
-          }
         },
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
@@ -54,7 +54,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'react-router-dom': 'react-router-dom'
+      'react-router-dom': 'react-router-dom',
+      'react/jsx-runtime': 'react/jsx-runtime'
     }
   },
   optimizeDeps: {
@@ -63,9 +64,10 @@ export default defineConfig({
       'react-dom',
       'react-router-dom',
       'axios',
-      'react-hot-toast'
-    ],
-    exclude: ['framer-motion']
+      'react-hot-toast',
+      'react-helmet-async',
+      'framer-motion'
+    ]
   },
   server: {
     hmr: {

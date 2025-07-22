@@ -1,13 +1,13 @@
 import React, { Suspense, lazy } from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Helmet } from 'react-helmet';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import './index.css';
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 
 // Lazy load components for better performance
-const App = lazy(() => import('./App'));
-const AdminDashboard = lazy(() => import('./admin/AdminApp'));
+const App = lazy(() => import('./App.jsx'));
+const AdminDashboard = lazy(() => import('./admin/AdminApp.jsx'));
 
 // Performance optimized loading component
 const LoadingSpinner = () => (
@@ -114,8 +114,6 @@ const SEOWrapper = ({ children }) => {
         <link rel="alternate" href="https://trendy-corner.org/ar" hrefLang="ar-EG" />
         <link rel="alternate" href="https://trendy-corner.org/en" hrefLang="en-US" />
 
-        {/* Preload Critical Assets */}
-        <link rel="preload" href="/icon.svg" as="image" />
       </Helmet>
       {children}
     </>
@@ -134,13 +132,15 @@ const AppRoutes = () => (
 
 // Enhanced Root Component
 const Root = () => (
-  <BrowserRouter basename="/">
-    <StrictMode>
-      <SEOWrapper>
-        <AppRoutes />
-      </SEOWrapper>
-    </StrictMode>
-  </BrowserRouter>
+  <HelmetProvider>
+    <BrowserRouter basename="/">
+      <StrictMode>
+        <SEOWrapper>
+          <AppRoutes />
+        </SEOWrapper>
+      </StrictMode>
+    </BrowserRouter>
+  </HelmetProvider>
 );
 
 // Initialize App

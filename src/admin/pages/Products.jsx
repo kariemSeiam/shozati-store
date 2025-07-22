@@ -124,9 +124,9 @@ const Products = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-secondary-900 pb-20" dir="rtl">
+    <div className="min-h-screen bg-gray-900 pb-20" dir="rtl">
       {/* Stats Grid */}
-      <div className="p-4 grid grid-cols-2 pt-0 gap-4">
+      <div className="p-6 grid grid-cols-2 gap-6">
         <StatCard
           title="إجمالي المنتجات"
           value={stats.total}
@@ -139,12 +139,10 @@ const Products = () => {
           icon={Check}
           color="emerald"
         />
-
       </div>
 
       {/* Actions Bar */}
-              <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4 border-b border-secondary-800"
-      >
+      <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-xl p-6 space-y-6 border-b border-gray-800/50 shadow-2xl shadow-black/20">
         <div className="flex items-center justify-between gap-4"
         >
           <button
@@ -1153,20 +1151,50 @@ const Select = ({
 
 
 // Helper Components
-const StatCard = ({ title, value, icon: Icon, color }) => (
-  <div className={`relative overflow-hidden rounded-2xl p-4 
-                 bg-${color}-500/10 border border-${color}-500/20`}>
-    <div className="absolute top-4 right-4">
-      <Icon className={`w-6 h-6 text-${color}-500`} />
-    </div>
-    <div className="mt-6">
-      <h3 className="text-sm font-medium text-gray-400">{title}</h3>
-      <div className="mt-2">
-        <span className={`text-2xl font-bold text-${color}-500`}>{value}</span>
+const StatCard = ({ title, value, icon: Icon, color }) => {
+  const colors = {
+    blue: {
+      bg: 'bg-blue-500/10',
+      text: 'text-blue-400',
+      border: 'border-blue-500/20',
+      iconBg: 'bg-blue-500/20'
+    },
+    emerald: {
+      bg: 'bg-emerald-500/10',
+      text: 'text-emerald-400',
+      border: 'border-emerald-500/20',
+      iconBg: 'bg-emerald-500/20'
+    },
+    amber: {
+      bg: 'bg-amber-500/10',
+      text: 'text-amber-400',
+      border: 'border-amber-500/20',
+      iconBg: 'bg-amber-500/20'
+    },
+    purple: {
+      bg: 'bg-purple-500/10',
+      text: 'text-purple-400',
+      border: 'border-purple-500/20',
+      iconBg: 'bg-purple-500/20'
+    }
+  }[color];
+
+  return (
+    <div className={`relative overflow-hidden rounded-2xl p-6 bg-gray-800/50 backdrop-blur-xl hover:bg-gray-800/70 transition-all duration-300 hover:shadow-xl hover:shadow-black/20 ${colors.border}`}>
+      <div className="absolute top-4 right-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.iconBg}`}>
+          <Icon className={`w-6 h-6 ${colors.text}`} />
+        </div>
+      </div>
+      <div className="mt-8">
+        <h3 className="text-sm font-medium text-gray-400 mb-2">{title}</h3>
+        <div className="mt-2">
+          <span className={`text-3xl font-bold ${colors.text}`}>{value}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ProductCard = ({ product, onEdit, onDelete }) => {
   const mainImage = product.variants[0]?.images[0];

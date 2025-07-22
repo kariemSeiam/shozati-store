@@ -158,13 +158,8 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
     const { isAuthenticated, login } = useContext(AuthContext);
     const [showPhoneVerification, setShowPhoneVerification] = useState(false);
 
-    useEffect(() => {
-        if (onOpenLocation) {
-            setShowLocationInput(true);
-        } else if (onOpenLogin) {
-            setShowPhoneUpdate(true);
-        }
-    }, [onOpenLocation, onOpenLogin]);
+    // Removed useEffect that was automatically opening phone update
+    // These functions should only be called when user clicks on specific sections
 
     const defaultAddress = userInfo?.addresses?.[0];
 
@@ -302,12 +297,7 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
                       <Star className="absolute bottom-2 left-2 w-3 h-3 text-white/70 animate-pulse delay-300" />
                     </div>
     
-                    {/* Creative edit button */}
-                    <button className="absolute -bottom-1 right-0 p-2 rounded-full bg-white shadow-md 
-                      hover:shadow-lg transition-all duration-300 group-hover:scale-110 
-                      hover:bg-sky-50 border border-sky-100 group">
-                      <Edit2 className="w-3.5 h-3.5 text-sky-500 group-hover:rotate-12 transition-transform" />
-                    </button>
+                    {/* Edit button removed - no functionality implemented */}
                   </div>
     
                   {/* Creative text treatment */}
@@ -567,13 +557,13 @@ export const SupportSheet = ({ isOpen, onClose }) => {
     ];
 
     return (
-        <BottomSheet isOpen={isOpen} onClose={onClose} title="مركز المساعدة | شوزاتي" hideSupport={true}>
+        <BottomSheet isOpen={isOpen} onClose={onClose} title="مركز المساعدة | Trendy Corner" hideSupport={true}>
             <div className="p-6 space-y-8" dir="rtl">
                 {/* About Section */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-3 mb-4">
                         <Store className="w-6 h-6 text-rose-600" />
-                        <h4 className="text-lg font-bold text-sky-800">مرحباً بك في شوزاتي</h4>
+                        <h4 className="text-lg font-bold text-sky-800">مرحباً بك في Trendy Corner</h4>
                     </div>
                     <p className="text-slate-600 leading-relaxed">
                         نحن متخصصون في تقديم أرقى تشكيلات الأحذية العصرية بجودة استثنائية وأسعار منافسة.
