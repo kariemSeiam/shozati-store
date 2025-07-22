@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AuthContext } from './hooks';
 
 
-// Define animation variants outside component
+// Optimized animation variants for smooth performance
 const backdropVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 }
@@ -22,10 +22,9 @@ const sheetVariants = {
   visible: { 
     y: 0,
     transition: {
-      type: "spring",
-      damping: 25,
-      stiffness: 350,
-      mass: 0.8
+      type: "tween",
+      duration: 0.25,
+      ease: [0.25, 0.46, 0.45, 0.94]
     }
   }
 };
@@ -57,8 +56,8 @@ const SheetHeader = memo(({ onClose, title, hideSupport, onSupportClick }) => (
   </div>
 ));
 
-// Optimized BottomSheet Component
-export const BottomSheet = ({ 
+// High-performance BottomSheet Component
+export const BottomSheet = memo(({ 
   isOpen, 
   onClose, 
   title, 
@@ -68,7 +67,7 @@ export const BottomSheet = ({
 }) => {
   const [showSupport, setShowSupport] = useState(false);
   
-  // Memoize handlers
+  // Memoize handlers to prevent re-renders
   const handleSupportClick = useCallback(() => {
     setShowSupport(true);
   }, []);
@@ -79,64 +78,64 @@ export const BottomSheet = ({
     }
   }, [onClose]);
 
-  // Early return if not open
+  // Early return if not open to prevent unnecessary renders
   if (!isOpen) return null;
 
   return (
     <>
       <AnimatePresence mode="wait">
-        {isOpen && (
-          <motion.div
-            key="backdrop"
-            variants={backdropVariants}
+        <motion.div
+          key="backdrop"
+          variants={backdropVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-slate-900/20 z-50"
+          onClick={handleBackdropClick}
+          style={{ backdropFilter: 'blur(2px)' }}
+        >
+          <motion.div 
+            variants={sheetVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
-            transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-slate-900/20 backdrop-blur-[2px] z-50"
-            onClick={handleBackdropClick}
+            className="fixed inset-x-0 bottom-0"
+            style={{ willChange: 'transform' }}
           >
-            <motion.div 
-              key="sheet"
-              variants={sheetVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed inset-x-0 bottom-0 transform will-change-transform"
+            <div 
+              className="bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-xl"
+              style={{
+                maxHeight,
+                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)'
+              }}
             >
-              <div 
-                className="bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-xl border-t border-sky-100"
-                style={{
-                  maxHeight,
-                  background: 'linear-gradient(180deg, rgb(248, 250, 252) 0%, rgb(255, 255, 255) 100%)'
-                }}
-              >
-                {/* Drag Handle */}
-                <div className="absolute inset-x-0 top-0 h-7 flex justify-center items-start">
-                  <div className="w-12 h-1 rounded-full bg-sky-200 mt-3" />
-                </div>
-                
-                {/* Memoized Header */}
-                <SheetHeader 
-                  onClose={onClose}
-                  title={title}
-                  hideSupport={hideSupport}
-                  onSupportClick={handleSupportClick}
-                />
-
-                {/* Content with reduced motion */}
-                <div 
-                  className="overflow-y-auto overscroll-contain hide-scrollbar flex-1 bg-gradient-to-b from-transparent to-white"
-                >
-                  {children}
-                </div>
+              {/* Simplified drag handle */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-12 h-1 rounded-full bg-gray-300" />
               </div>
-            </motion.div>
+              
+              {/* Optimized Header */}
+              <SheetHeader 
+                onClose={onClose}
+                title={title}
+                hideSupport={hideSupport}
+                onSupportClick={handleSupportClick}
+              />
+
+              {/* Performance-optimized content area */}
+              <div 
+                className="overflow-y-auto overscroll-contain hide-scrollbar flex-1"
+                style={{ contain: 'layout style paint' }}
+              >
+                {children}
+              </div>
+            </div>
           </motion.div>
-        )}
+        </motion.div>
       </AnimatePresence>
 
-      {/* Support Sheet */}
+      {/* Support Sheet - only render when needed */}
       {showSupport && (
         <SupportSheet
           isOpen={showSupport}
@@ -145,7 +144,7 @@ export const BottomSheet = ({
       )}
     </>
   );
-};
+});
 
 
 // Profile Sheet Component with API Integration

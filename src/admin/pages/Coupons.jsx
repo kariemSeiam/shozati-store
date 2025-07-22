@@ -898,7 +898,8 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
     );
 };
 
-const Sheet = ({ isOpen, onClose, children }) => {
+// Optimized Sheet component for admin panels
+const Sheet = React.memo(({ isOpen, onClose, children }) => {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -910,26 +911,28 @@ const Sheet = ({ isOpen, onClose, children }) => {
         };
     }, [isOpen]);
 
+    if (!isOpen) return null;
+
     return (
-        <div
-            className={`fixed inset-0 z-50 transition-opacity duration-300
-                  ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        >
+        <div className="fixed inset-0 z-50">
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/60"
                 onClick={onClose}
+                style={{ backdropFilter: 'blur(4px)' }}
             />
             <div
-                className={`fixed inset-x-0 bottom-0 transform transition-transform 
-                    duration-500 ease-out
-                    ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+                className="fixed inset-x-0 bottom-0"
+                style={{
+                    transform: 'translateY(0)',
+                    willChange: 'transform'
+                }}
             >
-                <div className="bg-gradient-to-b from-gray-900/95 to-gray-900 backdrop-blur-xl 
-                        rounded-t-[2.5rem] border-t border-gray-800/50 shadow-2xl
+                <div className="bg-gradient-to-b from-secondary-900/95 to-secondary-900 
+                        rounded-t-[2.5rem] border-t border-secondary-800/50 shadow-2xl
                         max-h-[90vh] overflow-y-auto hide-scrollbar">
-                    {/* Handle */}
-                    <div className="absolute inset-x-0 top-0 h-7 flex justify-center items-start">
-                        <div className="w-12 h-1 rounded-full bg-gray-700/50 mt-3" />
+                    {/* Simplified Handle */}
+                    <div className="flex justify-center pt-3 pb-1">
+                        <div className="w-12 h-1 rounded-full bg-secondary-700/50" />
                     </div>
 
                     {children}
@@ -937,7 +940,7 @@ const Sheet = ({ isOpen, onClose, children }) => {
             </div>
         </div>
     );
-};
+});
 
 const LoadingState = () => (
     <div className="flex items-center justify-center py-12">

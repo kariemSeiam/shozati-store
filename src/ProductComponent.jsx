@@ -849,7 +849,7 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
 
 ProductGrid.displayName = 'ProductGrid';
 
-// Optimized Product Sheet component with better image handling
+// High-performance Product Sheet component
 export const ProductSheet = memo(({
     product,
     isOpen,

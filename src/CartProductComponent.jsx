@@ -21,11 +21,12 @@ const formatCurrency = (amount) => {
 };
 
 
-const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
+// Optimized CartItem with reduced animations
+const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleQuantityChange = (newQuantity) => {
+  const handleQuantityChange = useCallback((newQuantity) => {
     setIsUpdating(true);
     if (newQuantity < 1) {
       setShowConfirm(true);
@@ -33,65 +34,53 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
     }
     onUpdateQuantity(item.cartItemId, newQuantity);
     setTimeout(() => setIsUpdating(false), 300);
-  };
+  }, [item.cartItemId, onUpdateQuantity]);
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     if (showConfirm) {
       onRemove(item.cartItemId);
       setShowConfirm(false);
     } else {
       setShowConfirm(true);
     }
-  };
+  }, [showConfirm, item.cartItemId, onRemove]);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+    <div
       className="group relative card p-3 sm:p-4 
-                transition-all duration-300"
+                transition-all duration-200"
       dir="rtl"
     >
-      {/* Delete Confirmation Overlay */}
-      <AnimatePresence>
-        {showConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 rounded-2xl 
-                      bg-white/95 backdrop-blur-sm
-                      flex items-center justify-center"
-          >
-            <div className="flex flex-col items-center gap-3 p-4 text-center">
-              <AlertCircle className="w-8 h-8 text-red-500" />
-              <p className="text-slate-800 font-medium">هل تريد حذف هذا المنتج؟</p>
-              <div className="flex gap-2 mt-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleRemove}
-                  className="px-4 py-2 bg-rose-500 text-white rounded-xl
-                            font-medium hover:bg-rose-600 
-                            transition-colors duration-200"
-                >
-                  تأكيد الحذف
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowConfirm(false)}
-                  className="btn-secondary"
-                >
-                  إلغاء
-                </motion.button>
-              </div>
+      {/* Optimized Delete Confirmation Overlay */}
+      {showConfirm && (
+        <div
+          className="absolute inset-0 z-20 rounded-2xl 
+                    bg-white/95 backdrop-blur-sm
+                    flex items-center justify-center
+                    transition-opacity duration-200"
+        >
+          <div className="flex flex-col items-center gap-3 p-4 text-center">
+            <AlertCircle className="w-8 h-8 text-red-500" />
+            <p className="text-slate-800 font-medium">هل تريد حذف هذا المنتج؟</p>
+            <div className="flex gap-2 mt-2">
+              <button
+                onClick={handleRemove}
+                className="px-4 py-2 bg-rose-500 text-white rounded-xl
+                          font-medium hover:bg-rose-600 
+                          transition-colors duration-200"
+              >
+                تأكيد الحذف
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="btn-secondary"
+              >
+                إلغاء
+              </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
 
       {/* Update Indicator */}
       <AnimatePresence>
@@ -240,9 +229,9 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
-};
+});
 const CouponInput = ({ isProcessing, onApplyCoupon }) => {
   const [couponCode, setCouponCode] = useState('');
   const inputRef = useRef(null);
