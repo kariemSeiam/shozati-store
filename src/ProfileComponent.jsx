@@ -11,19 +11,23 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AuthContext } from './hooks';
 
 
-// Optimized animation variants for smooth performance
+// Ultra-optimized animation variants for maximum performance
 const backdropVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1 }
+  visible: { opacity: 1, transition: { duration: 0.2, ease: "easeOut" } },
+  exit: { opacity: 0, transition: { duration: 0.15, ease: "easeIn" } }
 };
 
 const sheetVariants = {
-  hidden: { y: '100%' },
+  hidden: { 
+    y: '100%',
+    transition: { duration: 0.15, ease: [0.4, 0, 1, 1] }
+  },
   visible: { 
     y: 0,
     transition: {
       type: "tween",
-      duration: 0.25,
+      duration: 0.2,
       ease: [0.25, 0.46, 0.45, 0.94]
     }
   }
@@ -56,7 +60,7 @@ const SheetHeader = memo(({ onClose, title, hideSupport, onSupportClick }) => (
   </div>
 ));
 
-// High-performance BottomSheet Component
+// Ultra high-performance BottomSheet Component
 export const BottomSheet = memo(({ 
   isOpen, 
   onClose, 
@@ -66,6 +70,7 @@ export const BottomSheet = memo(({
   hideSupport = false
 }) => {
   const [showSupport, setShowSupport] = useState(false);
+  const sheetRef = useRef(null);
   
   // Memoize handlers to prevent re-renders
   const handleSupportClick = useCallback(() => {
@@ -77,6 +82,25 @@ export const BottomSheet = memo(({
       onClose();
     }
   }, [onClose]);
+
+  // Performance optimization: Prevent scroll on body when sheet is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = '0px'; // Prevent layout shift
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isOpen]);
+
+  // Memoize content to prevent unnecessary re-renders
+  const memoizedChildren = useMemo(() => children, [children]);
 
   // Early return if not open to prevent unnecessary renders
   if (!isOpen) return null;
@@ -90,10 +114,14 @@ export const BottomSheet = memo(({
           initial="hidden"
           animate="visible"
           exit="hidden"
-          transition={{ duration: 0.2 }}
           className="fixed inset-0 bg-slate-900/20 z-50"
           onClick={handleBackdropClick}
-          style={{ backdropFilter: 'blur(2px)' }}
+          style={{ 
+            backdropFilter: 'blur(1px)', // Reduced blur for better performance
+            WebkitBackdropFilter: 'blur(1px)',
+            willChange: 'opacity',
+            transform: 'translateZ(0)' // Force GPU acceleration
+          }}
         >
           <motion.div 
             variants={sheetVariants}
@@ -101,13 +129,19 @@ export const BottomSheet = memo(({
             animate="visible"
             exit="hidden"
             className="fixed inset-x-0 bottom-0"
-            style={{ willChange: 'transform' }}
+            style={{ 
+              willChange: 'transform',
+              transform: 'translateZ(0)', // Force GPU layer
+              backfaceVisibility: 'hidden' // Optimize 3D transforms
+            }}
           >
             <div 
               className="bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-xl"
               style={{
                 maxHeight,
-                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)'
+                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)',
+                transform: 'translateZ(0)', // Force hardware acceleration
+                isolation: 'isolate' // Create stacking context for better compositing
               }}
             >
               {/* Simplified drag handle */}
@@ -123,12 +157,17 @@ export const BottomSheet = memo(({
                 onSupportClick={handleSupportClick}
               />
 
-              {/* Performance-optimized content area */}
+              {/* Ultra performance-optimized content area */}
               <div 
+                ref={sheetRef}
                 className="overflow-y-auto overscroll-contain hide-scrollbar flex-1"
-                style={{ contain: 'layout style paint' }}
+                style={{ 
+                  contain: 'layout style paint size',
+                  contentVisibility: 'auto',
+                  willChange: 'scroll-position'
+                }}
               >
-                {children}
+                {memoizedChildren}
               </div>
             </div>
           </motion.div>
