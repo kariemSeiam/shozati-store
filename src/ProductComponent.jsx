@@ -26,38 +26,475 @@ const calculateDiscount = (basePrice, discountPrice) => {
     return Math.round(((basePrice - discountPrice) / basePrice) * 100);
 };
 
-// New image preloader utility
+// Advanced Image Loading System for High Performance
 const ImagePreloader = {
-    _cache: new Set(),
+    _cache: new Map(), // Use Map for better performance and size tracking
+    _loadingQueue: new Map(), // Track ongoing loads to prevent duplicates
+    _compressionCanvas: null, // Canvas for client-side compression
+    _maxCacheSize: 50, // Limit cache size to prevent memory issues
+    _compressionQuality: 0.85, // Compression quality for large images
+    _targetMaxWidth: 800, // Maximum width for compressed images
+    _targetMaxHeight: 800, // Maximum height for compressed images
     
-    // Preload a single image and return a promise
-    preload(src) {
-        if (!src || this._cache.has(src)) return Promise.resolve();
+    // Initialize compression canvas
+    _initCanvas() {
+        if (!this._compressionCanvas) {
+            this._compressionCanvas = document.createElement('canvas');
+        }
+        return this._compressionCanvas;
+    },
+
+    // Detect optimal image format support
+    _detectFormatSupport() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
         
+        return {
+            webp: canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0,
+            avif: canvas.toDataURL('image/avif').indexOf('data:image/avif') === 0
+        };
+    },
+
+    // Get optimal image URL with format conversion
+    _getOptimalImageUrl(src, targetWidth, targetHeight) {
+        if (!src) return src;
+        
+        // If it's already a data URL, return as is
+        if (src.startsWith('data:')) return src;
+        
+        const formatSupport = this._detectFormatSupport();
+        const url = new URL(src, window.location.href);
+        
+        // Add compression parameters if the server supports it
+        if (targetWidth) url.searchParams.set('w', targetWidth);
+        if (targetHeight) url.searchParams.set('h', targetHeight);
+        
+        // Try modern formats first
+        if (formatSupport.avif) {
+            url.searchParams.set('format', 'avif');
+        } else if (formatSupport.webp) {
+            url.searchParams.set('format', 'webp');
+        }
+        
+        return url.toString();
+    },
+
+    // Compress image on client side for very large images
+    async _compressImage(img, quality = this._compressionQuality) {
+        const canvas = this._initCanvas();
+        const ctx = canvas.getContext('2d');
+        
+        // Calculate optimal dimensions
+        let { width, height } = img;
+        const aspectRatio = width / height;
+        
+        if (width > this._targetMaxWidth) {
+            width = this._targetMaxWidth;
+            height = width / aspectRatio;
+        }
+        
+        if (height > this._targetMaxHeight) {
+            height = this._targetMaxHeight;
+            width = height * aspectRatio;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Enable image smoothing for better quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        return new Promise((resolve) => {
+            canvas.toBlob(resolve, 'image/webp', quality);
+        });
+    },
+
+    // Progressive image loading with placeholder
+    async _createProgressiveImage(src) {
+        // First load a tiny placeholder (low quality)
+        const placeholderSrc = this._getOptimalImageUrl(src, 50, 50);
+        const placeholder = await this._loadImage(placeholderSrc);
+        
+        // Then load the full quality image
+        const fullImage = await this._loadImage(src);
+        
+        return { placeholder, fullImage };
+    },
+
+    // Core image loading with error handling and retry
+    _loadImage(src, retries = 3) {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            img.onload = () => {
-                this._cache.add(src);
-                resolve(src);
+            img.crossOrigin = 'anonymous'; // Enable cross-origin for compression
+            
+            const handleLoad = async () => {
+                try {
+                    // Check if image is very large and needs compression
+                    const fileSize = this._estimateImageSize(img);
+                    
+                    if (fileSize > 1024 * 1024) { // If estimated > 1MB
+                        const compressedBlob = await this._compressImage(img);
+                        const compressedUrl = URL.createObjectURL(compressedBlob);
+                        resolve({ 
+                            url: compressedUrl, 
+                            original: src, 
+                            compressed: true,
+                            size: compressedBlob.size 
+                        });
+                    } else {
+                        resolve({ 
+                            url: src, 
+                            original: src, 
+                            compressed: false,
+                            size: fileSize 
+                        });
+                    }
+                } catch (error) {
+                    // If compression fails, return original
+                    resolve({ 
+                        url: src, 
+                        original: src, 
+                        compressed: false,
+                        size: this._estimateImageSize(img)
+                    });
+                }
             };
-            img.onerror = reject;
+            
+            const handleError = () => {
+                if (retries > 0) {
+                    // Retry with exponential backoff
+                    setTimeout(() => {
+                        this._loadImage(src, retries - 1).then(resolve).catch(reject);
+                    }, (4 - retries) * 1000);
+                } else {
+                    reject(new Error(`Failed to load image: ${src}`));
+                }
+            };
+            
+            img.onload = handleLoad;
+            img.onerror = handleError;
             img.src = src;
         });
     },
-    
-    // Simplified batch preload for better performance
-    preloadBatch(sources = [], priority = []) {
+
+    // Estimate image file size based on dimensions
+    _estimateImageSize(img) {
+        // Rough estimation: width * height * 3 bytes (RGB)
+        return img.naturalWidth * img.naturalHeight * 3;
+    },
+
+    // Manage cache size to prevent memory issues
+    _manageCacheSize() {
+        if (this._cache.size > this._maxCacheSize) {
+            // Remove oldest entries
+            const entries = Array.from(this._cache.entries());
+            const toRemove = entries.slice(0, this._cache.size - this._maxCacheSize);
+            
+            toRemove.forEach(([key, value]) => {
+                // Clean up blob URLs to prevent memory leaks
+                if (value.compressed && value.url.startsWith('blob:')) {
+                    URL.revokeObjectURL(value.url);
+                }
+                this._cache.delete(key);
+            });
+        }
+    },
+
+    // Enhanced preload with progressive loading and smart caching
+    async preload(src, options = {}) {
+        if (!src) return Promise.resolve();
+        
+        const cacheKey = `${src}_${options.targetWidth || ''}_${options.targetHeight || ''}`;
+        
+        // Return cached result
+        if (this._cache.has(cacheKey)) {
+            return Promise.resolve(this._cache.get(cacheKey));
+        }
+        
+        // Return ongoing load promise
+        if (this._loadingQueue.has(cacheKey)) {
+            return this._loadingQueue.get(cacheKey);
+        }
+        
+        // Start new load
+        const loadPromise = this._loadImage(
+            this._getOptimalImageUrl(src, options.targetWidth, options.targetHeight)
+        ).then(result => {
+            this._cache.set(cacheKey, {
+                ...result,
+                timestamp: Date.now()
+            });
+            this._manageCacheSize();
+            this._loadingQueue.delete(cacheKey);
+            return result;
+        }).catch(error => {
+            this._loadingQueue.delete(cacheKey);
+            throw error;
+        });
+        
+        this._loadingQueue.set(cacheKey, loadPromise);
+        return loadPromise;
+    },
+
+    // Batch preload with intelligent prioritization
+    async preloadBatch(sources = [], priority = []) {
         if (!sources.length) return Promise.resolve();
         
-        // Only preload priority images to reduce network load
-        return Promise.all(priority.map(src => this.preload(src)));
+        // Prioritize images that are likely to be viewed first
+        const prioritized = [...new Set([...priority, ...sources])];
+        
+        // Load in chunks to avoid overwhelming the browser
+        const chunkSize = 3;
+        const chunks = [];
+        
+        for (let i = 0; i < prioritized.length; i += chunkSize) {
+            chunks.push(prioritized.slice(i, i + chunkSize));
+        }
+        
+        // Load chunks sequentially, but images within chunks in parallel
+        for (const chunk of chunks) {
+            await Promise.allSettled(
+                chunk.map(src => this.preload(src).catch(() => null))
+            );
+        }
     },
-    
-    // Check if an image is already loaded
-    isLoaded(src) {
-        return this._cache.has(src);
+
+    // Check if image is loaded and get cached version
+    getCached(src, options = {}) {
+        const cacheKey = `${src}_${options.targetWidth || ''}_${options.targetHeight || ''}`;
+        return this._cache.get(cacheKey);
+    },
+
+    // Check if image is currently loading
+    isLoading(src, options = {}) {
+        const cacheKey = `${src}_${options.targetWidth || ''}_${options.targetHeight || ''}`;
+        return this._loadingQueue.has(cacheKey);
+    },
+
+    // Clear old cache entries
+    clearCache() {
+        this._cache.forEach(value => {
+            if (value.compressed && value.url.startsWith('blob:')) {
+                URL.revokeObjectURL(value.url);
+            }
+        });
+        this._cache.clear();
+        this._loadingQueue.clear();
     }
 };
+
+// Enhanced LazyImage component with progressive loading
+const LazyImage = memo(({ 
+    src, 
+    alt, 
+    className, 
+    onLoad, 
+    fallback = null, 
+    loadingClass = "",
+    targetWidth,
+    targetHeight,
+    priority = false
+}) => {
+    const [loadState, setLoadState] = useState({
+        isLoading: true,
+        error: false,
+        placeholder: null,
+        finalImage: null
+    });
+    const imgRef = useRef(null);
+    const observerRef = useRef(null);
+    const loadTimeoutRef = useRef(null);
+    
+    // Memoize cache key for performance
+    const cacheKey = useMemo(() => 
+        `${src}_${targetWidth || ''}_${targetHeight || ''}`, 
+        [src, targetWidth, targetHeight]
+    );
+
+    // Check if image is already cached
+    useEffect(() => {
+        const cached = ImagePreloader.getCached(src, { targetWidth, targetHeight });
+        if (cached) {
+            setLoadState({
+                isLoading: false,
+                error: false,
+                placeholder: null,
+                finalImage: cached.url
+            });
+            if (onLoad) onLoad();
+        } else {
+            setLoadState(prev => ({ ...prev, isLoading: true, error: false }));
+        }
+    }, [src, targetWidth, targetHeight, onLoad]);
+
+    // Progressive loading handler
+    const handleProgressiveLoad = useCallback(async () => {
+        try {
+            // Load optimized image
+            const result = await ImagePreloader.preload(src, { targetWidth, targetHeight });
+            
+            setLoadState({
+                isLoading: false,
+                error: false,
+                placeholder: null,
+                finalImage: result.url
+            });
+            
+            if (onLoad) onLoad();
+        } catch (error) {
+            console.warn('Image load failed:', error);
+            setLoadState(prev => ({
+                ...prev,
+                isLoading: false,
+                error: true
+            }));
+        }
+    }, [src, targetWidth, targetHeight, onLoad]);
+
+    // Enhanced intersection observer for lazy loading
+    useEffect(() => {
+        const element = imgRef.current;
+        if (!element) return;
+
+        // If priority image, load immediately
+        if (priority) {
+            handleProgressiveLoad();
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    // Delay loading slightly to batch multiple images
+                    loadTimeoutRef.current = setTimeout(handleProgressiveLoad, 100);
+                    observer.disconnect();
+                }
+            },
+            { 
+                threshold: 0.1, 
+                rootMargin: '300px' // Increased for better UX
+            }
+        );
+
+        observer.observe(element);
+        observerRef.current = observer;
+
+        return () => {
+            observer.disconnect();
+            if (loadTimeoutRef.current) {
+                clearTimeout(loadTimeoutRef.current);
+            }
+        };
+    }, [priority, handleProgressiveLoad]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+            if (loadTimeoutRef.current) {
+                clearTimeout(loadTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    return (
+        <div className={`relative ${className}`} ref={imgRef}>
+            {/* Progressive loading states */}
+            {loadState.isLoading && (
+                <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 ${loadingClass}`}>
+                    <div className="relative">
+                        <div className="w-12 h-12 border-3 border-sky-200 border-t-sky-500 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 w-12 h-12 border-3 border-transparent border-t-sky-300 rounded-full animate-spin" 
+                             style={{ animationDirection: 'reverse', animationDuration: '0.75s' }}></div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Final image */}
+            {loadState.finalImage && (
+                <img
+                    src={loadState.finalImage}
+                    alt={alt}
+                    className={`w-full h-full object-cover transition-all duration-500 ${
+                        loadState.isLoading ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+                    }`}
+                    style={{
+                        contentVisibility: 'auto',
+                        containIntrinsicSize: '300px 300px'
+                    }}
+                    loading={priority ? 'eager' : 'lazy'}
+                    decoding="async"
+                />
+            )}
+            
+            {/* Error state */}
+            {loadState.error && (
+                fallback || (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="text-center">
+                            <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gray-300 flex items-center justify-center">
+                                <span className="text-gray-500 text-xl">🖼️</span>
+                            </div>
+                            <div className="text-gray-500 text-sm">صورة غير متوفرة</div>
+                        </div>
+                    </div>
+                )
+            )}
+        </div>
+    );
+});
+
+LazyImage.displayName = 'LazyImage';
+
+// Global cache management for optimal memory usage
+if (typeof window !== 'undefined') {
+    // Clean up cache when memory pressure is detected
+    const handleMemoryWarning = () => {
+        console.log('Memory pressure detected, cleaning image cache...');
+        ImagePreloader.clearCache();
+    };
+
+    // Clean up cache on page visibility change (user switched tabs)
+    const handleVisibilityChange = () => {
+        if (document.hidden) {
+            // Clean up old cache entries when tab becomes hidden
+            setTimeout(() => {
+                const oldEntries = Array.from(ImagePreloader._cache.entries())
+                    .filter(([_, value]) => Date.now() - value.timestamp > 300000); // 5 minutes old
+                
+                oldEntries.forEach(([key, value]) => {
+                    if (value.compressed && value.url.startsWith('blob:')) {
+                        URL.revokeObjectURL(value.url);
+                    }
+                    ImagePreloader._cache.delete(key);
+                });
+            }, 5000); // Clean up after 5 seconds of being hidden
+        }
+    };
+
+    // Set up event listeners
+    window.addEventListener('beforeunload', handleMemoryWarning);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Memory pressure events (Chrome)
+    if ('memory' in performance) {
+        const checkMemory = () => {
+            const memInfo = performance.memory;
+            if (memInfo.usedJSHeapSize > memInfo.jsHeapSizeLimit * 0.9) {
+                handleMemoryWarning();
+            }
+        };
+        
+        setInterval(checkMemory, 30000); // Check every 30 seconds
+    }
+}
 
 
 export const ColorSelector = memo(({
@@ -72,11 +509,13 @@ export const ColorSelector = memo(({
     const visibleVariants = isExpanded ? variants : variants.slice(0, maxVisible);
     const remainingCount = variants.length - maxVisible;
 
-    // Preload the first image of each variant to ensure smooth color switching
+    // Enhanced preload with intelligent sizing for variant switching
     useEffect(() => {
-        // Extract first image from each variant
+        // Extract first image from each variant with optimized dimensions
         const imagesToPreload = variants.map(variant => variant.images[0]);
-        ImagePreloader.preloadBatch(imagesToPreload, [selectedVariant?.images[0]]);
+        const priorityImages = selectedVariant?.images[0] ? [selectedVariant.images[0]] : [];
+        
+        ImagePreloader.preloadBatch(imagesToPreload, priorityImages);
     }, [variants, selectedVariant]);
 
     return (
@@ -304,81 +743,7 @@ const Badges = memo(({ rating, tag, tagColor }) => {
 
 Badges.displayName = 'Badges';
 
-// Optimized LazyImage component with loading state management
-const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingClass = "" }) => {
-    const [isLoading, setIsLoading] = useState(!ImagePreloader.isLoaded(src));
-    const [error, setError] = useState(false);
-    const imgRef = useRef(null);
-    
-    useEffect(() => {
-        setIsLoading(!ImagePreloader.isLoaded(src));
-        setError(false);
-        
-        const handleLoad = () => {
-            setIsLoading(false);
-            if (onLoad) onLoad();
-        };
-        
-        const handleError = () => {
-            setIsLoading(false);
-            setError(true);
-        };
-        
-        const imgEl = imgRef.current;
-        if (imgEl) {
-            imgEl.addEventListener('load', handleLoad);
-            imgEl.addEventListener('error', handleError);
-            
-            return () => {
-                imgEl.removeEventListener('load', handleLoad);
-                imgEl.removeEventListener('error', handleError);
-            };
-        }
-    }, [src, onLoad]);
-    
-    // Use intersection observer for lazy loading
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    ImagePreloader.preload(src)
-                        .then(() => setIsLoading(false))
-                        .catch(() => setError(true));
-                    observer.disconnect();
-                }
-            },
-            { threshold: 0.1, rootMargin: '200px' }
-        );
-        
-        if (imgRef.current) {
-            observer.observe(imgRef.current);
-        }
-        
-        return () => observer.disconnect();
-    }, [src]);
-    
-    return (
-        <div className={`relative ${className}`}>
-            {isLoading && (
-                <div className={`absolute inset-0 flex items-center justify-center bg-gray-100/50 ${loadingClass}`}>
-                    <div className="w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-            )}
-            
-            <img
-                ref={imgRef}
-                src={src}
-                alt={alt}
-                className={`w-full h-full object-cover ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-                loading="lazy"
-            />
-            
-            {error && fallback}
-        </div>
-    );
-});
 
-LazyImage.displayName = 'LazyImage';
 
 // Optimized ProductCard component
 export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => {
@@ -396,23 +761,34 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     
     const preloaderTimeoutRef = useRef(null);
     
-    // Enhanced image preloading strategy
+    // Ultra-optimized image preloading strategy for large images
     useEffect(() => {
-        // Preload the current image immediately
+        // Define target dimensions based on display context
+        const targetWidth = 400; // ProductCard display size
+        const targetHeight = 500; // Aspect ratio optimized
+        
         const currentImage = selectedVariant.images[currentImageIndex];
-        ImagePreloader.preload(currentImage);
+        
+        // Preload current image with high priority and optimized dimensions
+        ImagePreloader.preload(currentImage, { targetWidth, targetHeight });
         
         // Clear any existing timeout to prevent race conditions
         if (preloaderTimeoutRef.current) {
             clearTimeout(preloaderTimeoutRef.current);
         }
         
-        // Preload next image with a small delay to prioritize current image
+        // Intelligent batch preloading of related images
         if (selectedVariant.images.length > 1) {
-            const nextIndex = (currentImageIndex + 1) % selectedVariant.images.length;
-            preloaderTimeoutRef.current = setTimeout(() => {
-                ImagePreloader.preload(selectedVariant.images[nextIndex]);
-            }, 300);
+            preloaderTimeoutRef.current = setTimeout(async () => {
+                const imagesToPreload = selectedVariant.images.slice(1, 4); // Next 3 images
+                const currentImageAsPriority = [currentImage];
+                
+                // Batch preload with compression for performance
+                await ImagePreloader.preloadBatch(
+                    imagesToPreload, 
+                    currentImageAsPriority
+                );
+            }, 500); // Increased delay to prioritize current image rendering
         }
         
         return () => {
@@ -459,23 +835,28 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
         setCurrentImageIndex(newIndex);
     }, [currentImageIndex, selectedVariant.images.length]);
     
-    const handleVariantSelect = useCallback((variant) => {
+    const handleVariantSelect = useCallback(async (variant) => {
         if (variant.id === selectedVariant.id) return;
         
         setIsChangingVariant(true);
-        // Preload the first image of the new variant
-        ImagePreloader.preload(variant.images[0])
-            .then(() => {
-                setSelectedVariant(variant);
-                setCurrentImageIndex(0);
-                setTimeout(() => setIsChangingVariant(false), 300);
-            })
-            .catch(() => {
-                // Still switch even if preload fails
-                setSelectedVariant(variant);
-                setCurrentImageIndex(0);
-                setTimeout(() => setIsChangingVariant(false), 300);
+        
+        try {
+            // Preload the first image of the new variant with optimized dimensions
+            await ImagePreloader.preload(variant.images[0], { 
+                targetWidth: 400, 
+                targetHeight: 500 
             });
+            
+            setSelectedVariant(variant);
+            setCurrentImageIndex(0);
+            setTimeout(() => setIsChangingVariant(false), 200);
+        } catch (error) {
+            // Still switch even if preload fails
+            console.warn('Variant image preload failed:', error);
+            setSelectedVariant(variant);
+            setCurrentImageIndex(0);
+            setTimeout(() => setIsChangingVariant(false), 200);
+        }
     }, [selectedVariant]);
 
     // Using CSS property will-change to hint the browser about animations
@@ -530,6 +911,9 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                     className="w-full h-full"
                                     onLoad={() => handleImageLoad(selectedVariant.images[currentImageIndex])}
                                     loadingClass="bg-gray-100/80"
+                                    targetWidth={400}
+                                    targetHeight={500}
+                                    priority={currentImageIndex === 0} // First image loads with priority
                                     fallback={
                                         <div className="w-full h-full flex items-center justify-center bg-gray-100">
                                             <div className="text-gray-400">صورة غير متوفرة</div>
@@ -994,6 +1378,9 @@ export const ProductSheet = memo(({
                                         className="w-full h-full cursor-zoom-in"
                                         onLoad={handleImageLoad}
                                         loadingClass="bg-gray-100/80 backdrop-blur-sm"
+                                        targetWidth={600}
+                                        targetHeight={600}
+                                        priority={true} // Gallery images should load with priority
                                         fallback={
                                             <div className="w-full h-full flex items-center justify-center bg-gray-100">
                                                 <div className="text-gray-400">صورة غير متوفرة</div>
