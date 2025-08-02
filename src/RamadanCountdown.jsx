@@ -26,10 +26,10 @@ const MemoizedMoon = memo(({ size = 20 }) => (
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      fill="rgba(14, 165, 233, 0.1)"
-      className="text-sky-500"
+      fill="rgba(59, 130, 246, 0.1)"
+      className="text-primary-500"
     />
-    <circle cx="12" cy="12" r="2" fill="currentColor" className="text-sky-600" />
+                  <circle cx="12" cy="12" r="2" fill="currentColor" className="text-primary-600" />
   </motion.svg>
 ));
 
@@ -58,8 +58,8 @@ const MemoizedStar = memo(({ size = 12, delay = 0, className = "" }) => (
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      fill="rgba(14, 165, 233, 0.1)"
-      className="text-sky-400"
+      fill="rgba(59, 130, 246, 0.1)"
+      className="text-primary-400"
     />
   </motion.svg>
 ));
@@ -120,10 +120,10 @@ const RamadanToEidProgress = () => {
           }}
           className="w-full h-full"
           style={{
-            backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.2) 0%, transparent 70%),
-              linear-gradient(45deg, rgba(56, 189, 248, 0.1) 0%, transparent 100%)
-            `
+                          backgroundImage: `
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 70%),
+                linear-gradient(45deg, rgba(245, 158, 11, 0.1) 0%, transparent 100%)
+              `
           }}
         />
       </div>
@@ -132,13 +132,13 @@ const RamadanToEidProgress = () => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="h-12 rounded-xl border border-sky-200 relative overflow-hidden shadow-sm"
+        className="h-12 rounded-xl border border-primary-200 relative overflow-hidden shadow-sm"
         style={{
           background: `
             linear-gradient(90deg, 
-              rgba(14, 165, 233, 0.03) 0%, 
-              rgba(56, 189, 248, 0.03) 50%,
-              rgba(14, 165, 233, 0.03) 100%
+              rgba(59, 130, 246, 0.03) 0%, 
+              rgba(245, 158, 11, 0.03) 50%,
+              rgba(59, 130, 246, 0.03) 100%
             )
           `,
           backdropFilter: 'blur(5px)'
@@ -164,13 +164,13 @@ const RamadanToEidProgress = () => {
                 }
               }}
             >
-              <div className="absolute inset-0 bg-sky-500/10 rounded-full blur-sm" />
+                              <div className="absolute inset-0 bg-primary-500/10 rounded-full blur-sm" />
               <MemoizedMoon size={18} />
             </motion.div>
             
             <div className="flex flex-col justify-center h-full">
               <div className="flex items-baseline">
-                <span className="text-xs font-semibold text-sky-600">
+                <span className="text-xs font-semibold text-primary-600">
                   {currentDay === totalDays ? "عيد مبارك" : `رمضان ${currentDay}`}
                 </span>
               </div>
@@ -180,9 +180,9 @@ const RamadanToEidProgress = () => {
           {/* Middle: Progress bar and days */}
           <div className="flex-grow mx-3 h-full relative flex items-center">
             {/* Progress line */}
-            <div className="h-1 bg-sky-100 rounded-full w-full absolute">
+                          <div className="h-1 bg-primary-100 rounded-full w-full absolute">
               <motion.div 
-                className="h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-full"
+                className="h-full bg-gradient-to-r from-primary-400 to-primary-500 rounded-full"
                 style={{ width: `${(currentDay / totalDays) * 100}%` }}
                 initial={{ width: 0 }}
                 animate={{ width: `${(currentDay / totalDays) * 100}%` }}
@@ -211,8 +211,8 @@ const RamadanToEidProgress = () => {
                   >
                     <motion.div
                       className={`w-1.5 h-1.5 rounded-full ${
-                        day.eid ? 'bg-gradient-to-r from-sky-500 to-sky-400' :
-                        day.completed ? 'bg-sky-500' : 'bg-sky-200'
+                                          day.eid ? 'bg-gradient-to-r from-primary-500 to-secondary-400' :
+                  day.completed ? 'bg-primary-500' : 'bg-primary-200'
                       }`}
                       style={{
                         boxShadow: day.current ? '0 0 5px rgba(14, 165, 233, 0.5)' : 'none'
@@ -234,7 +234,7 @@ const RamadanToEidProgress = () => {
                     )}
                     
                     {(day.eid || index % 10 === 0) && (
-                      <span className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-[8px] text-sky-600">
+                      <span className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-[8px] text-primary-600">
                         {day.day}
                       </span>
                     )}
@@ -261,7 +261,7 @@ const RamadanToEidProgress = () => {
                 exit={{ opacity: 0, y: -5 }}
                 className="text-xs"
               >
-                <span className="bg-gradient-to-r from-sky-600 to-sky-500 
+                <span className="bg-gradient-to-r from-primary-600 to-secondary-500 
                                bg-clip-text text-transparent font-medium">
                   {messages[messageIndex]}
                 </span>
@@ -269,12 +269,12 @@ const RamadanToEidProgress = () => {
             </AnimatePresence>
             
             {remainingDays > 0 ? (
-              <div className="flex items-baseline gap-1 bg-gradient-to-r from-sky-50 to-sky-100 
-                            px-2 py-0.5 rounded-md border border-sky-200">
-                <span className="text-xs font-bold text-sky-600">
+                          <div className="flex items-baseline gap-1 bg-gradient-to-r from-primary-50 to-secondary-100
+                       px-2 py-0.5 rounded-md border border-primary-200">
+                <span className="text-xs font-bold text-primary-600">
                   {remainingDays}
                 </span>
-                <span className="text-[10px] text-sky-500">
+                                  <span className="text-[10px] text-primary-500">
                   {remainingDays === 1 ? 'يوم' : 'أيام'}
                 </span>
               </div>
@@ -290,7 +290,7 @@ const RamadanToEidProgress = () => {
                   ease: "easeInOut"
                 }}
               >
-                <Gift size={18} className="text-sky-500" />
+                <Gift size={18} className="text-primary-500" />
               </motion.div>
             )}
           </div>
@@ -330,7 +330,7 @@ const RamadanToEidProgress = () => {
               ease: "easeInOut"
             }}
           >
-            <div className="w-4 h-4 rounded-full bg-sky-400/20 blur-sm" />
+                          <div className="w-4 h-4 rounded-full bg-primary-400/20 blur-sm" />
           </motion.div>
         )}
       </motion.div>
