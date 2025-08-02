@@ -36,11 +36,11 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
       className="relative p-3 rounded-2xl overflow-hidden group"
     >
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white 
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50/50 to-white 
                      backdrop-blur-xl transition-all duration-300" />
 
       {/* Premium Pattern */}
-      <div className="absolute inset-0 text-blue-500/10">
+      <div className="absolute inset-0 text-primary-500/10">
         <ButtonPattern />
       </div>
 
@@ -51,7 +51,7 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
           background: isHovered
             ? [
               'linear-gradient(45deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%)',
-              'linear-gradient(45deg, transparent 0%, rgba(59, 130, 246, 0.15) 100%)'
+              'linear-gradient(45deg, transparent 0%, rgba(245, 158, 11, 0.15) 100%)'
             ]
             : 'none'
         }}
@@ -65,7 +65,7 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
           boxShadow: isHovered
             ? [
               'inset 0 0 0 1px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(59, 130, 246, 0.1)',
-              'inset 0 0 0 1px rgba(59, 130, 246, 0.5), 0 4px 12px rgba(59, 130, 246, 0.2)',
+              'inset 0 0 0 1px rgba(245, 158, 11, 0.3), 0 4px 12px rgba(245, 158, 11, 0.1)',
             ]
             : 'none'
         }}
@@ -87,7 +87,7 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         className="relative"
       >
         <Icon className={`w-6 h-6 transition-all duration-300
-                       ${isHovered ? 'text-blue-500 filter drop-shadow-lg' : 'text-blue-600'}`} />
+                       ${isHovered ? 'text-primary-600 filter drop-shadow-lg' : 'text-primary-700'}`} />
       </motion.div>
 
       {/* Label Animation */}
@@ -99,7 +99,7 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 
-                         text-xs font-medium text-sky-600 whitespace-nowrap"
+                         text-xs font-medium text-primary-600 whitespace-nowrap"
             >
               {label}
             </motion.span>
@@ -125,7 +125,7 @@ const Logo = () => (
       />
       {/* Premium Glow Effect */}
       <motion.div
-        className="absolute -inset-2 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 
+        className="absolute -inset-2 bg-gradient-to-r from-primary-500/20 via-secondary-400/20 to-primary-500/20 
                    blur-xl opacity-0 rounded-full"
         animate={{
           opacity: [0, 0.6, 0],
@@ -183,8 +183,8 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
       className="sticky top-0 z-40"
     >
       {/* Premium Glass Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-50/95 via-white/90 to-sky-50/95 
-                    backdrop-blur-lg shadow-lg shadow-sky-100/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary-50/95 via-white/90 to-secondary-50/95 
+                    backdrop-blur-lg shadow-lg shadow-primary-100/50" />
 
       {/* Enhanced Content Layout */}
       <div className="relative px-4 py-2">
