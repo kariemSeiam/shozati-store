@@ -263,33 +263,33 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
               {/* Innovative Profile Header */}
               <div className="relative px-4 pt-8 pb-6 overflow-hidden">
                 {/* Decorative background elements */}
-                <div className="absolute inset-0 bg-gradient-to-b from-sky-50/80 to-white" />
-                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-sky-500/10 to-indigo-500/10 
+                <div className="absolute inset-0 bg-gradient-to-b from-primary-50/80 to-white" />
+                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 
                   transform -skew-y-6" />
-                <div className="absolute top-20 right-0 w-32 h-32 bg-gradient-to-br from-sky-400/20 to-transparent 
+                <div className="absolute top-20 right-0 w-32 h-32 bg-gradient-to-br from-primary-400/20 to-transparent 
                   rounded-full blur-2xl" />
-                <div className="absolute top-10 left-0 w-24 h-24 bg-gradient-to-br from-indigo-400/20 to-transparent 
+                <div className="absolute top-10 left-0 w-24 h-24 bg-gradient-to-br from-secondary-400/20 to-transparent 
                   rounded-full blur-xl" />
     
                 <div className="relative flex flex-col items-center">
                   {/* Innovative Avatar Container */}
                   <div className="relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-400 
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-secondary-400 
                       rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity" />
                     
                     {/* Orbital rings animation */}
-                    <div className="absolute inset-0 rounded-full border border-sky-200/40 
+                                          <div className="absolute inset-0 rounded-full border border-primary-200/40 
                       animate-[spin_8s_linear_infinite]" />
                     <div className="absolute inset-2 rounded-full border border-indigo-200/40 
                       animate-[spin_12s_linear_infinite_reverse]" />
                     
                     {/* Main avatar */}
-                    <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 via-blue-400 to-indigo-400 
-                      shadow-lg shadow-sky-200/50 flex items-center justify-center 
-                      ring-2 ring-white ring-offset-2 ring-offset-sky-50 transform transition-all duration-300 
+                                          <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary-400 via-primary-400 to-secondary-400
+                        shadow-lg shadow-primary-200/50 flex items-center justify-center
+                        ring-2 ring-white ring-offset-2 ring-offset-primary-50 transform transition-all duration-300 
                       group-hover:scale-105 overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-sky-600/10 via-transparent to-indigo-600/10" />
+                                              <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-transparent to-secondary-600/10" />
                       <User className="w-12 h-12 text-white/95 relative z-10" />
                       
                       {/* Sparkle effects */}
@@ -302,7 +302,7 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
     
                   {/* Creative text treatment */}
                   <div className="relative mt-4 text-center">
-                    <h3 className="text-xl font-bold bg-gradient-to-r from-slate-800 via-sky-700 to-slate-800 
+                                          <h3 className="text-xl font-bold bg-gradient-to-r from-slate-800 via-primary-700 to-slate-800 
                       bg-clip-text text-transparent">
                       {userInfo?.name || 'مستخدم جديد'}
                     </h3>
@@ -318,21 +318,21 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
                       onClick={stat.onClick}
                       className="group relative overflow-hidden rounded-xl p-3 
                         bg-white/80 backdrop-blur-sm border border-slate-100 shadow-md 
-                        hover:shadow-lg hover:border-sky-100 transition-all duration-300 
+                        hover:shadow-lg hover:border-primary-100 transition-all duration-300 
                         transform hover:-translate-y-0.5 active:translate-y-0"
                     >
                       {/* Decorative elements */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-sky-400/5 to-indigo-400/5 
+                                              <div className="absolute inset-0 bg-gradient-to-br from-primary-400/5 to-secondary-400/5 
                         opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r 
-                        from-sky-400 via-blue-400 to-indigo-400 scale-x-0 group-hover:scale-x-100 
+                                                  from-primary-400 via-primary-400 to-secondary-400 scale-x-0 group-hover:scale-x-100 
                         transition-transform duration-300 origin-left" />
                       
                       <div className="relative">
                         <div className="w-6 h-6 mx-auto mb-2 relative">
-                          <div className="absolute inset-0 bg-sky-100 rounded-full scale-0 
+                          <div className="absolute inset-0 bg-primary-100 rounded-full scale-0 
                             group-hover:scale-100 transition-transform duration-300" />
-                          <stat.icon className="w-full h-full text-sky-500 relative z-10 
+                          <stat.icon className="w-full h-full text-primary-500 relative z-10 
                             transform group-hover:scale-110 transition-transform duration-300" />
                         </div>
                         <p className="text-xs font-medium text-slate-600 mb-1">{stat.label}</p>
@@ -353,38 +353,38 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
                   <div
                     key={section.id}
                     className="group bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-slate-100
-                      hover:border-sky-100 hover:shadow-lg transition-all duration-300
+                                              hover:border-primary-100 hover:shadow-lg transition-all duration-300
                       relative overflow-hidden"
                   >
                     {/* Decorative background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-indigo-50 
+                                          <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-secondary-50 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-400/5 via-transparent to-indigo-400/5 
+                                          <div className="absolute inset-0 bg-gradient-to-br from-primary-400/5 via-transparent to-secondary-400/5 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     <div className="relative flex items-center justify-between">
                       <button
                         onClick={section.onEdit}
-                        className="p-2 rounded-lg bg-sky-50 hover:bg-sky-100
+                        className="p-2 rounded-lg bg-primary-50 hover:bg-primary-100
                           transition-all duration-300 group-hover:shadow-sm group"
                       >
-                        <Edit2 className="w-3.5 h-3.5 text-sky-500 group-hover:rotate-12 transition-transform" />
+                        <Edit2 className="w-3.5 h-3.5 text-primary-500 group-hover:rotate-12 transition-transform" />
                       </button>
     
                       <div className="flex items-center gap-3 text-right">
                         <div className="transform group-hover:translate-x-1 transition-transform duration-300">
                           <p className="text-xs font-medium text-slate-500 mb-1">{section.title}</p>
-                          <p className="text-sm font-bold text-slate-800 group-hover:text-sky-500
+                          <p className="text-sm font-bold text-slate-800 group-hover:text-primary-500
                             transition-colors">{section.value}</p>
                           {section.details && (
                             <p className="text-xs text-slate-400 mt-1">{section.details}</p>
                           )}
                         </div>
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-100 to-indigo-100 
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-secondary-100 
                           flex items-center justify-center group-hover:scale-105 transition-transform
                           shadow-sm group-hover:shadow-md relative overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
-                          <section.icon className="w-5 h-5 text-sky-500 relative z-10 
+                          <section.icon className="w-5 h-5 text-primary-500 relative z-10 
                             transform group-hover:rotate-12 transition-transform duration-300" />
                         </div>
                       </div>
@@ -397,18 +397,18 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
               <div className="relative p-4 space-y-3" dir="rtl">
                 <button
                   onClick={() => setShowSupport(true)}
-                  className="w-full bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 
+                  className="w-full bg-gradient-to-r from-primary-50 via-primary-50 to-secondary-50 
                     rounded-xl p-4 flex items-center justify-between group
                     hover:shadow-lg transition-all duration-300 relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-sky-100/50 to-indigo-100/50 
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-100/50 to-secondary-100/50 
                     opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="relative flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-100 to-indigo-100 
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-secondary-100 
                       flex items-center justify-center group-hover:scale-105 transition-transform
                       shadow-sm group-hover:shadow-md relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
-                      <HelpCircle className="w-5 h-5 text-sky-500 relative z-10 
+                                              <HelpCircle className="w-5 h-5 text-primary-500 relative z-10 
                         transform group-hover:rotate-12 transition-transform duration-300" />
                     </div>
                     <span className="font-bold text-base bg-gradient-to-br from-slate-800 to-slate-600 
@@ -494,7 +494,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
             icon: Star,
             title: 'جودة مضمونة',
             description: 'منتجات أصلية 100% مع ضمان الجودة',
-            color: 'bg-sky-100 text-sky-600'
+            color: 'bg-primary-100 text-primary-600'
         },
         {
             icon: Truck,
@@ -506,7 +506,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
             icon: Shield,
             title: 'ضمان الاسترجاع',
             description: 'استرجاع مجاني خلال 14 يوم',
-            color: 'bg-sky-100 text-sky-600'
+            color: 'bg-primary-100 text-primary-600'
         }
     ];
 
@@ -514,7 +514,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
         {
             name: 'Facebook',
             icon: Facebook,
-            color: 'bg-sky-100 text-sky-600',
+            color: 'bg-primary-100 text-primary-600',
             url: 'https://facebook.com/shozati'
         },
         {
@@ -545,7 +545,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
         {
             icon: Phone,
             label: 'اتصل بنا',
-            color: 'bg-sky-100 text-sky-600',
+            color: 'bg-primary-100 text-primary-600',
             onClick: handleCall
         },
         {
@@ -563,7 +563,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3 mb-4">
                         <Store className="w-6 h-6 text-rose-600" />
-                        <h4 className="text-lg font-bold text-sky-800">مرحباً بك في Trendy Corner</h4>
+                        <h4 className="text-lg font-bold text-primary-800">مرحباً بك في Trendy Corner</h4>
                     </div>
                     <p className="text-slate-600 leading-relaxed">
                         نحن متخصصون في تقديم أرقى تشكيلات الأحذية العصرية بجودة استثنائية وأسعار منافسة.
@@ -579,7 +579,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                             className={`${feature.color} rounded-xl p-4 space-y-2 shadow-sm`}
                         >
                             <feature.icon className="w-6 h-6" />
-                            <h5 className="font-bold text-sky-800">{feature.title}</h5>
+                            <h5 className="font-bold text-primary-800">{feature.title}</h5>
                             <p className="text-sm text-slate-600">{feature.description}</p>
                         </div>
                     ))}
@@ -595,7 +595,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                             hover:brightness-105 transition-all duration-300 shadow-sm hover:shadow-md`}
                         >
                             <action.icon className="w-6 h-6" />
-                            <span className="text-sm text-sky-800 text-center whitespace-nowrap">
+                            <span className="text-sm text-primary-800 text-center whitespace-nowrap">
                                 {action.label}
                             </span>
                         </button>
@@ -604,7 +604,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
 
                 {/* Social Links */}
                 <div className="space-y-4">
-                    <h4 className="font-bold text-sky-800">تابعنا على مواقع التواصل</h4>
+                    <h4 className="font-bold text-primary-800">تابعنا على مواقع التواصل</h4>
                     <div className="grid grid-cols-3 gap-3">
                         {socialLinks.map((social, index) => (
                             <a
@@ -616,7 +616,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                                 hover:brightness-105 transition-all duration-300 shadow-sm hover:shadow-md`}
                             >
                                 <social.icon className="w-6 h-6" />
-                                <span className="text-sm font-medium text-sky-800">{social.name}</span>
+                                <span className="text-sm font-medium text-primary-800">{social.name}</span>
                             </a>
                         ))}
                     </div>
@@ -627,7 +627,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                     <div className="flex items-center gap-3">
                         <Clock className="w-6 h-6 text-rose-600" />
                         <div>
-                            <h4 className="font-bold text-sky-800 mb-1">مواعيد العمل</h4>
+                            <h4 className="font-bold text-primary-800 mb-1">مواعيد العمل</h4>
                             <p className="text-sm text-slate-600">
                                 طوال أيام الأسبوع
                                 <br />
@@ -680,10 +680,10 @@ export const NameInputSheet = ({ isOpen, onClose, onUpdate, initialName = '' }) 
                             placeholder="أدخل اسمك"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full bg-sky-50 text-sky-800 rounded-xl p-4 
-                                   text-right text-lg border border-sky-100
-                                   focus:ring-4 focus:ring-sky-500/20 focus:border-sky-500
-                                   placeholder-sky-400 transition-all duration-300"
+                                            className="w-full bg-primary-50 text-primary-800 rounded-xl p-4
+                         text-right text-lg border border-primary-100
+                         focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500
+                         placeholder-primary-400 transition-all duration-300"
                         />
                     </div>
                     <button
@@ -956,8 +956,8 @@ export const PhoneVerificationSheet = ({
                             uppercase tracking-wider disabled:opacity-50 
                             disabled:cursor-not-allowed transition-all duration-300 
                             transform hover:-translate-y-0.5 shadow-sm hover:shadow-md
-                            bg-gradient-to-r from-sky-500 to-sky-600 
-                            hover:from-sky-500 hover:to-sky-600"
+                                                      bg-gradient-to-r from-primary-500 to-primary-600
+                          hover:from-primary-500 hover:to-primary-600"
                     >
                         {isLoading || externalLoading ? (
                             <div className="flex items-center justify-center gap-2">
