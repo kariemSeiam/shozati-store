@@ -362,8 +362,8 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
                 <p className="text-gray-400 text-sm mb-8 max-w-md">{error}</p>
                 <button
                     onClick={() => fetchPlaces(1, true)}
-                    className="bg-blue-600 px-8 py-3 rounded-full hover:bg-blue-700 
-                   transition-all duration-300 shadow-lg shadow-blue-500/20"
+                                    className="bg-primary-600 px-8 py-3 rounded-full hover:bg-primary-700
+                         transition-all duration-300 shadow-lg shadow-primary-500/20"
                 >
                     إعادة المحاولة
                 </button>
@@ -402,8 +402,8 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
                        backdrop-blur-xl border border-gray-700/20 rounded-2xl p-6">
                         <div className="flex items-center gap-4">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20"></div>
-                                <Loader2 className="animate-spin text-blue-400 relative" size={24} />
+                                                <div className="absolute inset-0 bg-primary-500 blur-xl opacity-20"></div>
+                <Loader2 className="animate-spin text-primary-400 relative" size={24} />
                             </div>
                             <span className="text-lg">جاري التحميل...</span>
                         </div>
@@ -414,9 +414,9 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
             {!loading && places.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                     <div className="relative mb-8 animate-float">
-                        <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20"></div>
-                        <div className="relative bg-blue-500/10 p-6 rounded-full">
-                            <MessageCircle size={56} className="text-blue-400" />
+                                        <div className="absolute inset-0 bg-primary-500 blur-2xl opacity-20"></div>
+                <div className="relative bg-primary-500/10 p-6 rounded-full">
+                    <MessageCircle size={56} className="text-primary-400" />
                         </div>
                     </div>
                     <h3 className="text-xl font-medium mb-3">لا توجد نتائج</h3>
@@ -466,7 +466,7 @@ const CustomButton = ({
 }) => {
     const baseStyles = "w-full py-3 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
     const variants = {
-        primary: "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/20",
+        primary: "bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 shadow-lg shadow-primary-500/20",
         secondary: "bg-gray-800/50 hover:bg-gray-700/50"
     };
 
@@ -505,7 +505,7 @@ const CustomInput = ({
             disabled={disabled}
             className={`w-full bg-gray-800/50 border border-gray-700/30 
                    rounded-xl p-3 text-sm focus:ring-2 
-                   focus:ring-blue-500/50 transition-all
+                   focus:ring-primary-500/50 transition-all
                    placeholder:text-gray-600 disabled:opacity-50 ${className}`}
         />
     </div>
@@ -533,7 +533,7 @@ const CustomTextarea = ({
             disabled={disabled}
             className={`w-full bg-gray-800/50 border border-gray-700/30 
                    rounded-xl p-4 text-sm focus:ring-2 
-                   focus:ring-blue-500/50 transition-all h-32 
+                   focus:ring-primary-500/50 transition-all h-32 
                    resize-none placeholder:text-gray-600
                    disabled:opacity-50 ${className}`}
         />
