@@ -6,6 +6,13 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { useCustomers } from '../hooks';
+import {
+    AdminCard,
+    AdminButton,
+    AdminInput,
+    AdminStatCard,
+    ADMIN_COLORS
+} from '../components/DesignSystem';
 // Removed lodash import for performance - using native JS alternatives
 
 const Customers = () => {
@@ -168,23 +175,31 @@ const Customers = () => {
     }, [customers, filters]);
 
     return (
-        <div className="min-h-screen bg-secondary-900 pb-20">
+        <div className="min-h-screen bg-neutral-950 pb-20">
+            {/* Header for mobile */}
+            <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
+                <h1 className="text-xl font-bold text-white" dir="rtl">العملاء</h1>
+                <span className="text-sm text-neutral-400">
+                    {totalCustomers} عميل
+                </span>
+            </div>
+
             {/* Analytics Dashboard */}
             <div className="p-4 space-y-6 pt-0">
                 {/* Key Metrics */}
                 <div className="grid grid-cols-2 gap-4">
-                    <StatCard
+                    <AdminStatCard
                         title="إجمالي العملاء"
                         value={totalCustomers}
                         icon={Users}
-                        color="emerald"
+                        color="primary"
                     />
-                    <StatCard
+                    <AdminStatCard
                         title="عملاء جدد"
                         value={analytics?.orderFrequency.new.count || 0}
                         subtitle="آخر 30 يوم"
                         icon={Users}
-                        color="blue"
+                        color="success"
                     />
                 </div>
 
@@ -236,18 +251,14 @@ const Customers = () => {
             </div>
 
             {/* Search and Filters */}
-            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
+            <div className="sticky top-0 z-30 bg-neutral-950/95 backdrop-blur-sm p-4 space-y-4 border-b border-neutral-800/50">
                 <div className="relative">
-                    <input
+                    <AdminInput
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="ابحث برقم الهاتف أو العنوان..."
-                        className="w-full h-12 bg-gray-800/50 rounded-xl px-12 text-white
-                     border border-gray-700/50 focus:border-blue-500/50
-                     focus:ring-2 focus:ring-blue-500/50
-                     placeholder:text-gray-500 text-right"
-                        dir="rtl"
+                        className="pr-12"
                     />
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>

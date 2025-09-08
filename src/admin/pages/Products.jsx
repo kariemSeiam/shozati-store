@@ -6,7 +6,16 @@ import {
 } from 'lucide-react';
 import { useProducts } from '../hooks';
 import { ProductImageUpload, useProductImageUpload } from './ImgUpload';
-import { code } from 'framer-motion/client';
+import {
+  AdminCard,
+  AdminButton,
+  AdminInput,
+  AdminSelect,
+  AdminTextarea,
+  AdminStatCard,
+  AdminModal,
+  ADMIN_COLORS
+} from '../components/DesignSystem';
 
 // First, let's define our color options constant
 const COLOR_OPTIONS = [
@@ -124,107 +133,130 @@ const Products = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-900 pb-20" dir="rtl">
-      {/* Stats Grid */}
-      <div className="p-6 grid grid-cols-2 gap-6">
-        <StatCard
+    <div className="min-h-screen bg-neutral-950 pb-20" dir="rtl">
+      {/* Header for mobile */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
+        <h1 className="text-xl font-bold text-white">المنتجات</h1>
+        <AdminButton
+          onClick={() => setIsCreateModalOpen(true)}
+          variant="primary"
+          size="sm"
+        >
+          <Plus className="w-5 h-5" />
+        </AdminButton>
+      </div>
+
+      {/* Stats Grid - Mobile Optimized */}
+      <div className="p-4 md:p-6 grid grid-cols-2 gap-3 md:gap-6">
+        <AdminStatCard
           title="إجمالي المنتجات"
           value={stats.total}
           icon={Box}
-          color="blue"
+          color="primary"
         />
-        <StatCard
+        <AdminStatCard
           title="منتجات نشطة"
           value={stats.active}
           icon={Check}
-          color="emerald"
+          color="success"
         />
       </div>
 
-      {/* Actions Bar */}
-      <div className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-xl p-6 space-y-6 border-b border-gray-800/50 shadow-2xl shadow-black/20">
-        <div className="flex items-center justify-between gap-4"
-        >
-          <button
+      {/* Actions Bar - Mobile Optimized */}
+      <div className="sticky top-0 md:top-16 z-30 bg-neutral-950/95 backdrop-blur-xl p-4 md:p-6 
+                     space-y-4 md:space-y-6 border-b border-neutral-800/50 shadow-2xl shadow-black/20">
+
+        {/* Desktop Header and Actions */}
+        <div className="hidden md:flex items-center justify-between gap-4">
+          <AdminButton
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white 
-                     rounded-xl font-medium hover:bg-blue-600 transition-colors"
+            variant="primary"
           >
             <Plus className="w-5 h-5" />
             <span>إضافة منتج</span>
-          </button>
+          </AdminButton>
 
           <div className="flex items-center gap-2">
-            <button
+            <AdminButton
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-xl transition-colors
-                       ${viewMode === 'grid'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+              variant={viewMode === 'grid' ? 'primary' : 'secondary'}
+              size="sm"
             >
               <Grid className="w-5 h-5" />
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-xl transition-colors
-                       ${viewMode === 'list'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+              variant={viewMode === 'list' ? 'primary' : 'secondary'}
+              size="sm"
             >
               <List className="w-5 h-5" />
-            </button>
+            </AdminButton>
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={filters.search}
-              onChange={(e) => handleSearch(e.target.value)}
-              placeholder="ابحث عن منتج..."
-              className="w-full h-12 bg-gray-800 rounded-xl px-12 text-white
-                     border border-gray-700 focus:border-blue-500
-                     focus:ring-2 focus:ring-blue-500/50 text-right"
-              dir="rtl"
-            />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            {filters.search && (
-              <button
-                onClick={() => handleSearch('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full
-                       hover:bg-gray-700 transition-colors"
-              >
-                <X className="w-4 h-4 text-gray-400" />
-              </button>
-            )}
-          </div>
-
-          
+        {/* Search */}
+        <div className="relative">
+          <AdminInput
+            value={filters.search}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="ابحث عن منتج..."
+          />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none" />
+          {filters.search && (
+            <button
+              onClick={() => handleSearch('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full
+                       hover:bg-neutral-700/50 transition-colors"
+            >
+              <X className="w-4 h-4 text-neutral-400" />
+            </button>
+          )}
         </div>
 
         {/* Category Filter */}
         <div className="flex gap-2 overflow-x-auto hide-scrollbar py-2">
           {CATEGORIES.map(category => (
-            <button
+            <AdminButton
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm
-                       whitespace-nowrap transition-colors
-                       ${filters.category === category.id
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}
+              variant={filters.category === category.id ? 'primary' : 'ghost'}
+              size="sm"
+              className="whitespace-nowrap"
             >
               <category.icon className="w-4 h-4" />
               <span>{category.label}</span>
-            </button>
+            </AdminButton>
           ))}
+        </div>
+
+        {/* Mobile View Mode Toggle */}
+        <div className="md:hidden flex items-center justify-between">
+          <span className="text-sm text-neutral-400">
+            {products.length} منتج
+          </span>
+          <div className="flex items-center gap-2">
+            <AdminButton
+              onClick={() => setViewMode('grid')}
+              variant={viewMode === 'grid' ? 'primary' : 'secondary'}
+              size="sm"
+            >
+              <Grid className="w-5 h-5" />
+            </AdminButton>
+            <AdminButton
+              onClick={() => setViewMode('list')}
+              variant={viewMode === 'list' ? 'primary' : 'secondary'}
+              size="sm"
+            >
+              <List className="w-5 h-5" />
+            </AdminButton>
+          </div>
         </div>
       </div>
 
-      {/* Products Grid/List */}
-      <div className={`p-4 ${viewMode === 'grid' ? 'grid grid-cols-2 gap-4' : 'space-y-4'}`}>
+      {/* Products Grid/List - Mobile Responsive */}
+      <div className={`p-4 ${viewMode === 'grid'
+        ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4'
+        : 'space-y-3 md:space-y-4'}`}>
         {isLoading ? (
           <LoadingState />
         ) : error ? (
@@ -270,7 +302,7 @@ const Products = () => {
           onClose={() => setIsCreateModalOpen(false)}
           onSubmit={handleCreateProduct}
           uploadImages={uploadProductImages}
-          ediState ={isEditModalOpen}
+          ediState={isEditModalOpen}
         />
       )}
 
@@ -303,7 +335,7 @@ const Products = () => {
   );
 };
 
-const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = true }) => {
+const ProductModal = ({ product, onClose, onSubmit, uploadImages, ediState = true }) => {
 
   // Form initialization with default values 
   const initialFormState = {
@@ -562,23 +594,23 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-gray-900 rounded-2xl w-full max-w-3xl 
-                    max-h-[95vh] overflow-y-auto hide-scrollbar">
-        <form onSubmit={handleSubmit} className="space-y-6 p-6">
+      <div className="relative bg-neutral-900 rounded-xl md:rounded-2xl w-full max-w-full md:max-w-3xl 
+                    h-full md:max-h-[95vh] overflow-y-auto hide-scrollbar border border-neutral-700/50 backdrop-blur-xl">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 p-4 md:p-6">
           {/* Modal Header */}
-          <div className="flex justify-between items-center"
-          dir='ltr'>
+          <div className="flex justify-between items-center sticky top-0 bg-neutral-900 py-2 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-neutral-800/50"
+            dir='ltr'>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 hover:bg-gray-800 rounded-xl transition-colors"
+              className="p-2 hover:bg-neutral-800/50 rounded-xl transition-colors"
             >
-              <X className="w-6 h-6 text-gray-400" />
+              <X className="w-6 h-6 text-neutral-400" />
             </button>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-lg md:text-xl font-bold text-white" dir="rtl">
               {product ? 'تعديل منتج' : 'إضافة منتج'}
             </h2>
           </div>
@@ -614,7 +646,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
               error={errors.description}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="السعر الأساسي"
                 name="basePrice"
@@ -647,8 +679,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
           </div>
 
           <div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="العلامة (اختياري)"
                 name="tag"
@@ -676,7 +707,6 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
                 ]}
               />
             </div>
-
           </div>
 
           {/* Features Section */}
@@ -730,8 +760,8 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
                 key={variantIndex}
                 className="bg-gray-800/30 rounded-xl p-4 space-y-4"
               >
-                <div className="flex justify-between items-start pb-4">
-                  <div className="grid grid-cols-2 gap-4 flex-1">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 pb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
                     <Select
                       label="اللون"
                       value={variant.colorName}
@@ -756,7 +786,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
                       type="button"
                       onClick={() => removeVariant(variantIndex)}
                       className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                              hover:bg-red-500/20 transition-colors mr-4"
+                              hover:bg-red-500/20 transition-colors md:mr-4 self-start"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
@@ -764,17 +794,17 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
                 </div>
 
                 {ediState && (
-        <ProductImageUpload
-        variant={variant}
-        variantIndex={variantIndex}
-        onImageUpload={handleImageUpload}
-        onImageRemove={handleImageRemove}
-        isUploading={isUploading}
-        uploadProgress={uploadProgress}
-        error={uploadErrors[variantIndex]}
-      />
-      )}
-                
+                  <ProductImageUpload
+                    variant={variant}
+                    variantIndex={variantIndex}
+                    onImageUpload={handleImageUpload}
+                    onImageRemove={handleImageRemove}
+                    isUploading={isUploading}
+                    uploadProgress={uploadProgress}
+                    error={uploadErrors[variantIndex]}
+                  />
+                )}
+
 
                 {/* Sizes Section */}
                 <div className="space-y-4">
@@ -792,7 +822,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
 
                   <div className="space-y-3">
                     {variant.sizes.map((size, sizeIndex) => (
-                      <div key={sizeIndex} className="flex gap-4">
+                      <div key={sizeIndex} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <div className="flex-1">
                           <Input
                             placeholder="المقاس"
@@ -825,7 +855,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
                             type="button"
                             onClick={() => removeSize(variantIndex, sizeIndex)}
                             className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                                     hover:bg-red-500/20 transition-colors"
+                                     hover:bg-red-500/20 transition-colors self-start"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -846,36 +876,33 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages , ediState = tr
             </div>
           )}
 
-          {/* Submit Buttons */}
-          <div className="flex justify-end gap-4">
-            <button
+          {/* Submit Buttons - Mobile Fixed Bottom */}
+          <div className="sticky bottom-0 left-0 right-0 bg-neutral-900 border-t border-neutral-800/50 
+                         -mx-4 md:-mx-6 px-4 md:px-6 py-4 flex gap-3 md:gap-4">
+            <AdminButton
               type="button"
               onClick={onClose}
-              className="px-6 py-2 bg-gray-800 text-gray-400 rounded-xl
-                       hover:bg-gray-700 transition-colors"
+              variant="secondary"
+              className="flex-1 md:flex-none"
             >
               إلغاء
-            </button>
-            <button
+            </AdminButton>
+            <AdminButton
               type="submit"
               disabled={isSubmitting || isUploading}
-              className="px-6 py-2 bg-blue-500 text-white rounded-xl
-                       hover:bg-blue-600 transition-colors disabled:opacity-50
-                       disabled:cursor-not-allowed flex items-center gap-2"
+              variant="primary"
+              loading={isSubmitting}
+              className="flex-1 md:flex-none"
             >
               {isSubmitting ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white
-                                rounded-full animate-spin" />
-                  <span>جاري الحفظ...</span>
-                </>
+                <span>جاري الحفظ...</span>
               ) : (
                 <>
                   <Check className="w-5 h-5" />
                   <span>حفظ</span>
                 </>
               )}
-            </button>
+            </AdminButton>
           </div>
         </form>
       </div>
@@ -920,7 +947,7 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
                            transition-colors">
                 {product.name}
               </h3>
-              <p className="text-sm text-gray-400"dir='rtl'>
+              <p className="text-sm text-gray-400" dir='rtl'>
                 كود: {product.code}
               </p>
             </div>
@@ -1042,33 +1069,14 @@ const Input = React.forwardRef(({
   ...props
 }, ref) => {
   return (
-    <div className="space-y-1">
-      {label && (
-        <label className="block text-sm font-medium text-gray-400">
-          {label}
-        </label>
-      )}
-      <input
-        ref={ref}
-        type={type}
-        className={`w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                   border transition-colors duration-300
-                   placeholder:text-gray-500 text-right
-                   ${error
-            ? 'border-red-500/50 focus:border-red-500'
-            : 'border-gray-700/50 focus:border-blue-500'}
-                   ${type === 'color' ? 'h-12 p-1' : ''}
-                   ${className}`}
-        dir="rtl"
-        {...props}
-      />
-      {error && (
-        <div className="flex items-center gap-2 mt-1 text-red-500 text-sm">
-          <AlertCircle className="w-4 h-4" />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
+    <AdminInput
+      ref={ref}
+      label={label}
+      error={error}
+      type={type}
+      className={className}
+      {...props}
+    />
   );
 });
 
@@ -1081,30 +1089,12 @@ const Textarea = ({
   ...props
 }) => {
   return (
-    <div className="space-y-1">
-      {label && (
-        <label className="block text-sm font-medium text-gray-400">
-          {label}
-        </label>
-      )}
-      <textarea
-        className={`w-full h-32 bg-gray-800/50 rounded-xl p-4 text-white
-                   border transition-colors duration-300 resize-none text-right
-                   placeholder:text-gray-500
-                   ${error
-            ? 'border-red-500/50 focus:border-red-500'
-            : 'border-gray-700/50 focus:border-blue-500'}
-                   ${className}`}
-        dir="rtl"
-        {...props}
-      />
-      {error && (
-        <div className="flex items-center gap-2 mt-1 text-red-500 text-sm">
-          <AlertCircle className="w-4 h-4" />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
+    <AdminTextarea
+      label={label}
+      error={error}
+      className={className}
+      {...props}
+    />
   );
 };
 
@@ -1116,83 +1106,26 @@ const Select = ({
   ...props
 }) => {
   return (
-    <div className="space-y-1 ">
-      {label && (
-        <label className="block text-sm font-medium text-gray-400">
-          {label}
-        </label>
-      )}
-      <select
-        className={`w-full h-12 bg-gray-800/50 rounded-xl px-8 text-white
-                   border transition-colors duration-300 text-right
-                   ${error
-            ? 'border-red-500/50 focus:border-red-500'
-            : 'border-gray-700/50 focus:border-blue-500'}
-                   ${className}`}
-        dir="rtl"
-        {...props}
-      >
-        <option value="">اختر...</option>
-        {options.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
-      {error && (
-        <div className="flex items-center gap-2 mt-1 text-red-500 text-sm">
-          <AlertCircle className="w-4 h-4" />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
+    <AdminSelect
+      label={label}
+      error={error}
+      options={options}
+      className={className}
+      {...props}
+    />
   );
 };
 
 
-// Helper Components
-const StatCard = ({ title, value, icon: Icon, color }) => {
-  const colors = {
-    blue: {
-      bg: 'bg-blue-500/10',
-      text: 'text-blue-400',
-      border: 'border-blue-500/20',
-      iconBg: 'bg-blue-500/20'
-    },
-    emerald: {
-      bg: 'bg-emerald-500/10',
-      text: 'text-emerald-400',
-      border: 'border-emerald-500/20',
-      iconBg: 'bg-emerald-500/20'
-    },
-    amber: {
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
-      border: 'border-amber-500/20',
-      iconBg: 'bg-amber-500/20'
-    },
-    purple: {
-      bg: 'bg-purple-500/10',
-      text: 'text-purple-400',
-      border: 'border-purple-500/20',
-      iconBg: 'bg-purple-500/20'
-    }
-  }[color];
-
+// Helper Components (Using AdminStatCard from design system)
+const StatCard = ({ title, value, icon, color }) => {
   return (
-    <div className={`relative overflow-hidden rounded-2xl p-6 bg-gray-800/50 backdrop-blur-xl hover:bg-gray-800/70 transition-all duration-300 hover:shadow-xl hover:shadow-black/20 ${colors.border}`}>
-      <div className="absolute top-4 right-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.iconBg}`}>
-          <Icon className={`w-6 h-6 ${colors.text}`} />
-        </div>
-      </div>
-      <div className="mt-8">
-        <h3 className="text-sm font-medium text-gray-400 mb-2">{title}</h3>
-        <div className="mt-2">
-          <span className={`text-3xl font-bold ${colors.text}`}>{value}</span>
-        </div>
-      </div>
-    </div>
+    <AdminStatCard
+      title={title}
+      value={value}
+      icon={icon}
+      color={color}
+    />
   );
 };
 
@@ -1202,10 +1135,12 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
     sum + variant.sizes.reduce((acc, size) => acc + size.quantity, 0), 0);
 
   return (
-    <div className="group bg-gray-800/30 rounded-2xl p-4 space-y-4
-                  border border-gray-700/50 hover:border-blue-500/30
-                  transition-all duration-300">
-      <div className="relative aspect-square rounded-xl overflow-hidden">
+    <AdminCard
+      variant="default"
+      padding="md"
+      className="border-neutral-700/50 hover:border-primary-500/30 group space-y-3 md:space-y-4"
+    >
+      <div className="relative aspect-square rounded-lg md:rounded-xl overflow-hidden">
         <img
           src={mainImage}
           alt={product.name}
@@ -1215,7 +1150,7 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
         {/* Product Status Badge */}
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-1 md:top-2 right-1 md:right-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium
                         ${product.status === 'active'
               ? 'bg-green-500/20 text-green-500'
@@ -1225,64 +1160,73 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
         </div>
 
         {/* Quick Actions */}
-        <div className="absolute bottom-2 left-2 flex gap-2 opacity-0 
-                     group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-1 md:bottom-2 left-1 md:left-2 flex gap-1 md:gap-2 
+                     opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={onEdit}
-            className="p-2 rounded-xl bg-blue-500/20 text-blue-500
+            className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-blue-500/20 text-blue-500
                          hover:bg-blue-500/30 transition-colors"
           >
-            <Edit3 className="w-5 h-5" />
+            <Edit3 className="w-4 h-4 md:w-5 md:h-5" />
           </button>
           <button
             onClick={onDelete}
-            className="p-2 rounded-xl bg-red-500/20 text-red-500
+            className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-red-500/20 text-red-500
                          hover:bg-red-500/30 transition-colors"
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-400">
+      </div>
+
+      {/* Product Info */}
+      <div className="space-y-2">
+        <h3 className="font-bold text-white text-sm md:text-base truncate">{product.name}</h3>
+        <div className="flex items-center justify-between">
+          <span className="text-xs md:text-sm text-neutral-400">
             المخزون: {totalStock}
           </span>
-          <span className="text-blue-500 font-bold">
+          <span className="text-primary-500 font-bold text-sm md:text-base">
             {product.basePrice.toLocaleString('ar-EG')} جنيه
           </span>
         </div>
       </div>
-    </div>
-
+    </AdminCard>
   );
 };
 
 const DeleteConfirmationModal = ({ product, onClose, onConfirm }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-    <div className="relative bg-gray-900 rounded-2xl w-full max-w-md p-6 space-y-4">
-      <h2 className="text-xl font-bold text-white text-center">تأكيد الحذف</h2>
-      <p className="text-gray-400 text-center">
-        هل أنت متأكد من حذف المنتج "{product.name}"؟
-        <br />
-        لا يمكن التراجع عن هذا الإجراء.
-      </p>
-      <div className="flex gap-4">
-        <button
-          onClick={onClose}
-          className="flex-1 px-4 py-2 bg-gray-800 text-gray-400 rounded-xl
-                   hover:bg-gray-700 transition-colors"
-        >
-          إلغاء
-        </button>
-        <button
-          onClick={onConfirm}
-          className="flex-1 px-4 py-2 bg-red-500 text-white rounded-xl
-                   hover:bg-red-600 transition-colors"
-        >
-          حذف
-        </button>
+    <AdminCard variant="elevated" padding="lg" className="w-full max-w-md space-y-4">
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 mx-auto rounded-full bg-danger-500/10 flex items-center justify-center">
+          <AlertCircle className="w-8 h-8 text-danger-500" />
+        </div>
+        <h2 className="text-xl font-bold text-white" dir="rtl">تأكيد الحذف</h2>
+        <p className="text-neutral-400" dir="rtl">
+          هل أنت متأكد من حذف المنتج "{product.name}"؟
+          <br />
+          لا يمكن التراجع عن هذا الإجراء.
+        </p>
+        <div className="flex gap-4 pt-2">
+          <AdminButton
+            onClick={onClose}
+            variant="secondary"
+            className="flex-1"
+          >
+            إلغاء
+          </AdminButton>
+          <AdminButton
+            onClick={onConfirm}
+            variant="danger"
+            className="flex-1"
+          >
+            حذف
+          </AdminButton>
+        </div>
       </div>
-    </div>
+    </AdminCard>
   </div>
 );
 

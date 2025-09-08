@@ -50,9 +50,17 @@ const Orders = () => {
     }, [orders]);
 
     return (
-        <div className="min-h-screen bg-secondary-900 pb-20">
-            {/* Analytics Overview */}
-            <div className="p-4 pt-0 grid grid-cols-2 gap-4">
+        <div className="min-h-screen bg-neutral-950 pb-20">
+            {/* Header for mobile */}
+            <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
+                <h1 className="text-xl font-bold text-white" dir="rtl">الطلبات</h1>
+                <span className="text-sm text-neutral-400">
+                    {analytics?.totalOrders || 0} طلب
+                </span>
+            </div>
+
+            {/* Analytics Overview - Mobile Optimized */}
+            <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <StatCard
                     title="إجمالي المبيعات"
                     value={(analytics?.totalRevenue?.toLocaleString('ar-EG') || 0) + ' جنيه'}
@@ -67,7 +75,7 @@ const Orders = () => {
                 />
                 <StatCard
                     title="متوسط قيمة الطلب"
-                    value={ (analytics?.avgOrderValue?.toLocaleString('ar-EG')||0) + ' جنيه'}
+                    value={(analytics?.avgOrderValue?.toLocaleString('ar-EG') || 0) + ' جنيه'}
                     icon={TrendingUp}
                     color="amber"
                 />
@@ -79,8 +87,9 @@ const Orders = () => {
                 />
             </div>
 
-            {/* Filters */}
-            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
+            {/* Filters - Mobile Optimized */}
+            <div className="sticky top-0 md:top-16 z-30 bg-neutral-950/95 backdrop-blur-xl p-4 space-y-4 
+                           border-b border-neutral-800/50">
                 <SearchBar
                     value={filters.search}
                     onChange={value => updateFilters({ search: value })}
@@ -91,8 +100,8 @@ const Orders = () => {
                 />
             </div>
 
-            {/* Orders List */}
-            <div className="p-4 space-y-4">
+            {/* Orders List - Mobile Optimized */}
+            <div className="p-4 space-y-3 md:space-y-4">
                 {isLoading ? (
                     <LoadingState />
                 ) : error ? (
@@ -139,21 +148,46 @@ const Orders = () => {
     );
 };
 
-const StatCard = ({ title, value, icon: Icon, color }) => (
-    <div className={`relative overflow-hidden hide-scrollbar rounded-2xl p-4 
-                  bg-${color}-500/10 border border-${color}-500/20`}
-                  dir='rtl'>
-        <div className="absolute top-4 left-4">
-            <Icon className={`w-6 h-6 text-${color}-500`} />
-        </div>
-        <div className="mt-6">
-            <h3 className="text-sm font-medium text-gray-400">{title}</h3>
-            <div className="mt-2">
-                <span className={`text-2xl font-bold text-${color}-500`}>{value}</span>
+const StatCard = ({ title, value, icon: Icon, color }) => {
+    const colorClasses = {
+        emerald: {
+            bg: 'bg-emerald-500/10',
+            text: 'text-emerald-500',
+            border: 'border-emerald-500/20'
+        },
+        blue: {
+            bg: 'bg-blue-500/10',
+            text: 'text-blue-500',
+            border: 'border-blue-500/20'
+        },
+        amber: {
+            bg: 'bg-amber-500/10',
+            text: 'text-amber-500',
+            border: 'border-amber-500/20'
+        },
+        red: {
+            bg: 'bg-red-500/10',
+            text: 'text-red-500',
+            border: 'border-red-500/20'
+        }
+    }[color];
+
+    return (
+        <div className={`relative overflow-hidden rounded-xl md:rounded-2xl p-3 md:p-4 
+                        ${colorClasses.bg} border ${colorClasses.border}`}
+            dir='rtl'>
+            <div className="absolute top-2 md:top-4 left-2 md:left-4">
+                <Icon className={`w-5 h-5 md:w-6 md:h-6 ${colorClasses.text}`} />
+            </div>
+            <div className="mt-5 md:mt-6">
+                <h3 className="text-xs md:text-sm font-medium text-gray-400 leading-tight">{title}</h3>
+                <div className="mt-1 md:mt-2">
+                    <span className={`text-lg md:text-2xl font-bold ${colorClasses.text}`}>{value}</span>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const SearchBar = ({ value, onChange }) => (
     <div className="relative">
@@ -250,9 +284,9 @@ const OrderCard = ({ order, onClick }) => {
     return (
         <div
             onClick={onClick}
-            className="group bg-gray-800/30 rounded-2xl p-4 space-y-4 cursor-pointer
+            className="group bg-gray-800/30 rounded-xl md:rounded-2xl p-3 md:p-4 space-y-3 md:space-y-4 cursor-pointer
                   border border-gray-700/50 hover:border-blue-500/30
-                  transition-all duration-300 relative overflow-hidden hide-scrollbar"
+                  transition-all duration-300 relative overflow-hidden"
         >
             {/* Background Gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-800/0 to-gray-800/50 opacity-0 
@@ -260,32 +294,32 @@ const OrderCard = ({ order, onClick }) => {
 
             {/* Content */}
             <div className="relative">
-                <div className="flex justify-between items-start gap-4">
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3 md:gap-4">
+                    <div className={`flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-full self-start
                           ${statusConfig.color} ${statusConfig.bgColor} border border-transparent
                           transition-all duration-300 group-hover:border-current/20`}>
-                        <StatusIcon className={`w-4 h-4 ${status === 'processing' ? 'group-hover:animate-spin' : ''}`} />
-                        <span className="text-sm font-medium">{statusConfig.label}</span>
+                        <StatusIcon className={`w-3 h-3 md:w-4 md:h-4 ${order.status === 'processing' ? 'group-hover:animate-spin' : ''}`} />
+                        <span className="text-xs md:text-sm font-medium">{statusConfig.label}</span>
                     </div>
 
                     <div className="text-right flex-1 min-w-0">
                         {name && (
-                            <h3 className="font-bold text-white truncate group-hover:text-blue-500
+                            <h3 className="font-bold text-white text-sm md:text-base truncate group-hover:text-blue-500
                              transition-colors duration-300">
                                 {name}
                             </h3>
                         )}
                         {phone && (
-                            <p className="text-sm text-gray-400 mt-0.5 dir-ltr">
+                            <p className="text-xs md:text-sm text-gray-400 mt-0.5" dir="ltr">
                                 {phone}
                             </p>
                         )}
                         {createdAt && (
                             <p className="text-xs text-gray-500 mt-1">
                                 {new Date(createdAt).toLocaleString('ar-EG', {
-                                    weekday: 'long',
+                                    weekday: 'short',
                                     year: 'numeric',
-                                    month: 'long',
+                                    month: 'short',
                                     day: 'numeric',
                                     hour: 'numeric',
                                     minute: 'numeric'
@@ -295,38 +329,38 @@ const OrderCard = ({ order, onClick }) => {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-700/50 mt-4">
-                    <div className="flex gap-2">
+                <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700/50 mt-3 md:mt-4">
+                    <div className="flex gap-1 md:gap-2">
                         {phone && (
                             <>
                                 <button
                                     onClick={handleWhatsAppClick}
-                                    className="p-2 rounded-xl bg-gray-800/50 hover:bg-green-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-green-500/10
                             border border-transparent hover:border-green-500/30
                             transition-all duration-300 group/btn"
                                     title="واتساب"
                                 >
-                                    <MessageCircle className="w-5 h-5 text-green-500 transition-transform duration-300
+                                    <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500 transition-transform duration-300
                                           group-hover/btn:scale-110" />
                                 </button>
                                 <button
                                     onClick={handlePhoneClick}
-                                    className="p-2 rounded-xl bg-gray-800/50 hover:bg-blue-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-blue-500/10
                             border border-transparent hover:border-blue-500/30
                             transition-all duration-300 group/btn"
                                     title="اتصال"
                                 >
-                                    <Phone className="w-5 h-5 text-blue-500 transition-transform duration-300
+                                    <Phone className="w-4 h-4 md:w-5 md:h-5 text-blue-500 transition-transform duration-300
                                   group-hover/btn:scale-110" />
                                 </button>
                                 <button
                                     onClick={handleCopyPhoneNumber}
-                                    className="p-2 rounded-xl bg-gray-800/50 hover:bg-blue-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-blue-500/10
                             border border-transparent hover:border-blue-500/30
                             transition-all duration-300 group/btn"
                                     title="نسخ رقم الهاتف"
                                 >
-                                    <Copy className="w-5 h-5 text-blue-500 transition-transform duration-300
+                                    <Copy className="w-4 h-4 md:w-5 md:h-5 text-blue-500 transition-transform duration-300
                                  group-hover/btn:scale-110" />
                                 </button>
                             </>
@@ -335,7 +369,7 @@ const OrderCard = ({ order, onClick }) => {
 
                     <div className="flex items-center gap-2">
                         <div className="text-right">
-                            <span className="block font-bold text-blue-500 text-lg">
+                            <span className="block font-bold text-blue-500 text-sm md:text-lg">
                                 {total.toLocaleString('ar-EG')} جنيه
                             </span>
                             {order.items?.length > 0 && (
@@ -344,7 +378,7 @@ const OrderCard = ({ order, onClick }) => {
                                 </span>
                             )}
                         </div>
-                        <Package className="w-5 h-5 text-gray-400 group-hover:text-blue-500
+                        <Package className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-blue-500
                               transition-colors duration-300" />
                     </div>
                 </div>
@@ -557,50 +591,50 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
 
             <div className={`fixed inset-x-0 bottom-0 transform transition-transform duration-500 
                         ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
-                <div className="bg-gradient-to-b from-gray-900/95 to-gray-900 backdrop-blur-xl
-                        rounded-t-[2.5rem] border-t border-gray-800/50 shadow-2xl
+                <div className="bg-gradient-to-b from-neutral-950/95 to-neutral-950 backdrop-blur-xl
+                        rounded-t-[2.5rem] border-t border-neutral-800/50 shadow-2xl
                         max-h-[90vh] overflow-y-auto hide-scrollbar">
-                    <div className="px-6 py-8 space-y-6">
+                    <div className="px-4 md:px-6 py-6 md:py-8 space-y-4 md:space-y-6">
                         {/* Order Header */}
                         <div className="flex justify-between items-center">
                             <button onClick={onClose}
-                                className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors">
-                                <ChevronDown className="w-6 h-6 text-gray-400" />
+                                className="p-2 -m-2 rounded-full hover:bg-neutral-850/50 transition-colors">
+                                <ChevronDown className="w-6 h-6 text-neutral-400" />
                             </button>
                             <div className="text-center flex-1">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm
-                                bg-gray-800/50">
+                                bg-neutral-850/50">
                                     <StatusIcon status={order.status} className="w-4 h-4" />
                                     <span>{getStatusLabel(order.status)}</span>
                                 </div>
                             </div>
                             <button onClick={handleShare}
-                                className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors">
-                                <Share2 className="w-6 h-6 text-gray-400" />
+                                className="p-2 -m-2 rounded-full hover:bg-neutral-850/50 transition-colors">
+                                <Share2 className="w-6 h-6 text-neutral-400" />
                             </button>
                         </div>
 
                         {/* Customer Info */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4">
+                        <div className="bg-neutral-850/30 rounded-xl md:rounded-2xl p-3 md:p-4 border border-neutral-700/30">
                             <div className="flex items-center justify-between">
-                                <h4 className="text-lg font-bold text-white">معلومات العميل</h4>
-                                <span className="text-sm text-gray-400" dir="ltr">{phone}</span>
+                                <h4 className="text-base md:text-lg font-bold text-white">معلومات العميل</h4>
+                                <span className="text-xs md:text-sm text-gray-400" dir="ltr">{phone}</span>
                             </div>
 
-                            <div className="flex gap-2 mt-4">
+                            <div className="flex gap-2 mt-3 md:mt-4">
                                 <button onClick={() => window.open(`https://wa.me/${phone}`, '_blank')}
-                                    className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl
+                                    className="flex-1 flex items-center justify-center gap-2 p-2.5 md:p-3 rounded-lg md:rounded-xl
                                    bg-gray-800/50 hover:bg-green-500/10 border border-transparent
                                    hover:border-green-500/30 transition-all duration-300">
-                                    <MessageCircle className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm text-gray-400">واتساب</span>
+                                    <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
+                                    <span className="text-xs md:text-sm text-gray-400">واتساب</span>
                                 </button>
                                 <button onClick={() => window.open(`tel:${phone}`, '_blank')}
-                                    className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl
+                                    className="flex-1 flex items-center justify-center gap-2 p-2.5 md:p-3 rounded-lg md:rounded-xl
                                    bg-gray-800/50 hover:bg-blue-500/10 border border-transparent
                                    hover:border-blue-500/30 transition-all duration-300">
-                                    <Phone className="w-5 h-5 text-blue-500" />
-                                    <span className="text-sm text-gray-400">اتصال</span>
+                                    <Phone className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
+                                    <span className="text-xs md:text-sm text-gray-400">اتصال</span>
                                 </button>
                             </div>
                         </div>
@@ -608,7 +642,7 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         {/* Items */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between"
-                            dir='rtl'>
+                                dir='rtl'>
                                 <h4 className="text-lg font-bold text-white">المنتجات</h4>
                                 <span className="text-sm text-gray-400">{items.length} منتج</span>
                             </div>
@@ -681,9 +715,9 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         {/* Status Timeline */}
                         {tracking.length > 0 && (
                             <div className="space-y-4"
-                           >
+                            >
                                 <h4 className="text-lg font-bold text-white"
-                                 dir='rtl'>تتبع الطلب</h4>
+                                    dir='rtl'>تتبع الطلب</h4>
                                 <div className="relative space-y-4"
                                 >
                                     {tracking.map((step, index) => (
@@ -718,35 +752,44 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         )}
 
                         {/* Status Actions */}
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2 md:gap-3">
                             {[
                                 { status: 'pending', label: 'تعليق', icon: Clock, color: 'yellow' },
                                 { status: 'processing', label: 'معالجة', icon: RefreshCw, color: 'blue' },
                                 { status: 'delivered', label: 'تسليم', icon: CheckCircle, color: 'green' },
                                 { status: 'cancelled', label: 'إلغاء', icon: Ban, color: 'red' }
-                            ].map(({ status, label, icon: Icon, color }) => (
-                                <button
-                                    key={status}
-                                    onClick={() => onUpdateStatus(order.id, status)}
-                                    disabled={order.status === status}
-                                    className={`flex items-center justify-center gap-2 p-3 rounded-xl font-medium 
-                               transition-all duration-300 group
-                               ${order.status === status
-                                            ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed'
-                                            : `bg-gray-800/30 hover:bg-${color}-500/10 
-                                    border border-transparent hover:border-${color}-500/30`}`}>
-                                    <Icon className={`w-5 h-5 ${order.status === status
-                                        ? 'text-gray-500'
-                                        : `text-${color}-500 
-                                        ${status === 'processing' ? 'group-hover:animate-spin' : ''}`}`} />
-                                    <span className={`text-sm ${order.status === status
-                                        ? 'text-gray-500'
-                                        : `text-gray-400 group-hover:text-${color}-500`}`}>
-                                        {label}
-                                    </span>
-                                </button>
-                            ))}
+                            ].map(({ status, label, icon: Icon, color }) => {
+                                const colorClasses = {
+                                    yellow: { text: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' },
+                                    blue: { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+                                    green: { text: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/30' },
+                                    red: { text: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' }
+                                }[color];
 
+                                return (
+                                    <button
+                                        key={status}
+                                        onClick={() => onUpdateStatus(order.id, status)}
+                                        disabled={order.status === status}
+                                        className={`flex items-center justify-center gap-1.5 md:gap-2 p-2.5 md:p-3 
+                                               rounded-lg md:rounded-xl font-medium transition-all duration-300 group
+                                               ${order.status === status
+                                                ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed'
+                                                : `bg-gray-800/30 hover:${colorClasses.bg} 
+                                                  border border-transparent hover:${colorClasses.border}`}`}
+                                    >
+                                        <Icon className={`w-4 h-4 md:w-5 md:h-5 ${order.status === status
+                                            ? 'text-gray-500'
+                                            : `${colorClasses.text} 
+                                              ${status === 'processing' ? 'group-hover:animate-spin' : ''}`}`} />
+                                        <span className={`text-xs md:text-sm ${order.status === status
+                                            ? 'text-gray-500'
+                                            : `text-gray-400 group-hover:${colorClasses.text}`}`}>
+                                            {label}
+                                        </span>
+                                    </button>
+                                );
+                            })}
                         </div>
 
                     </div>
