@@ -3,10 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [
-    react({
-      jsxRuntime: 'automatic',
-      jsxImportSource: 'react'
-    })
+    react()
   ],
   base: '/',
   build: {
@@ -96,10 +93,7 @@ export default defineConfig({
     assetsInlineLimit: 4096
   },
   resolve: {
-    alias: {
-      'react-router-dom': 'react-router-dom',
-      'react/jsx-runtime': 'react/jsx-runtime'
-    }
+    alias: {}
   },
   optimizeDeps: {
     include: [
