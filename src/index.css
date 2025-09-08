@@ -341,7 +341,7 @@ select {
   @apply fixed bottom-6 right-6 w-14 h-14 
          bg-gradient-to-r from-primary-500 to-primary-600
          text-white rounded-full shadow-floating
-         hover:shadow-glow hover:scale-110
+         hover:shadow-glow-blue hover:scale-110
          active:scale-95
          transition-all duration-300
          flex items-center justify-center;
