@@ -59,6 +59,21 @@ const Orders = () => {
                 </span>
             </div>
 
+            {/* Header for desktop */}
+            <div className="hidden md:block bg-gradient-to-b from-neutral-950/95 to-neutral-950 border-b border-neutral-800/50 p-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold text-white">إدارة الطلبات</h1>
+                        <p className="text-neutral-400 mt-1">متابعة وإدارة جميع طلبات العملاء</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-neutral-400">
+                            إجمالي الطلبات: {analytics?.totalOrders || 0}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             {/* Analytics Overview - Mobile Optimized */}
             <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <StatCard
@@ -195,13 +210,21 @@ const SearchBar = ({ value, onChange }) => (
             type="text"
             value={value}
             onChange={e => onChange(e.target.value)}
-            placeholder="ابحث برقم الطلب أو رقم الهاتف..."
-            className="w-full h-12 bg-neutral-800/50 rounded-xl px-12 text-white text-right
-                 border border-neutral-700/50 focus:border-blue-500/50
+            placeholder=""
+            className="w-full h-12 !bg-neutral-800/70 rounded-xl px-12 !text-white text-right
+                 !border-neutral-700/50 focus:!border-blue-500/50
                  focus:ring-2 focus:ring-blue-500/50
-                 placeholder:text-neutral-500"
+                 placeholder:!text-neutral-500"
+            style={{
+                backgroundColor: 'rgb(38 38 38 / 0.7)',
+                color: 'white',
+                borderColor: 'rgb(64 64 64 / 0.5)'
+            }}
             dir="rtl"
         />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-neutral-500">
+            ابحث برقم الطلب أو رقم الهاتف...
+        </div>
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
         {value && (
             <button
@@ -445,7 +468,7 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                 }
               }
               body {
-                font-family: system-ui, -apple-system, sans-serif;
+                font-family: 'Cairo Play', sans-serif;
                 margin: 0;
                 padding: ${format === 'receipt' ? '10mm' : '20mm'};
                 width: ${sizes[format].width};
@@ -879,10 +902,15 @@ const ErrorState = ({ message }) => (
 );
 
 const EmptyState = () => (
-    <div className="text-center py-12">
-        <Package className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-white mb-2">لا توجد طلبات</h3>
-        <p className="text-neutral-400">لم يتم العثور على طلبات تطابق معايير البحث</p>
+    <div className="text-center py-16">
+        <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 
+                      flex items-center justify-center mb-8 shadow-2xl shadow-black/20 border border-neutral-800/50">
+            <Package className="w-12 h-12 text-blue-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4">لا توجد طلبات</h3>
+        <p className="text-neutral-400 text-lg max-w-md mx-auto leading-relaxed">
+            لم يتم العثور على طلبات تطابق معايير البحث
+        </p>
     </div>
 );
 

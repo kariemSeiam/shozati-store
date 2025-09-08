@@ -184,6 +184,21 @@ const Customers = () => {
                 </span>
             </div>
 
+            {/* Header for desktop */}
+            <div className="hidden md:block bg-gradient-to-b from-neutral-950/95 to-neutral-950 border-b border-neutral-800/50 p-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold text-white">إدارة العملاء</h1>
+                        <p className="text-neutral-400 mt-1">إدارة وتحليل بيانات العملاء والمبيعات</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-neutral-400">
+                            إجمالي العملاء: {totalCustomers}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             {/* Analytics Dashboard */}
             <div className="p-4 space-y-6 pt-0">
                 {/* Key Metrics */}
@@ -257,7 +272,8 @@ const Customers = () => {
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="ابحث برقم الهاتف أو العنوان..."
+                        placeholder=""
+                        hint="ابحث برقم الهاتف أو العنوان..."
                         className="pr-12"
                     />
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -602,12 +618,12 @@ const FilterButton = ({ label, options, values = [], onChange, icon: Icon }) => 
 
                 <div className={`fixed inset-x-0 bottom-0 transform transition-transform duration-500 ease-out
                         ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
-                    <div className="bg-gradient-to-b from-gray-900/95 to-gray-900 backdrop-blur-xl
-                         rounded-t-[2.5rem] border-t border-gray-800/50 shadow-2xl
-                         max-h-[80vh] overflow-y-auto">
+                    <div className="bg-gradient-to-b from-neutral-950/95 to-neutral-950 backdrop-blur-xl
+                         rounded-t-[2.5rem] border-t border-neutral-800/50 shadow-2xl
+                         max-h-[80vh] overflow-y-auto hide-scrollbar">
                         {/* Handle */}
                         <div className="absolute inset-x-0 top-0 h-7 flex justify-center items-start">
-                            <div className="w-12 h-1 rounded-full bg-gray-700/50 mt-3" />
+                            <div className="w-12 h-1 rounded-full bg-neutral-700/50 mt-3" />
                         </div>
 
                         <div className="px-6 pt-8 pb-6">
@@ -726,9 +742,9 @@ const CustomerDetailsSheet = ({ customer, isOpen, onClose, analytics }) => {
 
             <div className={`fixed inset-x-0 bottom-0 transform transition-transform duration-500
                     ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
-                <div className="bg-gradient-to-b from-gray-900/95 to-gray-900 backdrop-blur-xl
-                     rounded-t-[2.5rem] border-t border-gray-800/50 shadow-2xl
-                     max-h-[90vh] overflow-y-auto"
+                <div className="bg-gradient-to-b from-neutral-950/95 to-neutral-950 backdrop-blur-xl
+                     rounded-t-[2.5rem] border-t border-neutral-800/50 shadow-2xl
+                     max-h-[90vh] overflow-y-auto hide-scrollbar"
                     dir='rtl'>
                     <div className="px-6 py-8 space-y-6">
                         {/* Header */}
@@ -820,8 +836,8 @@ const CustomerDetailsSheet = ({ customer, isOpen, onClose, analytics }) => {
 };
 
 const Pagination = ({ page, totalPages, onNext, onPrevious }) => (
-    <div className="fixed bottom-0 inset-x-0 bg-gray-900/95 backdrop-blur-xl 
-                border-t border-gray-800/50 p-4">
+    <div className="fixed bottom-0 inset-x-0 bg-neutral-950/95 backdrop-blur-xl 
+                border-t border-neutral-800/50 p-4">
         <div className="flex justify-between items-center">
             <button
                 onClick={onPrevious}
@@ -853,10 +869,15 @@ const LoadingState = () => (
 );
 
 const EmptyState = () => (
-    <div className="text-center py-12">
-        <Users className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-white mb-2">لا يوجد عملاء</h3>
-        <p className="text-gray-400">لم يتم العثور على عملاء يطابقون معايير البحث</p>
+    <div className="text-center py-16">
+        <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 
+                      flex items-center justify-center mb-8 shadow-2xl shadow-black/20 border border-neutral-800/50">
+            <Users className="w-12 h-12 text-blue-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4">لا يوجد عملاء</h3>
+        <p className="text-neutral-400 text-lg max-w-md mx-auto leading-relaxed">
+            لم يتم العثور على عملاء يطابقون معايير البحث
+        </p>
     </div>
 );
 

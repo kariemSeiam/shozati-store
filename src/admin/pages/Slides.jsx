@@ -4,6 +4,18 @@ import {
   Loader2, Plus, Image, ChevronDown, ChevronUp,
   Package, AlertCircle
 } from 'lucide-react';
+import {
+  ResponsiveSheet,
+  ResponsiveFormField,
+  ResponsiveInput,
+  ResponsiveSelect,
+  ResponsiveTextarea,
+  ResponsiveButtonGroup,
+  getDefaultValue
+} from '../components/ResponsiveSheet';
+import {
+  AdminButton
+} from '../components/DesignSystem';
 
 const Slides = () => {
   const {
@@ -32,50 +44,78 @@ const Slides = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary-900 p-4 pt-0 pb-20" dir="rtl">
-      {/* Header */}
-      <div className="sticky top-0 z-30 -mx-4 bg-primary-900/95 backdrop-blur-xl px-4 py-3 
-                      border-b border-primary-800/50 pt-0">
+    <div className="min-h-screen bg-neutral-950 pb-20" dir="rtl">
+      {/* Header for mobile */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
+        <h1 className="text-xl font-bold text-white">إدارة العروض</h1>
+        <span className="text-sm text-neutral-400">
+          {slides.length} عرض
+        </span>
+      </div>
+
+      {/* Header for desktop */}
+      <div className="hidden md:block bg-gradient-to-b from-neutral-950/95 to-neutral-950 border-b border-neutral-800/50 p-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-white">إدارة العروض</h1>
-          <button
+          <div>
+            <h1 className="text-2xl font-bold text-white">إدارة العروض</h1>
+            <p className="text-neutral-400 mt-1">إدارة العروض التقديمية للمنتجات</p>
+          </div>
+          <AdminButton
             onClick={() => {
               setIsCreatingNew(true);
               resetError('create');
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 
-                     hover:bg-blue-600 transition-colors text-white"
+            variant="primary"
+            size="md"
           >
             <Plus className="w-5 h-5" />
             <span>إضافة عرض</span>
-          </button>
+          </AdminButton>
         </div>
       </div>
 
+      {/* Add button for mobile */}
+      <div className="md:hidden sticky top-0 z-30 bg-neutral-950/95 backdrop-blur-sm p-4 border-b border-neutral-800/50">
+        <AdminButton
+          onClick={() => {
+            setIsCreatingNew(true);
+            resetError('create');
+          }}
+          variant="primary"
+          size="md"
+          fullWidth
+        >
+          <Plus className="w-5 h-5" />
+          <span>إضافة عرض جديد</span>
+        </AdminButton>
+      </div>
+
       {/* Content */}
-      {loading.slides ? (
-        <LoadingState />
-      ) : errors.slides ? (
-        <ErrorState message={errors.slides} />
-      ) : slides.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="space-y-4 mt-6">
-          {slides.map(slide => (
-            <SlideCard
-              key={slide.id}
-              slide={slide}
-              onDelete={deleteSlide}
-              onUpdate={updateSlide}
-              onToggleStatus={toggleSlideStatus}
-              products={products}
-              loading={loading}
-              errors={errors}
-              resetError={resetError}
-            />
-          ))}
-        </div>
-      )}
+      <div className="p-4 md:p-6">
+        {loading.slides ? (
+          <LoadingState />
+        ) : errors.slides ? (
+          <ErrorState message={errors.slides} />
+        ) : slides.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+            {slides.map(slide => (
+              <SlideCard
+                key={slide.id}
+                slide={slide}
+                onDelete={deleteSlide}
+                onUpdate={updateSlide}
+                onToggleStatus={toggleSlideStatus}
+                products={products}
+                loading={loading}
+                errors={errors}
+                resetError={resetError}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Create New Slide Sheet */}
       {isCreatingNew && (
@@ -103,7 +143,7 @@ const StatusToggle = ({ checked, onChange, disabled }) => {
     >
       <div className={`
         w-10 h-5 rounded-full transition-colors duration-200 ml-[-48px]
-        ${checked ? 'bg-blue-500' : 'bg-neutral-700'}
+        ${checked ? 'bg-green-500' : 'bg-neutral-700'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}>
         <div className={`
@@ -113,14 +153,14 @@ const StatusToggle = ({ checked, onChange, disabled }) => {
         `}>
           {disabled && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <Loader2 className="w-3 h-3 text-blue-500 animate-spin" />
+              <Loader2 className="w-3 h-3 text-primary-500 animate-spin" />
             </div>
           )}
         </div>
       </div>
       <span className={`
         text-sm transition-colors duration-200
-        ${checked ? 'text-blue-500' : 'text-neutral-400'}
+        ${checked ? 'text-green-400' : 'text-neutral-400'}
         ${disabled ? 'opacity-50' : ''}
       `}>
         {checked ? 'نشط' : 'غير نشط'}
@@ -159,88 +199,85 @@ const SlideCard = ({
   };
 
   return (
-    <div className="bg-neutral-800/30 rounded-2xl border border-neutral-700/50 overflow-hidden">
-      <div className="p-4">
-        <div className="flex items-start gap-4">
-          {/* Image */}
-          <div className="relative w-24 h-24 rounded-xl overflow-hidden group">
-            <img
-              src={slide.imageUrl}
-              alt={slide.title}
-              className="w-full h-full object-cover transition-transform duration-300
-                        group-hover:scale-110"
-            />
+    <div className="bg-neutral-800/30 rounded-2xl border border-neutral-700/50 overflow-hidden hover:border-primary-500/30 transition-all duration-300 group">
+      {/* Image */}
+      <div className="relative aspect-video w-full rounded-t-2xl overflow-hidden">
+        <img
+          src={slide.imageUrl}
+          alt={slide.title}
+          className="w-full h-full object-cover transition-transform duration-300
+                    group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Status Badge */}
+        <div className="absolute top-3 right-3">
+          <div className={`px-2 py-1 rounded-full text-xs font-medium ${slide.status === 'active'
+            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+            : 'bg-neutral-800/60 text-neutral-400 border border-neutral-600/30'
+            }`}>
+            {slide.status === 'active' ? 'نشط' : 'غير نشط'}
           </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-white text-lg truncate">{slide.title}</h3>
-            {product && (
-              <div className="flex items-center gap-2 mt-1">
-                <Package className="w-4 h-4 text-blue-500" />
-                <span className="text-sm text-neutral-400">{product.name}</span>
-              </div>
-            )}
-
-            {/* Status Toggle */}
-            <div className="mt-6" dir="ltr">
-              <StatusToggle
-                checked={slide.status === 'active'}
-                onChange={() => onToggleStatus(slide.id)}
-                disabled={loading.status}
-              />
-            </div>
-          </div>
-
-          {/* Expand Button */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-xl hover:bg-neutral-700/50 transition-colors"
-          >
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-neutral-400" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-neutral-400" />
-            )}
-          </button>
         </div>
       </div>
 
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="border-t border-neutral-700/50 p-4 space-y-4">
+      <div className="p-4">
+        {/* Content */}
+        <div className="space-y-3">
+          <h3 className="font-bold text-white text-lg leading-tight">{slide.title}</h3>
+
           {slide.description && (
-            <p className="text-neutral-400 text-sm">{slide.description}</p>
+            <p className="text-sm text-neutral-400 line-clamp-2 leading-relaxed">
+              {slide.description}
+            </p>
           )}
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                setIsEditing(true);
-                resetError('update');
-              }}
-              className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl
-                        bg-blue-500/10 text-blue-500 hover:bg-blue-500/20
-                        transition-colors"
-            >
-              تعديل
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={loading.delete}
-              className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl
-                        bg-red-500/10 text-red-500 hover:bg-red-500/20
-                        transition-colors disabled:opacity-50"
-            >
-              {loading.delete ? 'جاري الحذف...' : 'حذف'}
-            </button>
+          {product && (
+            <div className="flex items-center gap-2">
+              <Package className="w-4 h-4 text-primary-400" />
+              <span className="text-sm text-neutral-300 truncate">{product.name}</span>
+            </div>
+          )}
+
+          {/* Status Toggle */}
+          <div className="pt-2" dir="ltr">
+            <StatusToggle
+              checked={slide.status === 'active'}
+              onChange={() => onToggleStatus(slide.id)}
+              disabled={loading.status}
+            />
           </div>
-
-          {errors.delete && (
-            <p className="text-sm text-red-500 text-center">{errors.delete}</p>
-          )}
         </div>
-      )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 pt-2">
+          <AdminButton
+            onClick={() => {
+              setIsEditing(true);
+              resetError('update');
+            }}
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+          >
+            تعديل
+          </AdminButton>
+          <AdminButton
+            onClick={handleDelete}
+            disabled={loading.delete}
+            variant="danger"
+            size="sm"
+            loading={loading.delete}
+            className="flex-1"
+          >
+            {loading.delete ? 'جاري الحذف...' : 'حذف'}
+          </AdminButton>
+        </div>
+
+        {errors.delete && (
+          <p className="text-sm text-red-400 text-center mt-2">{errors.delete}</p>
+        )}
+      </div>
 
       {/* Edit Sheet */}
       {isEditing && (
@@ -317,102 +354,84 @@ const CreateSlideSheet = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
-      <div className="fixed inset-x-0 bottom-0 transform transition-transform duration-300">
-        <div className="bg-neutral-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
-                     border-neutral-800/50 p-6 max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold text-white mb-6">إضافة عرض جديد</h2>
-
-          {(error || validationError) && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 text-red-500">
-              {error || validationError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Image Upload */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                الصورة
-              </label>
-              <ImageUpload
-                imagePreview={imagePreview}
-                onChange={handleImageChange}
-                inputId="create-slide-image"
-              />
-            </div>
-
-            {/* Title Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                العنوان
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                       border border-neutral-700/50 focus:border-blue-500/50"
-                placeholder="عنوان العرض"
-              />
-            </div>
-
-            {/* Description Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                الوصف
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full h-24 bg-neutral-800/50 rounded-xl p-4 text-white
-                       border border-neutral-700/50 focus:border-blue-500/50 resize-none"
-                placeholder="وصف العرض"
-              />
-            </div>
-
-            {/* Product Select */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                المنتج
-              </label>
-              <ProductSelect
-                value={formData.productId}
-                onChange={(value) => setFormData(prev => ({ ...prev, productId: value }))}
-                products={products}
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 h-12 rounded-xl bg-neutral-800/50 text-neutral-400
-                       hover:bg-neutral-700/50 transition-colors"
-              >
-                إلغاء
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1 h-12 rounded-xl bg-blue-500 text-white
-                       hover:bg-blue-600 transition-colors disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    جاري الإنشاء...
-                  </span>
-                ) : (
-                  'إنشاء'
-                )}
-              </button>
-            </div>
-          </form>
+    <ResponsiveSheet
+      isOpen={true}
+      onClose={onClose}
+      title="إضافة عرض جديد"
+      size="default"
+    >
+      {(error || validationError) && (
+        <div className="mb-4 p-3 rounded-xl bg-red-500/10 text-red-500">
+          {error || validationError}
         </div>
-      </div>
-    </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Image Upload */}
+        <ResponsiveFormField label="الصورة" required>
+          <ImageUpload
+            imagePreview={imagePreview}
+            onChange={handleImageChange}
+            inputId="create-slide-image"
+          />
+        </ResponsiveFormField>
+
+        {/* Title Input */}
+        <ResponsiveInput
+          name="العنوان"
+          value={getDefaultValue(formData.title)}
+          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+          placeholder=""
+          hint="عنوان العرض"
+          required
+        />
+
+        {/* Description Input */}
+        <ResponsiveTextarea
+          name="الوصف"
+          value={getDefaultValue(formData.description)}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          placeholder=""
+          hint="وصف العرض"
+          rows={3}
+        />
+
+        {/* Product Select */}
+        <ResponsiveSelect
+          name="المنتج"
+          value={getDefaultValue(formData.productId)}
+          onChange={(value) => setFormData(prev => ({ ...prev, productId: value }))}
+          options={products.map(product => ({
+            value: product.id,
+            label: product.name
+          }))}
+          placeholder=""
+          hint="اختر منتج"
+          required
+        />
+
+        {/* Action Buttons */}
+        <ResponsiveButtonGroup className="pt-6 border-t border-neutral-800/50">
+          <AdminButton
+            type="button"
+            onClick={onClose}
+            variant="secondary"
+            size="md"
+          >
+            إلغاء
+          </AdminButton>
+          <AdminButton
+            type="submit"
+            disabled={isLoading}
+            variant="primary"
+            size="md"
+            loading={isLoading}
+          >
+            {isLoading ? 'جاري الإنشاء...' : 'إنشاء'}
+          </AdminButton>
+        </ResponsiveButtonGroup>
+      </form>
+    </ResponsiveSheet>
   );
 };
 
@@ -454,9 +473,9 @@ const ProductSelect = ({ value, onChange, products }) => (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+      className="w-full h-12 bg-neutral-800/70 rounded-xl px-4 text-white
                border border-neutral-700/50 focus:border-blue-500/50
-               appearance-none"
+               appearance-none placeholder:text-neutral-500"
     >
       <option value="">اختر منتج</option>
       {products.map(product => (
@@ -521,105 +540,87 @@ const EditSlideSheet = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
-      <div className="fixed inset-x-0 bottom-0 transform transition-transform duration-300">
-        <div className="bg-neutral-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
-                     border-neutral-800/50 p-6 max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold text-white mb-6">تعديل العرض</h2>
-
-          {(error || validationError) && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 text-red-500">
-              {error || validationError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                الصورة
-              </label>
-              <ImageUpload
-                imagePreview={imagePreview || slide.imageUrl}
-                onChange={handleImageChange}
-                inputId="edit-slide-image"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                العنوان
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                       border border-neutral-700/50 focus:border-blue-500/50"
-                placeholder="عنوان العرض"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                الوصف
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full h-24 bg-neutral-800/50 rounded-xl p-4 text-white
-                       border border-neutral-700/50 focus:border-blue-500/50 resize-none"
-                placeholder="وصف العرض"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-400">
-                المنتج
-              </label>
-              <ProductSelect
-                value={formData.productId}
-                onChange={(value) => setFormData(prev => ({ ...prev, productId: value }))}
-                products={products}
-              />
-            </div>
-
-            {formData.productId && (
-              <div className="bg-neutral-800/30 rounded-xl p-4">
-                <ProductPreview
-                  product={products.find(p => p.id === formData.productId)}
-                />
-              </div>
-            )}
-
-            <div className="flex gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 h-12 rounded-xl bg-neutral-800/50 text-neutral-400
-                       hover:bg-neutral-700/50 transition-colors"
-              >
-                إلغاء
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1 h-12 rounded-xl bg-blue-500 text-white
-                       hover:bg-blue-600 transition-colors disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    جاري الحفظ...
-                  </span>
-                ) : (
-                  'حفظ'
-                )}
-              </button>
-            </div>
-          </form>
+    <ResponsiveSheet
+      isOpen={true}
+      onClose={onClose}
+      title="تعديل العرض"
+      size="default"
+    >
+      {(error || validationError) && (
+        <div className="mb-4 p-3 rounded-xl bg-red-500/10 text-red-500">
+          {error || validationError}
         </div>
-      </div>
-    </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <ResponsiveFormField label="الصورة" required>
+          <ImageUpload
+            imagePreview={imagePreview || slide.imageUrl}
+            onChange={handleImageChange}
+            inputId="edit-slide-image"
+          />
+        </ResponsiveFormField>
+
+        <ResponsiveInput
+          name="العنوان"
+          value={getDefaultValue(formData.title)}
+          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+          placeholder=""
+          hint="عنوان العرض"
+          required
+        />
+
+        <ResponsiveTextarea
+          name="الوصف"
+          value={getDefaultValue(formData.description)}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          placeholder=""
+          hint="وصف العرض"
+          rows={3}
+        />
+
+        <ResponsiveSelect
+          name="المنتج"
+          value={getDefaultValue(formData.productId)}
+          onChange={(value) => setFormData(prev => ({ ...prev, productId: value }))}
+          options={products.map(product => ({
+            value: product.id,
+            label: product.name
+          }))}
+          placeholder=""
+          hint="اختر منتج"
+          required
+        />
+
+        {formData.productId && (
+          <div className="bg-neutral-800/30 rounded-xl p-4">
+            <ProductPreview
+              product={products.find(p => p.id === formData.productId)}
+            />
+          </div>
+        )}
+
+        <ResponsiveButtonGroup className="pt-6 border-t border-neutral-800/50">
+          <AdminButton
+            type="button"
+            onClick={onClose}
+            variant="secondary"
+            size="md"
+          >
+            إلغاء
+          </AdminButton>
+          <AdminButton
+            type="submit"
+            disabled={isLoading}
+            variant="primary"
+            size="md"
+            loading={isLoading}
+          >
+            {isLoading ? 'جاري الحفظ...' : 'حفظ'}
+          </AdminButton>
+        </ResponsiveButtonGroup>
+      </form>
+    </ResponsiveSheet>
   );
 };
 
@@ -641,10 +642,15 @@ const ErrorState = ({ message }) => (
 );
 
 const EmptyState = () => (
-  <div className="text-center py-12">
-    <Image className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
-    <h3 className="text-xl font-bold text-white mb-2">لا توجد عروض</h3>
-    <p className="text-neutral-400">ابدأ بإضافة عروض جديدة لعرضها للعملاء</p>
+  <div className="text-center py-16">
+    <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 
+                  flex items-center justify-center mb-8 shadow-2xl shadow-black/20 border border-neutral-800/50">
+      <Image className="w-12 h-12 text-blue-400" />
+    </div>
+    <h3 className="text-2xl font-bold text-white mb-4">لا توجد عروض</h3>
+    <p className="text-neutral-400 text-lg max-w-md mx-auto leading-relaxed">
+      ابدأ بإضافة عروض جديدة لعرضها للعملاء
+    </p>
   </div>
 );
 

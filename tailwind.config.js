@@ -10,34 +10,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary Brand Colors - Clean Blue Palette (replacing sky-*)
+        // Primary Colors - Modern Creative Purple-Blue (40% of elements)
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9', // Main brand blue (cleaner than previous)
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49'
+          50: '#f0f4ff',   // Very light purple-blue
+          100: '#e0e7ff',  // Light purple-blue
+          200: '#c7d2fe',  // Soft purple-blue
+          300: '#a5b4fc',  // Medium light purple-blue
+          400: '#818cf8',  // Medium purple-blue
+          500: '#6366f1',  // Main brand indigo
+          600: '#4f46e5',  // Darker indigo
+          700: '#4338ca',  // Dark indigo
+          800: '#3730a3',  // Very dark indigo
+          900: '#312e81',  // Deep indigo
+          950: '#1e1b4b'   // Darkest indigo
         },
         
-        // Secondary Colors - Clean Blue Accent (matching primary)
+        // Secondary Colors - Modern Teal-Cyan (30% of elements)
         secondary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9', // Main blue (matching primary)
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49'
+          50: '#f0fdfa',   // Very light teal
+          100: '#ccfbf1',  // Light teal
+          200: '#99f6e4',  // Soft teal
+          300: '#5eead4',  // Medium light teal
+          400: '#2dd4bf',  // Medium teal
+          500: '#14b8a6',  // Main teal
+          600: '#0d9488',  // Darker teal
+          700: '#0f766e',  // Dark teal
+          800: '#115e59',  // Very dark teal
+          900: '#134e4a',  // Deep teal
+          950: '#042f2e'   // Darkest teal
         },
         
         // Success Colors - Clean Green (replacing emerald-*)
@@ -85,54 +85,70 @@ export default {
           950: '#450a0a'
         },
         
-        // Neutral Colors - Clean Light Gray Palette (replacing gray-*)
+        // Neutral Colors - Modern Dark Theme (20% of elements)
         neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
-          950: '#0a0a0a'
+          50: '#fafafa',   // Pure white
+          100: '#f5f5f5',  // Very light gray
+          200: '#e5e5e5',  // Light gray
+          300: '#d4d4d4',  // Medium light gray
+          400: '#a3a3a3',  // Medium gray
+          500: '#737373',  // Main gray
+          600: '#525252',  // Darker gray
+          700: '#404040',  // Dark gray
+          800: '#262626',  // Very dark gray
+          900: '#171717',  // Deep dark gray
+          950: '#0a0a0a'   // Darkest gray
         },
         
-        // Background Colors - Pure Light Theme
+        // Background Colors - Modern Dark Theme
         background: {
-          DEFAULT: '#ffffff',
-          secondary: '#fafafa',
-          tertiary: '#f5f5f5',
-          muted: '#f8fafc'
+          DEFAULT: '#0a0a0a',    // Pure black
+          secondary: '#171717',  // Very dark gray
+          tertiary: '#262626',   // Dark gray
+          muted: '#404040'       // Medium dark gray
         },
         
-        // Surface Colors for cards and components
+        // Accent Colors - Complementary (10% of elements)
+        accent: {
+          50: '#fef3c7',   // Light amber
+          100: '#fde68a',  // Soft amber
+          200: '#fcd34d',  // Medium amber
+          300: '#fbbf24',  // Amber
+          400: '#f59e0b',  // Dark amber
+          500: '#d97706',  // Main amber
+          600: '#b45309',  // Darker amber
+          700: '#92400e',  // Dark amber
+          800: '#78350f',  // Very dark amber
+          900: '#451a03',  // Deep amber
+          950: '#292524'   // Darkest amber
+        },
+        
+        // Surface Colors for cards and components - Dark Theme
         surface: {
-          DEFAULT: '#ffffff',
-          elevated: '#fafafa',
-          hover: '#f5f5f5',
-          border: '#e5e5e5',
-          'border-hover': '#d4d4d4'
+          DEFAULT: '#171717',     // Dark gray
+          elevated: '#262626',    // Darker gray
+          hover: '#404040',       // Medium dark gray
+          border: '#525252',      // Medium gray
+          'border-hover': '#737373' // Light gray
         },
         
-        // Text Colors with perfect contrast
+        // Text Colors with perfect contrast - Dark Theme
         text: {
-          primary: '#171717',
-          secondary: '#404040',
-          tertiary: '#737373',
-          muted: '#a3a3a3',
-          disabled: '#d4d4d4',
-          inverse: '#ffffff'
+          primary: '#ffffff',     // Pure white
+          secondary: '#f5f5f5',   // Very light gray
+          tertiary: '#d4d4d4',    // Light gray
+          muted: '#a3a3a3',       // Medium gray
+          disabled: '#737373',    // Dark gray
+          inverse: '#0a0a0a'      // Black
         }
       },
       
       // Enhanced Typography
       fontFamily: {
-        tajawal: ['Tajawal', 'sans-serif'],
-        display: ['Tajawal', 'sans-serif'],
-        body: ['Tajawal', 'sans-serif']
+        cairo: ['Cairo Play', 'sans-serif'],
+        display: ['Cairo Play', 'sans-serif'],
+        body: ['Cairo Play', 'sans-serif'],
+        sans: ['Cairo Play', 'sans-serif']
       },
       
       // Modern Spacing Scale
@@ -200,13 +216,17 @@ export default {
         }
       },
       
-      // Clean Gradient System - Blue Only
+      // Clean Gradient System - Modern Dark Theme
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-        'gradient-primary-light': 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
-        'gradient-surface': 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-        'gradient-overlay': 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(2, 132, 199, 0.05) 100%)',
-        'shimmer-gradient': 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'
+        'gradient-primary': 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+        'gradient-primary-light': 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+        'gradient-surface': 'linear-gradient(135deg, #171717 0%, #262626 100%)',
+        'gradient-overlay': 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%)',
+        'gradient-accent': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        'gradient-dark': 'linear-gradient(135deg, #0a0a0a 0%, #171717 100%)',
+        'gradient-card': 'linear-gradient(135deg, #262626 0%, #404040 100%)',
+        'shimmer-gradient': 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)'
       }
     },
   },

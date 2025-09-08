@@ -16,6 +16,17 @@ import {
     AdminModal,
     ADMIN_COLORS
 } from '../components/DesignSystem';
+import {
+    ResponsiveSheet,
+    ResponsiveFormField,
+    ResponsiveInput,
+    ResponsiveSelect,
+    ResponsiveTextarea,
+    ResponsiveButtonGroup,
+    ResponsiveGrid,
+    getDefaultValue,
+    formatNumber
+} from '../components/ResponsiveSheet';
 
 const Coupons = () => {
     const {
@@ -54,30 +65,45 @@ const Coupons = () => {
                 </span>
             </div>
 
+            {/* Header for desktop */}
+            <div className="hidden md:block bg-gradient-to-b from-neutral-950/95 to-neutral-950 border-b border-neutral-800/50 p-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold text-white">إدارة القسائم</h1>
+                        <p className="text-neutral-400 mt-1">إنشاء وإدارة قسائم الخصم والعروض الترويجية</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-neutral-400">
+                            إجمالي القسائم: {totalCoupons}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             {/* Stats Overview */}
             {couponStats && (
                 <div className="p-4 grid grid-cols-2 gap-4">
                     <AdminStatCard
                         title="القسائم النشطة"
-                        value={couponStats.activeCoupons}
+                        value={couponStats.activeCoupons || 0}
                         icon={Ticket}
                         color="success"
                     />
                     <AdminStatCard
                         title="إجمالي التوفير"
-                        value={`${couponStats.totalDiscountGiven.toLocaleString('ar-EG')} جنيه`}
+                        value={`${(couponStats.totalDiscountGiven || 0).toLocaleString('ar-EG')} جنيه`}
                         icon={Wallet}
                         color="primary"
                     />
                     <AdminStatCard
                         title="معدل الاستخدام"
-                        value={`${((couponStats.totalUsedCoupons / couponStats.totalCoupons) * 100).toFixed(1)}%`}
+                        value={`${((couponStats.totalUsedCoupons || 0) / (couponStats.totalCoupons || 1) * 100).toFixed(1)}%`}
                         icon={TrendingUp}
                         color="warning"
                     />
                     <AdminStatCard
                         title="قسائم منتهية"
-                        value={couponStats.expiredCoupons}
+                        value={couponStats.expiredCoupons || 0}
                         icon={Ban}
                         color="danger"
                     />
@@ -92,13 +118,21 @@ const Coupons = () => {
                         type="text"
                         value={filters.search}
                         onChange={e => updateFilters({ search: e.target.value })}
-                        placeholder="ابحث برمز القسيمة أو رقم الهاتف..."
-                        className="w-full h-12 bg-neutral-800/50 rounded-xl px-12 text-white text-right
-                     border border-neutral-700/50 focus:border-blue-500/50
+                        placeholder=""
+                        className="w-full h-12 !bg-neutral-800/70 rounded-xl px-12 !text-white text-right
+                     !border-neutral-700/50 focus:!border-blue-500/50
                      focus:ring-2 focus:ring-blue-500/50
-                     placeholder:text-neutral-500"
+                     placeholder:!text-neutral-500"
+                        style={{
+                            backgroundColor: 'rgb(38 38 38 / 0.7)',
+                            color: 'white',
+                            borderColor: 'rgb(64 64 64 / 0.5)'
+                        }}
                         dir="rtl"
                     />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-neutral-500">
+                        ابحث برمز القسيمة أو رقم الهاتف...
+                    </div>
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                     {filters.search && (
                         <button
@@ -301,11 +335,11 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
                         </button>
                         <h3 className="font-bold text-white group-hover:text-blue-500
                          transition-colors">
-                            {coupon.code}
+                            {coupon.code || 'غير محدد'}
                         </h3>
                     </div>
                     <p className="text-sm text-neutral-400 mt-1">
-                        {new Date(coupon.endDate).toLocaleDateString('ar-EG')}
+                        {coupon.endDate ? new Date(coupon.endDate).toLocaleDateString('ar-EG') : 'غير محدد'}
                     </p>
                 </div>
             </div>
@@ -318,14 +352,14 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
                         <DollarSign className="w-5 h-5 text-blue-500" />
                     )}
                     <span className="text-white font-medium">
-                        {coupon.discountValue}
+                        {coupon.discountValue || 0}
                         {coupon.discountType === 'percentage' ? '%' : ' جنيه'}
                     </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-neutral-400">
                     <Users className="w-5 h-5" />
-                    <span>{coupon.usedCount}/{coupon.maxUses || '∞'}</span>
+                    <span>{coupon.usedCount || 0}/{coupon.maxUses || '∞'}</span>
                 </div>
             </div>
         </div>
@@ -355,205 +389,168 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
     };
 
     return (
-        <Sheet isOpen={isOpen} onClose={onClose}>
-            <div className="p-6 space-y-6">
-                <div className="flex justify-between items-center">
-                    <button
-                        onClick={onClose}
-                        className="p-2 -m-2 rounded-full hover:bg-neutral-800/50 transition-colors"
+        <ResponsiveSheet
+            isOpen={isOpen}
+            onClose={onClose}
+            title="إنشاء قسيمة جديدة"
+            size="default"
+        >
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Coupon Code */}
+                <ResponsiveInput
+                    name="رمز القسيمة"
+                    value={getDefaultValue(formData.code)}
+                    onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                    placeholder=""
+                    hint="اتركه فارغاً لإنشاء رمز تلقائي"
+                    className="text-left"
+                />
+
+                {/* Discount Type & Value */}
+                <ResponsiveGrid cols={2}>
+                    <ResponsiveSelect
+                        name="نوع الخصم"
+                        value={getDefaultValue(formData.discountType, 'percentage')}
+                        onChange={e => setFormData({ ...formData, discountType: e.target.value })}
+                        options={[
+                            { value: 'percentage', label: 'نسبة مئوية' },
+                            { value: 'fixed', label: 'قيمة ثابتة' }
+                        ]}
+                        required
+                    />
+                    <ResponsiveFormField
+                        label="قيمة الخصم"
+                        hint={formData.discountType === 'percentage' ? 'النسبة المئوية' : 'القيمة بالجنيه'}
+                        required
                     >
-                        <ChevronDown className="w-6 h-6 text-neutral-400" />
-                    </button>
-                    <h2 className="text-xl font-bold text-white">إنشاء قسيمة جديدة</h2>
-                    <div className="w-10" />
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Coupon Code */}
-                    <div className="space-y-2">
-                        <label className="block text-sm font-medium text-neutral-400">
-                            رمز القسيمة
-                        </label>
-                        <input
-                            type="text"
-                            value={formData.code}
-                            onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                            placeholder="SALE2025"
-                            className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                         border border-neutral-700/50 focus:border-blue-500/50
-                         focus:ring-2 focus:ring-blue-500/50"
-                            dir="ltr"
-                        />
-                        <p className="text-xs text-neutral-500">
-                            اتركه فارغاً لإنشاء رمز تلقائي
-                        </p>
-                    </div>
-
-                    {/* Discount Type & Value */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-neutral-400">
-                                نوع الخصم
-                            </label>
-                            <select
-                                value={formData.discountType}
-                                onChange={e => setFormData({ ...formData, discountType: e.target.value })}
-                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                           border border-neutral-700/50 focus:border-blue-500/50
-                           focus:ring-2 focus:ring-blue-500/50"
-                            >
-                                <option value="percentage">نسبة مئوية</option>
-                                <option value="fixed">قيمة ثابتة</option>
-                            </select>
+                        <div className="relative">
+                            <input
+                                type="number"
+                                value={getDefaultValue(formData.discountValue, 0)}
+                                onChange={e => setFormData({ ...formData, discountValue: e.target.value })}
+                                placeholder=""
+                                className="w-full h-12 bg-neutral-800/70 rounded-xl px-4 pr-12 text-white
+                                     border border-neutral-700/50 focus:border-blue-500/50
+                                     focus:ring-2 focus:ring-blue-500/50 placeholder:text-neutral-500"
+                            />
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                                {formData.discountType === 'percentage' ? '%' : 'جنيه'}
+                            </span>
                         </div>
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-neutral-400">
-                                قيمة الخصم
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type="number"
-                                    value={formData.discountValue}
-                                    onChange={e => setFormData({ ...formData, discountValue: e.target.value })}
-                                    placeholder={formData.discountType === 'percentage' ? '10' : '100'}
-                                    className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                    </ResponsiveFormField>
+                </ResponsiveGrid>
+
+                {/* Usage Limit */}
+                <ResponsiveInput
+                    name="الحد الأقصى للاستخدام"
+                    type="number"
+                    value={getDefaultValue(formData.maxUses, 0)}
+                    onChange={e => setFormData({ ...formData, maxUses: e.target.value })}
+                    placeholder=""
+                    hint="اتركه فارغاً للاستخدام غير المحدود"
+                />
+
+                {/* Date Range */}
+                <ResponsiveGrid cols={2}>
+                    <ResponsiveInput
+                        name="تاريخ البدء"
+                        type="date"
+                        value={getDefaultValue(formData.startDate)}
+                        onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                        required
+                    />
+                    <ResponsiveInput
+                        name="تاريخ الانتهاء"
+                        type="date"
+                        value={getDefaultValue(formData.endDate)}
+                        onChange={e => setFormData({ ...formData, endDate: e.target.value })}
+                        hint="اتركه فارغاً للاستخدام الدائم"
+                    />
+                </ResponsiveGrid>
+
+                {/* Specific Users */}
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-sm font-medium text-neutral-400">
+                            مستخدمين محددين
+                        </h3>
+                        <button
+                            type="button"
+                            onClick={() => setFormData({
+                                ...formData,
+                                specificUsers: [...formData.specificUsers, { phone: '', maxUses: '' }]
+                            })}
+                            className="text-sm text-blue-500 hover:text-blue-400 transition-colors"
+                        >
+                            إضافة مستخدم
+                        </button>
+                    </div>
+                    {formData.specificUsers.map((user, index) => (
+                        <div key={index} className="flex gap-4">
+                            <input
+                                type="tel"
+                                value={user.phone}
+                                onChange={e => {
+                                    const newUsers = [...formData.specificUsers];
+                                    newUsers[index].phone = e.target.value;
+                                    setFormData({ ...formData, specificUsers: newUsers });
+                                }}
+                                placeholder=""
+                                className="flex-1 h-12 bg-neutral-800/70 rounded-xl px-4 text-white
                              border border-neutral-700/50 focus:border-blue-500/50
-                             focus:ring-2 focus:ring-blue-500/50"
-                                />
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                                    {formData.discountType === 'percentage' ? '%' : 'جنيه'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Usage Limit */}
-                    <div className="space-y-2">
-                        <label className="block text-sm font-medium text-neutral-400">
-                            الحد الأقصى للاستخدام
-                        </label>
-                        <input
-                            type="number"
-                            value={formData.maxUses}
-                            onChange={e => setFormData({ ...formData, maxUses: e.target.value })}
-                            placeholder="اتركه فارغاً للاستخدام غير المحدود"
-                            className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                         border border-neutral-700/50 focus:border-blue-500/50
-                         focus:ring-2 focus:ring-blue-500/50"
-                        />
-                    </div>
-
-                    {/* Date Range */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-neutral-400">
-                                تاريخ البدء
-                            </label>
-                            <input
-                                type="date"
-                                value={formData.startDate}
-                                onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                           border border-neutral-700/50 focus:border-blue-500/50
-                           focus:ring-2 focus:ring-blue-500/50"
+                             focus:ring-2 focus:ring-blue-500/50 placeholder:text-neutral-500"
+                                dir="ltr"
                             />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-neutral-400">
-                                تاريخ الانتهاء
-                            </label>
                             <input
-                                type="date"
-                                value={formData.endDate}
-                                onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                           border border-neutral-700/50 focus:border-blue-500/50
-                           focus:ring-2 focus:ring-blue-500/50"
+                                type="number"
+                                value={user.maxUses}
+                                onChange={e => {
+                                    const newUsers = [...formData.specificUsers];
+                                    newUsers[index].maxUses = e.target.value;
+                                    setFormData({ ...formData, specificUsers: newUsers });
+                                }}
+                                placeholder=""
+                                className="w-32 h-12 bg-neutral-800/70 rounded-xl px-4 text-white
+                             border border-neutral-700/50 focus:border-blue-500/50
+                             focus:ring-2 focus:ring-blue-500/50 placeholder:text-neutral-500"
                             />
-                        </div>
-                    </div>
-
-                    {/* Specific Users */}
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-sm font-medium text-neutral-400">
-                                مستخدمين محددين
-                            </h3>
                             <button
                                 type="button"
-                                onClick={() => setFormData({
-                                    ...formData,
-                                    specificUsers: [...formData.specificUsers, { phone: '', maxUses: '' }]
-                                })}
-                                className="text-sm text-blue-500 hover:text-blue-400 transition-colors"
+                                onClick={() => {
+                                    const newUsers = formData.specificUsers.filter((_, i) => i !== index);
+                                    setFormData({ ...formData, specificUsers: newUsers });
+                                }}
+                                className="p-3 rounded-xl bg-red-500/10 text-red-500
+                             hover:bg-red-500/20 transition-colors"
                             >
-                                إضافة مستخدم
+                                <X className="w-6 h-6" />
                             </button>
                         </div>
-                        {formData.specificUsers.map((user, index) => (
-                            <div key={index} className="flex gap-4">
-                                <input
-                                    type="tel"
-                                    value={user.phone}
-                                    onChange={e => {
-                                        const newUsers = [...formData.specificUsers];
-                                        newUsers[index].phone = e.target.value;
-                                        setFormData({ ...formData, specificUsers: newUsers });
-                                    }}
-                                    placeholder="رقم الهاتف"
-                                    className="flex-1 h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                             border border-neutral-700/50 focus:border-blue-500/50
-                             focus:ring-2 focus:ring-blue-500/50"
-                                    dir="ltr"
-                                />
-                                <input
-                                    type="number"
-                                    value={user.maxUses}
-                                    onChange={e => {
-                                        const newUsers = [...formData.specificUsers];
-                                        newUsers[index].maxUses = e.target.value;
-                                        setFormData({ ...formData, specificUsers: newUsers });
-                                    }}
-                                    placeholder="عدد مرات الاستخدام"
-                                    className="w-32 h-12 bg-neutral-800/50 rounded-xl px-4 text-white
-                             border border-neutral-700/50 focus:border-blue-500/50
-                             focus:ring-2 focus:ring-blue-500/50"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const newUsers = formData.specificUsers.filter((_, i) => i !== index);
-                                        setFormData({ ...formData, specificUsers: newUsers });
-                                    }}
-                                    className="p-3 rounded-xl bg-red-500/10 text-red-500
-                             hover:bg-red-500/20 transition-colors"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                    ))}
+                </div>
 
-                    {/* Submit Button */}
-                    <button
+                {/* Submit Button */}
+                <ResponsiveButtonGroup className="pt-6 border-t border-neutral-800/50">
+                    <AdminButton
+                        type="button"
+                        onClick={onClose}
+                        variant="secondary"
+                        size="md"
+                    >
+                        إلغاء
+                    </AdminButton>
+                    <AdminButton
                         type="submit"
                         disabled={isCreating}
-                        className="w-full p-4 rounded-xl bg-blue-500 text-white font-medium
-                       hover:bg-blue-600 transition-colors disabled:opacity-50
-                       disabled:cursor-not-allowed"
+                        variant="primary"
+                        size="md"
+                        loading={isCreating}
                     >
-                        {isCreating ? (
-                            <div className="flex items-center justify-center gap-2">
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                <span>جاري الإنشاء...</span>
-                            </div>
-                        ) : (
-                            'إنشاء القسيمة'
-                        )}
-                    </button>
-                </form>
-            </div>
-        </Sheet>
+                        {isCreating ? 'جاري الإنشاء...' : 'إنشاء القسيمة'}
+                    </AdminButton>
+                </ResponsiveButtonGroup>
+            </form>
+        </ResponsiveSheet>
     );
 };
 
@@ -945,12 +942,12 @@ const Sheet = React.memo(({ isOpen, onClose, children }) => {
                     willChange: 'transform'
                 }}
             >
-                <div className="bg-gradient-to-b from-primary-900/95 to-primary-900 
-                        rounded-t-[2.5rem] border-t border-primary-800/50 shadow-2xl
+                <div className="bg-gradient-to-b from-neutral-950/95 to-neutral-950 
+                        rounded-t-[2.5rem] border-t border-neutral-800/50 shadow-2xl
                         max-h-[90vh] overflow-y-auto hide-scrollbar">
                     {/* Simplified Handle */}
                     <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-12 h-1 rounded-full bg-primary-700/50" />
+                        <div className="w-12 h-1 rounded-full bg-neutral-700/50" />
                     </div>
 
                     {children}
@@ -978,10 +975,15 @@ const ErrorState = ({ message }) => (
 );
 
 const EmptyState = () => (
-    <div className="text-center py-12">
-        <Ticket className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-white mb-2">لا توجد قسائم</h3>
-        <p className="text-neutral-400">قم بإنشاء قسيمة جديدة للبدء</p>
+    <div className="text-center py-16">
+        <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 
+                      flex items-center justify-center mb-8 shadow-2xl shadow-black/20 border border-neutral-800/50">
+            <Ticket className="w-12 h-12 text-blue-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4">لا توجد قسائم</h3>
+        <p className="text-neutral-400 text-lg max-w-md mx-auto leading-relaxed">
+            قم بإنشاء قسيمة جديدة للبدء
+        </p>
     </div>
 );
 

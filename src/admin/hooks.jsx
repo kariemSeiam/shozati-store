@@ -82,7 +82,7 @@ export const useAdmin = () => {
 
     // Modified useAdmin hook apiCall implementation
     const apiCall = useCallback(async (endpoint, options = {}) => {
-        
+
 
         const makeRequest = async (token) => {
             let headers = {
@@ -307,7 +307,7 @@ export const useCoupons = () => {
         type: 'all', // Default to 'all' based on logs
         isSpecific: null
     });
-    
+
     // Constants for coupon types
     const COUPON_TYPES = {
         ALL: 'all',
@@ -616,7 +616,7 @@ export const useProducts = (config = {}) => {
                 signal: abortController.current.signal
             });
 
-            
+
 
             if (response) {
                 setProducts(response.products);
@@ -1100,7 +1100,7 @@ export const useSlides = () => {
         update: null,
         delete: null
     });
-    
+
     const { apiCall } = useAdmin();
     const previousSlides = useRef([]);
 
@@ -1117,7 +1117,7 @@ export const useSlides = () => {
     const validateSlideData = useCallback((data) => {
         const requiredFields = ['title', 'productId'];
         const missingFields = requiredFields.filter(field => !data[field]);
-        
+
         if (missingFields.length > 0) {
             return {
                 isValid: false,
@@ -1133,7 +1133,7 @@ export const useSlides = () => {
      */
     const prepareFormData = useCallback((slideData) => {
         const formData = new FormData();
-        
+
         Object.entries(slideData).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
                 if (key === 'image' && value instanceof File) {
@@ -1186,7 +1186,7 @@ export const useSlides = () => {
 
         try {
             const formData = prepareFormData(slideData);
-            
+
             const response = await apiCall('/admin/slides', {
                 method: 'POST',
                 body: formData
@@ -1245,7 +1245,7 @@ export const useSlides = () => {
                 await loadSlides();
                 return response;
             }
-            
+
             // Revert on failure
             setSlides(previousState);
             return null;
@@ -1264,7 +1264,7 @@ export const useSlides = () => {
     const deleteSlide = useCallback(async (slideId) => {
         setLoading(prev => ({ ...prev, delete: true }));
         resetError('delete');
-        
+
         const previousState = [...slides];
 
         try {
@@ -1344,7 +1344,7 @@ export const useSlides = () => {
         selectedSlide,
         loading,
         errors,
-        
+
         // Actions
         setSelectedSlide,
         loadSlides,
@@ -1352,7 +1352,7 @@ export const useSlides = () => {
         updateSlide,
         deleteSlide,
         toggleSlideStatus,
-        
+
         // Helpers
         resetError
     };

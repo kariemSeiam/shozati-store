@@ -24,9 +24,14 @@ const RouteHandler = () => {
   const [searchParams] = useSearchParams();
   const key = searchParams.get('key');
   const productCode = searchParams.get('code');
+  const path = window.location.pathname;
 
-  // If admin key is present, show admin dashboard
-  if (key === '123123') {
+  // Check for admin access - either via key parameter or direct admin path
+  const adminAccessKey = '123123';
+  const isAdminAccess = key === adminAccessKey || path.includes('/admin') || path.includes('admin');
+
+  // If admin access is detected, show admin dashboard
+  if (isAdminAccess) {
     return <AdminDashboard />;
   }
   // If product code is present, pass it to App component
@@ -125,6 +130,7 @@ const AppRoutes = () => (
   <Suspense fallback={<LoadingSpinner />}>
     <Routes>
       <Route path="/" element={<RouteHandler />} />
+      <Route path="/admin" element={<AdminDashboard />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </Suspense>

@@ -144,85 +144,93 @@ const MainContent = ({ productCode }) => {
 
 
   return (
-    <div className="min-h-screen bg-white">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          className: 'bg-white backdrop-blur-xl border border-neutral-200 rounded-2xl px-6 py-4 shadow-lg',
-          duration: 3000,
-          style: {
-            color: '#1e293b',
-            fontSize: '14px',
-            fontWeight: '500'
-          }
-        }}
-      />
+    <div className="min-h-screen bg-white bg-mesh-gradient relative overflow-hidden">
+      {/* Decorative Background Elements - Ultra Light */}
+      <div className="absolute inset-0 bg-animated-dots"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-primary-100/8 to-secondary-100/4 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-secondary-100/6 to-primary-100/4 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 animate-float" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-primary-50/10 to-secondary-50/6 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2 animate-float" style={{ animationDelay: '4s' }}></div>
 
-      {/* Premium Header */}
-      <header>
-        <Header
-          onOrdersClick={handleOrdersClick}
-          onProfileClick={handleProfileClick}
+      <div className="relative z-10">
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            className: 'bg-white/95 backdrop-blur-xl border border-neutral-200/50 rounded-2xl px-6 py-4 shadow-lg',
+            duration: 3000,
+            style: {
+              color: '#1e293b',
+              fontSize: '14px',
+              fontWeight: '500'
+            }
+          }}
         />
-      </header>
 
-      {/* Category Navigation */}
-      <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-neutral-200">
-        <HorizontalCategoryScroller
-          selectedCategory={uiState.selectedCategory}
-          onSelect={handleCategorySelect}
-        />
-      </nav>
-
-      <main className="pb-24">
-        {/* Promotional Slider */}
-        <div className='p-4 pt-2 pb-2'>
-          <PromotionalSlider
-            slides={slides}
-            loading={slidesLoading}
-            onSelect={handleProductSelect}
+        {/* Premium Header */}
+        <header>
+          <Header
+            onOrdersClick={handleOrdersClick}
+            onProfileClick={handleProfileClick}
           />
-        </div>
+        </header>
 
-        {/* Product Section */}
-        <ProductSection
-          products={products}
-          productsLoading={productsLoading}
-          selectedCategory={uiState.selectedCategory}
-          totalPages={totalPages}
-          loadMore={loadMore}
+        {/* Category Navigation */}
+        <nav className="sticky top-0 z-20">
+          <HorizontalCategoryScroller
+            selectedCategory={uiState.selectedCategory}
+            onSelect={handleCategorySelect}
+          />
+        </nav>
+
+        <main className="pb-24 relative">
+          {/* Promotional Slider */}
+          <div className='p-4 pt-2 pb-2'>
+            <PromotionalSlider
+              slides={slides}
+              loading={slidesLoading}
+              onSelect={handleProductSelect}
+            />
+          </div>
+
+          {/* Product Section */}
+          <ProductSection
+            products={products}
+            productsLoading={productsLoading}
+            selectedCategory={uiState.selectedCategory}
+            totalPages={totalPages}
+            loadMore={loadMore}
+            onProductSelect={handleProductSelect}
+            checkAuthAndProceed={checkAuthAndProceed}
+            updateFilters={updateFilters}
+            setPage={setPage}
+            setSelectedCategory={selectCategory}
+          />
+        </main>
+
+        {/* Floating Actions */}
+        <FloatingActions
+          onFavoritesClick={handleFavoritesClick}
+          onCartClick={handleCartClick}
+        />
+
+        {/* Cart Sheet */}
+        <CartSheet
+          onOrderCreated={handleOrderCreated}
+          checkAuthAndProceed={checkAuthAndProceed}
+          openModal={openModal}
+        />
+
+        {/* Modal Manager */}
+        <ModalManager
+          uiState={uiState}
+          userInfo={userInfo}
+          isLoading={isLoading}
+          onCloseModal={handleModalClose}
+          onPhoneVerification={handlePhoneVerificationSuccess}
+          onLocationUpdate={handleLocationUpdateSuccess}
           onProductSelect={handleProductSelect}
           checkAuthAndProceed={checkAuthAndProceed}
-          updateFilters={updateFilters}
-          setPage={setPage}
-          setSelectedCategory={selectCategory}
         />
-      </main>
-
-      {/* Floating Actions */}
-      <FloatingActions
-        onFavoritesClick={handleFavoritesClick}
-        onCartClick={handleCartClick}
-      />
-
-      {/* Cart Sheet */}
-      <CartSheet
-        onOrderCreated={handleOrderCreated}
-        checkAuthAndProceed={checkAuthAndProceed}
-        openModal={openModal}
-      />
-
-      {/* Modal Manager */}
-      <ModalManager
-        uiState={uiState}
-        userInfo={userInfo}
-        isLoading={isLoading}
-        onCloseModal={handleModalClose}
-        onPhoneVerification={handlePhoneVerificationSuccess}
-        onLocationUpdate={handleLocationUpdateSuccess}
-        onProductSelect={handleProductSelect}
-        checkAuthAndProceed={checkAuthAndProceed}
-      />
+      </div>
     </div>
   );
 };

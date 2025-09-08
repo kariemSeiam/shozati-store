@@ -6,19 +6,19 @@ import { AlertCircle } from 'lucide-react';
 
 // Color Palette
 export const ADMIN_COLORS = {
-    // Primary colors - Clean Blue
+    // Primary colors - Unified Blue Theme
     primary: {
-        50: '#f0f9ff',
-        100: '#e0f2fe',
-        200: '#bae6fd',
-        300: '#7dd3fc',
-        400: '#38bdf8',
-        500: '#0ea5e9', // Main blue
-        600: '#0284c7',
-        700: '#0369a1',
-        800: '#075985',
-        900: '#0c4a6e',
-        950: '#082f49'
+        50: '#eff6ff',
+        100: '#dbeafe',
+        200: '#bfdbfe',
+        300: '#93c5fd',
+        400: '#60a5fa',
+        500: '#3b82f6', // Main blue
+        600: '#2563eb',
+        700: '#1d4ed8',
+        800: '#1e40af',
+        900: '#1e3a8a',
+        950: '#172554'
     },
 
     // Status colors
@@ -36,16 +36,16 @@ export const ADMIN_COLORS = {
     },
 
     warning: {
-        50: '#f0f9ff',
-        100: '#e0f2fe',
-        200: '#bae6fd',
-        300: '#7dd3fc',
-        400: '#38bdf8',
-        500: '#0ea5e9', // Main blue
-        600: '#0284c7',
-        700: '#0369a1',
-        800: '#075985',
-        900: '#0c4a6e',
+        50: '#fef3c7',
+        100: '#fde68a',
+        200: '#fcd34d',
+        300: '#fbbf24',
+        400: '#f59e0b',
+        500: '#d97706', // Main amber
+        600: '#b45309',
+        700: '#92400e',
+        800: '#78350f',
+        900: '#451a03',
     },
 
     danger: {
@@ -61,20 +61,20 @@ export const ADMIN_COLORS = {
         900: '#7f1d1d',
     },
 
-    // Neutral colors (gray scale)
+    // Neutral colors (blue-tinted grays)
     neutral: {
-        50: '#f9fafb',
-        100: '#f3f4f6',
-        200: '#e5e7eb',
-        300: '#d1d5db',
-        400: '#9ca3af',
-        500: '#6b7280',
-        600: '#4b5563',
-        700: '#374151',
-        800: '#1f2937',
+        50: '#f8fafc',
+        100: '#f1f5f9',
+        200: '#e2e8f0',
+        300: '#cbd5e1',
+        400: '#94a3b8',
+        500: '#64748b',
+        600: '#475569',
+        700: '#334155',
+        800: '#1e293b',
         850: '#1a1f2e', // Custom darker shade
-        900: '#111827',
-        950: '#0d1117', // Custom darkest shade
+        900: '#0f172a',
+        950: '#020617', // Custom darkest shade
     }
 };
 
@@ -255,16 +255,21 @@ export const AdminInput = React.forwardRef(({
                 type={type}
                 className={`
           w-full rounded-xl border backdrop-blur-sm transition-all duration-300
-          !bg-neutral-800/70 !text-white placeholder:text-neutral-400
+          !bg-neutral-800/70 !text-white placeholder:!text-neutral-400
           ${error
-                        ? 'border-danger-500/50 focus:border-danger-500 focus:ring-danger-500/20'
-                        : 'border-neutral-700/50 focus:border-primary-500/50 focus:ring-primary-500/20'
+                        ? '!border-danger-500/50 focus:!border-danger-500 focus:ring-danger-500/20'
+                        : '!border-neutral-700/50 focus:!border-primary-500/50 focus:ring-primary-500/20'
                     }
           focus:outline-none focus:ring-2
           ${sizes[size]}
           ${type === 'color' ? 'p-1 !bg-transparent' : ''}
           ${className}
         `}
+                style={{
+                    backgroundColor: 'rgb(38 38 38 / 0.7)',
+                    color: 'white',
+                    borderColor: 'rgb(64 64 64 / 0.5)'
+                }}
                 dir="rtl"
                 {...props}
             />
@@ -313,13 +318,18 @@ export const AdminSelect = ({
           w-full rounded-xl border backdrop-blur-sm transition-all duration-300
           !bg-neutral-800/70 !text-white
           ${error
-                        ? 'border-danger-500/50 focus:border-danger-500 focus:ring-danger-500/20'
-                        : 'border-neutral-700/50 focus:border-primary-500/50 focus:ring-primary-500/20'
+                        ? '!border-danger-500/50 focus:!border-danger-500 focus:ring-danger-500/20'
+                        : '!border-neutral-700/50 focus:!border-primary-500/50 focus:ring-primary-500/20'
                     }
           focus:outline-none focus:ring-2
           ${sizes[size]}
           ${className}
         `}
+                style={{
+                    backgroundColor: 'rgb(38 38 38 / 0.7)',
+                    color: 'white',
+                    borderColor: 'rgb(64 64 64 / 0.5)'
+                }}
                 dir="rtl"
                 {...props}
             >
@@ -364,14 +374,19 @@ export const AdminTextarea = ({
                 rows={rows}
                 className={`
           w-full rounded-xl border backdrop-blur-sm transition-all duration-300 resize-none
-          !bg-neutral-800/70 !text-white placeholder:text-neutral-400 p-4
+          !bg-neutral-800/70 !text-white placeholder:!text-neutral-400 p-4
           ${error
-                        ? 'border-danger-500/50 focus:border-danger-500 focus:ring-danger-500/20'
-                        : 'border-neutral-700/50 focus:border-primary-500/50 focus:ring-primary-500/20'
+                        ? '!border-danger-500/50 focus:!border-danger-500 focus:ring-danger-500/20'
+                        : '!border-neutral-700/50 focus:!border-primary-500/50 focus:ring-primary-500/20'
                     }
           focus:outline-none focus:ring-2
           ${className}
         `}
+                style={{
+                    backgroundColor: 'rgb(38 38 38 / 0.7)',
+                    color: 'white',
+                    borderColor: 'rgb(64 64 64 / 0.5)'
+                }}
                 dir="rtl"
                 {...props}
             />
@@ -488,7 +503,7 @@ export const AdminModal = ({
             <div className={`
         relative bg-neutral-900 rounded-xl md:rounded-2xl border border-neutral-700/50
         w-full ${fullScreen ? 'h-full md:max-h-[95vh]' : sizes[size]} 
-        overflow-y-auto backdrop-blur-xl
+        overflow-y-auto backdrop-blur-xl hide-scrollbar
       `}
                 dir="rtl"
             >

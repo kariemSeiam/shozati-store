@@ -182,9 +182,7 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
       animate={{ opacity: 1, y: 0 }}
       className="sticky top-0 z-40"
     >
-      {/* Premium Glass Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary-50/95 via-white/90 to-primary-50/95 
-                    backdrop-blur-lg shadow-lg shadow-primary-100/50" />
+      {/* Transparent Background */}
 
       {/* Enhanced Content Layout */}
       <div className="relative px-4 py-2">

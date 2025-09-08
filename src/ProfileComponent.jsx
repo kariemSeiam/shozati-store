@@ -302,8 +302,7 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
 
               {/* Creative text treatment */}
               <div className="relative mt-4 text-center">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-slate-800 via-primary-700 to-slate-800 
-                      bg-clip-text text-transparent">
+                <h3 className="text-xl font-bold text-neutral-800">
                   {userInfo?.name || 'مستخدم جديد'}
                 </h3>
                 <p className="text-sm text-slate-500 mt-1">{userInfo?.phone}</p>
@@ -413,8 +412,7 @@ export const ProfileSheet = ({ isOpen, onClose, onOpenOrders, onOpenFavorites, o
                   <HelpCircle className="w-5 h-5 text-primary-600 relative z-10 
                         transform group-hover:rotate-12 transition-transform duration-300" />
                 </div>
-                <span className="font-bold text-base bg-gradient-to-br from-slate-800 to-slate-600 
-                      bg-clip-text text-transparent group-hover:translate-x-1 transition-transform duration-300">
+                <span className="font-bold text-base text-neutral-800 group-hover:translate-x-1 transition-transform duration-300">
                   الدعم والمساعدة
                 </span>
               </div>
@@ -490,25 +488,25 @@ export const SupportSheet = ({ isOpen, onClose }) => {
       icon: ShoppingBag,
       title: 'تشكيلة واسعة',
       description: 'أحدث موديلات الأحذية العصرية للرجال والنساء',
-      color: 'bg-rose-100 text-rose-600'
+      color: 'bg-primary-100 text-primary-600'
     },
     {
       icon: Star,
       title: 'جودة مضمونة',
       description: 'منتجات أصلية 100% مع ضمان الجودة',
-      color: 'bg-primary-100 text-primary-600'
+      color: 'bg-secondary-100 text-secondary-600'
     },
     {
       icon: Truck,
       title: 'توصيل سريع',
       description: 'شحن لجميع المحافظات خلال 2-4 أيام',
-      color: 'bg-green-100 text-green-600'
+      color: 'bg-primary-100 text-primary-600'
     },
     {
       icon: Shield,
       title: 'ضمان الاسترجاع',
       description: 'استرجاع مجاني خلال 14 يوم',
-      color: 'bg-primary-100 text-primary-600'
+      color: 'bg-secondary-100 text-secondary-600'
     }
   ];
 
@@ -522,7 +520,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
     {
       name: 'Instagram',
       icon: Instagram,
-      color: 'bg-pink-100 text-pink-600',
+      color: 'bg-secondary-100 text-secondary-600',
       url: 'https://instagram.com/shozati'
     },
     {
@@ -532,7 +530,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
           <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
         </svg>
       ),
-      color: 'bg-neutral-100 text-neutral-600',
+      color: 'bg-primary-100 text-primary-600',
       url: 'https://tiktok.com/@shozati'
     }
   ];
@@ -541,7 +539,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
     {
       icon: MessageCircle,
       label: 'تحدث معنا',
-      color: 'bg-green-100 text-green-600',
+      color: 'bg-secondary-100 text-secondary-600',
       onClick: handleWhatsApp
     },
     {
@@ -553,7 +551,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
     {
       icon: Copy,
       label: 'نسخ الرقم',
-      color: 'bg-purple-100 text-purple-600',
+      color: 'bg-secondary-100 text-secondary-600',
       onClick: handleCopyNumber
     }
   ];
@@ -565,7 +563,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <Store className="w-6 h-6 text-rose-600" />
-            <h4 className="text-lg font-bold text-primary-800">مرحباً بك في Trendy Corner</h4>
+            <h4 className="text-lg font-bold text-neutral-800">مرحباً بك في Trendy Corner</h4>
           </div>
           <p className="text-slate-600 leading-relaxed">
             نحن متخصصون في تقديم أرقى تشكيلات الأحذية العصرية بجودة استثنائية وأسعار منافسة.
@@ -581,7 +579,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
               className={`${feature.color} rounded-xl p-4 space-y-2 shadow-sm`}
             >
               <feature.icon className="w-6 h-6" />
-              <h5 className="font-bold text-primary-800">{feature.title}</h5>
+              <h5 className="font-bold text-neutral-800">{feature.title}</h5>
               <p className="text-sm text-slate-600">{feature.description}</p>
             </div>
           ))}
@@ -597,7 +595,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                             hover:brightness-105 transition-all duration-300 shadow-sm hover:shadow-md`}
             >
               <action.icon className="w-6 h-6" />
-              <span className="text-sm text-primary-800 text-center whitespace-nowrap">
+              <span className="text-sm text-neutral-800 text-center whitespace-nowrap">
                 {action.label}
               </span>
             </button>
@@ -606,7 +604,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
 
         {/* Social Links */}
         <div className="space-y-4">
-          <h4 className="font-bold text-primary-800">تابعنا على مواقع التواصل</h4>
+          <h4 className="font-bold text-neutral-800">تابعنا على مواقع التواصل</h4>
           <div className="grid grid-cols-3 gap-3">
             {socialLinks.map((social, index) => (
               <a
@@ -618,7 +616,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
                                 hover:brightness-105 transition-all duration-300 shadow-sm hover:shadow-md`}
               >
                 <social.icon className="w-6 h-6" />
-                <span className="text-sm font-medium text-primary-800">{social.name}</span>
+                <span className="text-sm font-medium text-neutral-800">{social.name}</span>
               </a>
             ))}
           </div>
@@ -629,7 +627,7 @@ export const SupportSheet = ({ isOpen, onClose }) => {
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-rose-600" />
             <div>
-              <h4 className="font-bold text-primary-800 mb-1">مواعيد العمل</h4>
+              <h4 className="font-bold text-neutral-800 mb-1">مواعيد العمل</h4>
               <p className="text-sm text-slate-600">
                 طوال أيام الأسبوع
                 <br />
