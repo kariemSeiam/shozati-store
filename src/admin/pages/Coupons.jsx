@@ -1,4 +1,4 @@
-import React, { useState ,useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Ticket, Plus, Search, Filter, Calendar, Ban, PieChart,
     Settings, PercentIcon, DollarSign, Users, Clock, CheckCircle,
@@ -6,6 +6,16 @@ import {
     TrendingUp, BadgePercent, Wallet, CircleDollarSign
 } from 'lucide-react';
 import { useCoupons } from '../hooks';
+import {
+    AdminCard,
+    AdminButton,
+    AdminInput,
+    AdminSelect,
+    AdminTextarea,
+    AdminStatCard,
+    AdminModal,
+    ADMIN_COLORS
+} from '../components/DesignSystem';
 
 const Coupons = () => {
     const {
@@ -35,39 +45,47 @@ const Coupons = () => {
     const [isStatsSheetOpen, setIsStatsSheetOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-secondary-900 pb-20">
+        <div className="min-h-screen bg-neutral-950 pb-20">
+            {/* Header for mobile */}
+            <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
+                <h1 className="text-xl font-bold text-white" dir="rtl">القسائم</h1>
+                <span className="text-sm text-neutral-400">
+                    {totalCoupons} قسيمة
+                </span>
+            </div>
+
             {/* Stats Overview */}
             {couponStats && (
                 <div className="p-4 grid grid-cols-2 gap-4">
-                    <StatCard
+                    <AdminStatCard
                         title="القسائم النشطة"
                         value={couponStats.activeCoupons}
                         icon={Ticket}
-                        color="emerald"
+                        color="success"
                     />
-                    <StatCard
+                    <AdminStatCard
                         title="إجمالي التوفير"
                         value={`${couponStats.totalDiscountGiven.toLocaleString('ar-EG')} جنيه`}
                         icon={Wallet}
-                        color="blue"
+                        color="primary"
                     />
-                    <StatCard
+                    <AdminStatCard
                         title="معدل الاستخدام"
                         value={`${((couponStats.totalUsedCoupons / couponStats.totalCoupons) * 100).toFixed(1)}%`}
                         icon={TrendingUp}
-                        color="amber"
+                        color="warning"
                     />
-                    <StatCard
+                    <AdminStatCard
                         title="قسائم منتهية"
                         value={couponStats.expiredCoupons}
                         icon={Ban}
-                        color="red"
+                        color="danger"
                     />
                 </div>
             )}
 
             {/* Actions Bar */}
-            <div className="sticky top-0 z-30 bg-secondary-900/95 backdrop-blur-sm p-4 space-y-4">
+            <div className="sticky top-0 z-30 bg-neutral-950/95 backdrop-blur-sm p-4 space-y-4 border-b border-neutral-800/50">
                 {/* Search */}
                 <div className="relative">
                     <input

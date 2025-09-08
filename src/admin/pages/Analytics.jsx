@@ -4,12 +4,13 @@ import {
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart
 } from 'recharts';
 import {
-  TrendingUp, Wallet, Users, Package, Calendar, RefreshCw, 
+  TrendingUp, Wallet, Users, Package, Calendar, RefreshCw,
   Loader2, AlertCircle, ArrowUpRight, ArrowDownRight, DollarSign,
   ShoppingBag, TrendingDown, Clock, CheckCircle, Ban
 } from 'lucide-react';
 // Removed lodash import for performance - using native JS alternatives
 import { useAnalytics } from '../hooks';
+import { AdminCard, AdminButton, AdminStatCard } from '../components/DesignSystem';
 
 const Analytics = () => {
   const {
@@ -26,7 +27,7 @@ const Analytics = () => {
   const metrics = useMemo(() => {
     if (!analytics) return null;
 
-    const calculateGrowth = (current, previous) => 
+    const calculateGrowth = (current, previous) =>
       previous === 0 ? 0 : ((current - previous) / previous) * 100;
 
     return {
@@ -67,7 +68,7 @@ const Analytics = () => {
 
   const orderStatusData = useMemo(() => {
     if (!analytics?.ordersByStatus) return [];
-    
+
     const colors = {
       pending: '#FCD34D',
       processing: '#60A5FA',
@@ -83,51 +84,69 @@ const Analytics = () => {
   }, [analytics?.ordersByStatus]);
 
   return (
-    <div className="min-h-screen bg-gray-900 px-4 space-y-6" dir="rtl">
+    <div className="min-h-screen bg-neutral-950 p-4 space-y-6" dir="rtl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-white md:hidden">التحليلات</h1>
+        <AdminButton
+          onClick={refreshAnalytics}
+          disabled={isRefreshing}
+          variant="outline"
+          loading={isRefreshing}
+        >
+          <RefreshCw className="w-5 h-5" />
+          <span className="text-sm">تحديث</span>
+        </AdminButton>
+      </div>
+
       {isLoading ? (
         <LoadingState />
       ) : error ? (
         <ErrorState error={error} onRetry={refreshAnalytics} />
       ) : (
-        <div className="space-y-8">
-          {/* Key Metrics Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <MetricCard
+        <div className="space-y-6">
+          {/* Key Metrics Grid - Mobile Optimized */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+            <AdminStatCard
               title="إجمالي المبيعات"
               value={`${metrics.revenue.current?.toLocaleString('ar-EG')} ج.م`}
               icon={Wallet}
-              color={metrics.revenue.color}
+              color="success"
+              trend={metrics.revenue.growth}
             />
-            <MetricCard
+            <AdminStatCard
               title="عدد الطلبات"
               value={metrics.orders.current}
               icon={Package}
-              color={metrics.orders.color}
+              color="primary"
+              trend={metrics.orders.growth}
             />
-            <MetricCard
+            <AdminStatCard
               title="متوسط قيمة الطلب"
               value={`${metrics.avgOrderValue.current?.toLocaleString('ar-EG')} ج.م`}
               icon={ShoppingBag}
-              color={metrics.avgOrderValue.color}
+              color="warning"
+              trend={metrics.avgOrderValue.growth}
             />
-            <MetricCard
+            <AdminStatCard
               title="معدل الاحتفاظ بالعملاء"
               value={`${metrics.customerRetention.current?.toFixed(1)}%`}
               icon={Users}
-              color={metrics.customerRetention.color}
+              color="neutral"
+              trend={metrics.customerRetention.growth}
             />
           </div>
 
-          {/* Top Products */}
+          {/* Top Products - Mobile Optimized */}
           <TopProducts products={analytics.topProducts} />
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Order Status Distribution */}
+          {/* Charts Section - Mobile Stacked */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Order Status Distribution - Mobile Optimized */}
             <ChartCard
               title="توزيع حالات الطلبات"
               chart={
-                <div className="flex items-center justify-center h-[300px] bg-gray-800/30 rounded-xl">
+                <div className="flex items-center justify-center h-[250px] md:h-[300px] bg-gray-800/30 rounded-xl">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -136,8 +155,8 @@ const Analytics = () => {
                         nameKey="status"
                         cx="50%"
                         cy="50%"
-                        outerRadius={100}
-                        innerRadius={60}
+                        outerRadius={window.innerWidth < 768 ? 80 : 100}
+                        innerRadius={window.innerWidth < 768 ? 50 : 60}
                         paddingAngle={5}
                       >
                         {orderStatusData.map((entry, index) => (
@@ -150,17 +169,17 @@ const Analytics = () => {
                 </div>
               }
               footer={
-                <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-2 gap-3 mt-4">
                   {orderStatusData.map(({ status, count, color }) => (
                     <div key={status} className="flex items-center gap-2">
                       <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-3 h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: color }}
                       />
-                      <span className="text-sm text-gray-400">
+                      <span className="text-xs md:text-sm text-gray-400 truncate">
                         {getStatusLabel(status)}
                       </span>
-                      <span className="text-sm font-bold text-white">
+                      <span className="text-xs md:text-sm font-bold text-white ml-auto">
                         {count}
                       </span>
                     </div>
@@ -169,8 +188,6 @@ const Analytics = () => {
               }
             />
           </div>
-
-          
         </div>
       )}
     </div>
@@ -209,22 +226,25 @@ const MetricCard = ({ title, value, trend, icon: Icon, color }) => {
   const trendColor = trend >= 0 ? 'text-emerald-400' : 'text-red-400';
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border p-6 bg-gray-800/50 backdrop-blur-xl hover:bg-gray-800/70 transition-all duration-300 hover:shadow-xl hover:shadow-black/20 ${colors.border}`}
-    dir='rtl'>
-      <div className="absolute top-4 left-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.iconBg}`}>
-          <Icon className={`w-6 h-6 ${colors.text}`} />
+    <div className={`relative overflow-hidden rounded-xl md:rounded-2xl border p-3 md:p-6 
+                    bg-gray-800/50 backdrop-blur-xl hover:bg-gray-800/70 transition-all duration-300 
+                    hover:shadow-xl hover:shadow-black/20 ${colors.border}`}
+      dir='rtl'>
+      <div className="absolute top-2 md:top-4 left-2 md:left-4">
+        <div className={`w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center ${colors.iconBg}`}>
+          <Icon className={`w-4 h-4 md:w-6 md:h-6 ${colors.text}`} />
         </div>
       </div>
-      <div className="mt-8">
-        <h3 className="text-sm font-medium text-gray-400 mb-2">{title}</h3>
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${colors.text}`}>{value}</span>
+      <div className="mt-6 md:mt-8">
+        <h3 className="text-xs md:text-sm font-medium text-gray-400 mb-1 md:mb-2 leading-tight">{title}</h3>
+        <div className="mt-1 md:mt-2 flex items-baseline gap-1 md:gap-2">
+          <span className={`text-lg md:text-3xl font-bold ${colors.text} leading-none`}>{value}</span>
         </div>
         {trend !== undefined && (
-          <div className={`mt-3 flex items-center gap-2 px-3 py-1 rounded-full ${trend >= 0 ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-            <TrendIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">
+          <div className={`mt-2 md:mt-3 flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 rounded-full
+                          ${trend >= 0 ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
+            <TrendIcon className="w-3 h-3 md:w-4 md:h-4" />
+            <span className="text-xs md:text-sm font-medium">
               {Math.abs(trend).toFixed(1)}%
             </span>
           </div>
@@ -246,39 +266,43 @@ const ChartCard = ({ title, chart, footer }) => (
 );
 
 const TopProducts = ({ products }) => (
-  <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 hover:shadow-xl hover:shadow-black/20">
-    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-      <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+  <AdminCard variant="glass" padding="lg">
+    <h3 className="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-3" dir="rtl">
+      <div className="w-2 h-2 rounded-full bg-success-400"></div>
       أفضل المنتجات مبيعاً
     </h3>
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {products?.map((product, index) => (
-        <div
+        <AdminCard
           key={product.id}
-          className="flex items-center gap-4 p-4 bg-gray-800/30 rounded-xl
-                   hover:bg-gray-700/50 transition-all duration-300 border border-gray-700/30 hover:border-gray-600/50"
+          variant="default"
+          padding="md"
+          className="hover:border-primary-500/30"
         >
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-            <span className="text-lg font-bold text-white">#{index + 1}</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-bold text-white truncate mb-1">{product.name}</h4>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-400">
-                  {product.quantity} قطعة
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 
+                           flex items-center justify-center flex-shrink-0">
+              <span className="text-sm md:text-lg font-bold text-white">#{index + 1}</span>
+            </div>
+            <div className="flex-1 min-w-0" dir="rtl">
+              <h4 className="font-bold text-white truncate mb-1 text-sm md:text-base">{product.name}</h4>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Package className="w-3 h-3 md:w-4 md:h-4 text-neutral-400" />
+                  <span className="text-xs md:text-sm text-neutral-400">
+                    {product.quantity} قطعة
+                  </span>
+                </div>
+                <span className="text-primary-400 font-bold text-sm md:text-base">
+                  {product.revenue.toLocaleString('ar-EG')} جنيه
                 </span>
               </div>
-              <span className="text-blue-400 font-bold">
-                {product.revenue.toLocaleString('ar-EG')} جنيه
-              </span>
             </div>
           </div>
-        </div>
+        </AdminCard>
       ))}
     </div>
-  </div>
+  </AdminCard>
 );
 
 const CustomTooltip = ({ active, payload, label }) => {

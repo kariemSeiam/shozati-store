@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   BarChart3, PackageSearch, Users2, Image, PieChart,
-  Loader2, AlertCircle, LogOut,
-  Ticket
+  Loader2, AlertCircle, LogOut, Ticket, Menu, X, Home
 } from 'lucide-react';
 
 // Page Components (to be imported)
@@ -14,20 +13,22 @@ import Slides from './pages/Slides';
 
 import { useAdmin } from './hooks';
 import Coupons from './pages/Coupons';
+import { ADMIN_COLORS } from './components/DesignSystem';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytics');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { token, isInitialized, loading, error, logout } = useAdmin();
 
   if (!isInitialized || loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center space-y-6 p-8 rounded-2xl bg-gray-800/50 backdrop-blur-xl border border-gray-700/50">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50">
           <div className="relative">
-            <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto" />
-            <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />
+            <Loader2 className="w-16 h-16 text-primary-500 animate-spin mx-auto" />
+            <div className="absolute inset-0 rounded-full bg-primary-500/20 animate-ping" />
           </div>
-          <p className="text-gray-300 text-lg font-medium">جاري تحميل لوحة التحكم...</p>
+          <p className="text-neutral-300 text-lg font-medium" dir="rtl">جاري تحميل لوحة التحكم...</p>
         </div>
       </div>
     );
@@ -35,14 +36,14 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="text-center space-y-6 p-8 rounded-2xl bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 max-w-md">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+        <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
           <div className="relative">
-            <AlertCircle className="w-20 h-20 text-red-500 mx-auto" />
-            <div className="absolute inset-0 rounded-full bg-red-500/20 animate-pulse" />
+            <AlertCircle className="w-20 h-20 text-danger-500 mx-auto" />
+            <div className="absolute inset-0 rounded-full bg-danger-500/20 animate-pulse" />
           </div>
-          <h1 className="text-2xl font-bold text-white">عذراً، حدث خطأ ما</h1>
-          <p className="text-gray-400 leading-relaxed">{error}</p>
+          <h1 className="text-2xl font-bold text-white" dir="rtl">عذراً، حدث خطأ ما</h1>
+          <p className="text-neutral-400 leading-relaxed" dir="rtl">{error}</p>
         </div>
       </div>
     );
@@ -50,13 +51,13 @@ const AdminDashboard = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="text-center space-y-6 p-8 rounded-2xl bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 max-w-md">
-          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+        <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
             <LogOut className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">تسجيل الدخول مطلوب</h1>
-          <p className="text-gray-400 leading-relaxed">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
+          <h1 className="text-2xl font-bold text-white" dir="rtl">تسجيل الدخول مطلوب</h1>
+          <p className="text-neutral-400 leading-relaxed" dir="rtl">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
         </div>
       </div>
     );
@@ -69,8 +70,13 @@ const AdminDashboard = () => {
     { id: 'customers', icon: Users2, label: 'العملاء' },
     { id: 'slides', icon: Image, label: 'العروض' },
     { id: 'coupons', icon: Ticket, label: 'كوبون' }
-
   ];
+
+  // Close mobile menu when tab changes
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setIsMobileMenuOpen(false);
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -86,49 +92,160 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
-      {/* Top Navigation */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-gray-900/95 backdrop-blur-xl 
-                    border-b border-gray-800/50 shadow-2xl shadow-black/20">
-        <div className="px-4 py-4">
-        
-          {/* Tabs */}
-          <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-neutral-950 text-white">
+      {/* Mobile Header */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-50 bg-neutral-950/95 backdrop-blur-xl 
+                        border-b border-neutral-800/50 shadow-2xl">
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 rounded-xl bg-neutral-850/50 hover:bg-neutral-800/50 transition-colors"
+          >
+            <Menu className="w-6 h-6 text-neutral-400" />
+          </button>
+
+          <h1 className="text-lg font-bold text-white" dir="rtl">
+            {tabs.find(tab => tab.id === activeTab)?.label || 'لوحة التحكم'}
+          </h1>
+
+          <button
+            onClick={logout}
+            className="p-2 rounded-xl bg-neutral-850/50 hover:bg-danger-500/10 
+                     hover:border-danger-500/30 border border-transparent transition-all"
+          >
+            <LogOut className="w-5 h-5 text-danger-500" />
+          </button>
+        </div>
+      </header>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-neutral-950/95 
+                       backdrop-blur-xl border-r border-neutral-800/50 flex-col z-40">
+        <div className="p-6 border-b border-neutral-800/50">
+          <h1 className="text-xl font-bold text-white" dir="rtl">لوحة التحكم</h1>
+          <p className="text-sm text-neutral-400 mt-1" dir="rtl">إدارة المتجر</p>
+        </div>
+
+        <nav className="flex-1 px-4 py-6 space-y-2">
           {tabs.map(({ id, icon: Icon, label }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                       transition-all duration-300 group text-right
+                       ${activeTab === id
+                  ? 'text-primary-400 bg-primary-500/10 border border-primary-500/20'
+                  : 'text-neutral-400 hover:text-neutral-300 hover:bg-neutral-850/50'}`}
+              dir="rtl"
+            >
+              <Icon className={`w-5 h-5 transition-all duration-300
+                            ${activeTab === id ? 'text-primary-400' : 'group-hover:scale-110'}`} />
+              <span className="font-medium">{label}</span>
+              {activeTab === id && (
+                <div className="ml-auto w-2 h-8 rounded-full bg-gradient-to-b 
+                              from-primary-400 to-primary-600" />
+              )}
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t border-neutral-800/50">
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                     text-danger-500 hover:bg-danger-500/10 border border-transparent
+                     hover:border-danger-500/30 transition-all duration-300"
+            dir="rtl"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">تسجيل الخروج</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Navigation Overlay */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <nav className="absolute right-0 top-0 h-full w-80 max-w-[85vw] 
+                         bg-neutral-950/95 backdrop-blur-xl border-l border-neutral-800/50
+                         transform transition-transform duration-300">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-800/50">
               <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={`flex flex-col items-center gap-2 py-3 px-4 rounded-xl
-                         transition-all duration-300 relative group
-                         ${activeTab === id 
-                           ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' 
-                           : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/50'}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 rounded-xl hover:bg-neutral-850/50 transition-colors"
               >
-                <div className="relative">
-                  <Icon className={`w-6 h-6 transition-all duration-300
-                                ${activeTab === id ? 'scale-110 text-blue-400' : 'group-hover:scale-110'}`} />
-                  {activeTab === id && (
-                    <div className="absolute -inset-1 bg-blue-500/20 rounded-full blur-sm" />
-                  )}
-                </div>
-                <span className={`text-xs font-medium transition-all duration-300
-                              ${activeTab === id 
-                                ? 'text-blue-400 transform scale-105' 
-                                : 'text-gray-400 group-hover:text-gray-300'}`}>
-                  {label}
-                </span>
-                {activeTab === id && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 
-                                rounded-full bg-gradient-to-r from-blue-400 to-blue-600" />
-                )}
+                <X className="w-6 h-6 text-neutral-400" />
               </button>
-            ))}
-          </div>
+              <h2 className="text-lg font-bold text-white" dir="rtl">القائمة</h2>
+            </div>
+
+            <div className="px-4 py-6 space-y-2">
+              {tabs.map(({ id, icon: Icon, label }) => (
+                <button
+                  key={id}
+                  onClick={() => handleTabChange(id)}
+                  className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl
+                           transition-all duration-300 text-right
+                           ${activeTab === id
+                      ? 'text-primary-400 bg-primary-500/10 border border-primary-500/20'
+                      : 'text-neutral-400 hover:text-neutral-300 hover:bg-neutral-850/50'}`}
+                  dir="rtl"
+                >
+                  <Icon className={`w-6 h-6 ${activeTab === id ? 'text-primary-400' : ''}`} />
+                  <span className="font-medium text-lg">{label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800/50">
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                         text-danger-500 hover:bg-danger-500/10 border border-transparent
+                         hover:border-danger-500/30 transition-all duration-300"
+                dir="rtl"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium">تسجيل الخروج</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
+
+      {/* Bottom Navigation for Mobile */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-neutral-950/95 
+                     backdrop-blur-xl border-t border-neutral-800/50">
+        <div className="flex justify-around py-2">
+          {tabs.slice(0, 5).map(({ id, icon: Icon, label }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`flex flex-col items-center gap-1 py-2 px-2 rounded-xl
+                       transition-all duration-300 min-w-0 flex-1
+                       ${activeTab === id
+                  ? 'text-primary-400'
+                  : 'text-neutral-500 hover:text-neutral-400'}`}
+            >
+              <Icon className={`w-5 h-5 ${activeTab === id ? 'scale-110' : ''} transition-transform`} />
+              <span className="text-xs font-medium truncate w-full text-center">
+                {label}
+              </span>
+              {activeTab === id && (
+                <div className="w-6 h-0.5 rounded-full bg-primary-400 mt-1" />
+              )}
+            </button>
+          ))}
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="pt-32 pb-8 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950">
+      <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-8 min-h-screen
+                     bg-gradient-to-b from-neutral-950 via-neutral-950 to-neutral-900">
         {renderContent()}
       </main>
     </div>
