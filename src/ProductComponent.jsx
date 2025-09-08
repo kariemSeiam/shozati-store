@@ -29,11 +29,11 @@ const calculateDiscount = (basePrice, discountPrice) => {
 // New image preloader utility
 const ImagePreloader = {
     _cache: new Set(),
-    
+
     // Preload a single image and return a promise
     preload(src) {
         if (!src || this._cache.has(src)) return Promise.resolve();
-        
+
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
@@ -44,15 +44,15 @@ const ImagePreloader = {
             img.src = src;
         });
     },
-    
+
     // Simplified batch preload for better performance
     preloadBatch(sources = [], priority = []) {
         if (!sources.length) return Promise.resolve();
-        
+
         // Only preload priority images to reduce network load
         return Promise.all(priority.map(src => this.preload(src)));
     },
-    
+
     // Check if an image is already loaded
     isLoaded(src) {
         return this._cache.has(src);
@@ -90,14 +90,13 @@ export const ColorSelector = memo(({
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        className={`relative p-0.5 rounded-full transition-all ${
-                            selectedVariant?.id === variant.id
-                                ? 'ring-2 ring-primary-500 ring-offset-1 ring-offset-white'
-                                : ''
-                        }`}
+                        className={`relative p-0.5 rounded-full transition-all ${selectedVariant?.id === variant.id
+                            ? 'ring-2 ring-primary-500 ring-offset-1 ring-offset-white'
+                            : ''
+                            }`}
                     >
                         <div
-                            className="w-6 h-6 rounded-full border border-gray-200 shadow-sm"
+                            className="w-6 h-6 rounded-full border border-neutral-200 shadow-sm"
                             style={{ backgroundColor: variant.colorCode }}
                         />
                         {selectedVariant?.id === variant.id && (
@@ -117,10 +116,10 @@ export const ColorSelector = memo(({
                         exit={{ opacity: 0 }}
                         onClick={() => setIsExpanded(true)}
                         className="flex items-center justify-center px-2 py-1 rounded-full 
-                            bg-gray-100 hover:bg-gray-200 transition-colors border 
-                            border-gray-200 shadow-sm"
+                            bg-neutral-100 hover:bg-neutral-200 transition-colors border 
+                            border-neutral-200 shadow-sm"
                     >
-                        <span className="text-xs text-gray-600">+{remainingCount}</span>
+                        <span className="text-xs text-neutral-600">+{remainingCount}</span>
                     </motion.button>
                 )}
                 {hasMoreColors && isExpanded && (
@@ -130,9 +129,9 @@ export const ColorSelector = memo(({
                         exit={{ opacity: 0 }}
                         onClick={() => setIsExpanded(false)}
                         className="flex items-center justify-center px-2 rounded-full 
-                            hover:bg-gray-100 transition-colors"
+                            hover:bg-neutral-100 transition-colors"
                     >
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-neutral-400" />
                     </motion.button>
                 )}
             </div>
@@ -187,8 +186,8 @@ export const SizeSelector = memo(({ sizes, selectedSize, onSizeSelect }) => {
                         ${sizeObj.inStock
                             ? selectedSize?.size === sizeObj.size
                                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white ring-2 ring-primary-500/50 shadow-lg'
-                                : 'bg-white text-slate-800 hover:bg-gray-50 border border-gray-200 shadow-sm'
-                            : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                                : 'bg-white text-slate-800 hover:bg-neutral-50 border border-neutral-200 shadow-sm'
+                            : 'bg-neutral-50 text-neutral-400 cursor-not-allowed border border-neutral-200'
                         }`}
                 >
                     {sizeObj.size}
@@ -212,93 +211,93 @@ SizeSelector.displayName = 'SizeSelector';
 const Badges = memo(({ rating, tag, tagColor }) => {
     // Function to determine text color based on background
     const getTextColor = (bgColor) => {
-      // Convert hex to RGB
-      const hex = bgColor.replace('#', '');
-      const r = parseInt(hex.substr(0, 2), 16);
-      const g = parseInt(hex.substr(2, 2), 16);
-      const b = parseInt(hex.substr(4, 2), 16);
-      
-      // Calculate luminance
-      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      
-      return luminance > 0.5 ? 'text-white' : 'text-white';
+        // Convert hex to RGB
+        const hex = bgColor.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Calculate luminance
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+        return luminance > 0.5 ? 'text-white' : 'text-white';
     };
-  
+
     // Function to generate lighter and darker shades - memoized
     const shades = useMemo(() => {
-      if (!tagColor) return null;
-      
-      // Convert to RGB
-      const r = parseInt(tagColor.slice(1, 3), 16);
-      const g = parseInt(tagColor.slice(3, 5), 16);
-      const b = parseInt(tagColor.slice(5, 7), 16);
-      
-      // Generate lighter shade (20% lighter)
-      const lighter = `rgba(${r + (255 - r) * 0.2}, ${g + (255 - g) * 0.2}, ${b + (255 - b) * 0.2}, 0.9)`;
-      
-      // Generate darker shade (20% darker)
-      const darker = `rgba(${r * 0.8}, ${g * 0.8}, ${b * 0.8}, 1)`;
-      
-      return { lighter, darker };
+        if (!tagColor) return null;
+
+        // Convert to RGB
+        const r = parseInt(tagColor.slice(1, 3), 16);
+        const g = parseInt(tagColor.slice(3, 5), 16);
+        const b = parseInt(tagColor.slice(5, 7), 16);
+
+        // Generate lighter shade (20% lighter)
+        const lighter = `rgba(${r + (255 - r) * 0.2}, ${g + (255 - g) * 0.2}, ${b + (255 - b) * 0.2}, 0.9)`;
+
+        // Generate darker shade (20% darker)
+        const darker = `rgba(${r * 0.8}, ${g * 0.8}, ${b * 0.8}, 1)`;
+
+        return { lighter, darker };
     }, [tagColor]);
-  
-    const textColorClass = useMemo(() => 
-      tagColor ? getTextColor(tagColor) : 'text-white'
-    , [tagColor]);
-  
+
+    const textColorClass = useMemo(() =>
+        tagColor ? getTextColor(tagColor) : 'text-white'
+        , [tagColor]);
+
     return (
-      <div className="absolute top-4 right-3 flex flex-col gap-2 z-10">
-        {rating > 0 && (
-          <motion.div
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, type: "spring" }}
-            className="bg-gradient-to-r from-white/95 to-white/85
+        <div className="absolute top-4 right-3 flex flex-col gap-2 z-10">
+            {rating > 0 && (
+                <motion.div
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, type: "spring" }}
+                    className="bg-gradient-to-r from-white/95 to-white/85
                        backdrop-blur-md rounded-full px-3 py-1.5
-                       shadow-lg shadow-amber-100/30 
-                       border border-amber-100/50
-                       hover:border-amber-200/60
-                       hover:shadow-xl hover:shadow-amber-100/40
+                       shadow-lg shadow-blue-100/30 
+                       border border-blue-100/50
+                       hover:border-blue-200/60
+                       hover:shadow-xl hover:shadow-blue-100/40
                        flex items-center gap-1.5
                        transition-all duration-300"
-          >
-            <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
-            <span className="text-sm font-semibold bg-gradient-to-r 
-                           from-amber-600 to-amber-500
+                >
+                    <Star className="w-4 h-4 text-blue-500 fill-blue-400" />
+                    <span className="text-sm font-semibold bg-gradient-to-r 
+                           from-blue-600 to-blue-500
                            bg-clip-text text-transparent">
-              {rating.toFixed(1)}
-            </span>
-          </motion.div>
-        )}
-        
-        {tag && tagColor && (
-          <motion.div
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, type: "spring" }}
-            className="relative overflow-hidden"
-          >
-            <div
-              className="rounded-full px-3 py-1.5 text-sm font-medium
+                        {rating.toFixed(1)}
+                    </span>
+                </motion.div>
+            )}
+
+            {tag && tagColor && (
+                <motion.div
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, type: "spring" }}
+                    className="relative overflow-hidden"
+                >
+                    <div
+                        className="rounded-full px-3 py-1.5 text-sm font-medium
                          shadow-lg backdrop-blur-md
                          hover:shadow-xl transition-all duration-300
                          flex items-center gap-2"
-              style={{
-                background: `linear-gradient(to right, ${tagColor}, ${shades?.lighter})`,
-                boxShadow: `0 4px 6px -1px ${tagColor}20, 0 2px 4px -1px ${tagColor}10`
-              }}
-            >
-              <span className={`relative ${textColorClass}`}>
-                {tag}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </div>
+                        style={{
+                            background: `linear-gradient(to right, ${tagColor}, ${shades?.lighter})`,
+                            boxShadow: `0 4px 6px -1px ${tagColor}20, 0 2px 4px -1px ${tagColor}10`
+                        }}
+                    >
+                        <span className={`relative ${textColorClass}`}>
+                            {tag}
+                        </span>
+                    </div>
+                </motion.div>
+            )}
+        </div>
     );
 });
 
@@ -309,33 +308,33 @@ const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingC
     const [isLoading, setIsLoading] = useState(!ImagePreloader.isLoaded(src));
     const [error, setError] = useState(false);
     const imgRef = useRef(null);
-    
+
     useEffect(() => {
         setIsLoading(!ImagePreloader.isLoaded(src));
         setError(false);
-        
+
         const handleLoad = () => {
             setIsLoading(false);
             if (onLoad) onLoad();
         };
-        
+
         const handleError = () => {
             setIsLoading(false);
             setError(true);
         };
-        
+
         const imgEl = imgRef.current;
         if (imgEl) {
             imgEl.addEventListener('load', handleLoad);
             imgEl.addEventListener('error', handleError);
-            
+
             return () => {
                 imgEl.removeEventListener('load', handleLoad);
                 imgEl.removeEventListener('error', handleError);
             };
         }
     }, [src, onLoad]);
-    
+
     // Use intersection observer for lazy loading
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -349,22 +348,22 @@ const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingC
             },
             { threshold: 0.1, rootMargin: '200px' }
         );
-        
+
         if (imgRef.current) {
             observer.observe(imgRef.current);
         }
-        
+
         return () => observer.disconnect();
     }, [src]);
-    
+
     return (
         <div className={`relative ${className}`}>
             {isLoading && (
-                <div className={`absolute inset-0 flex items-center justify-center bg-gray-100/50 ${loadingClass}`}>
+                <div className={`absolute inset-0 flex items-center justify-center bg-neutral-100/50 ${loadingClass}`}>
                     <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             )}
-            
+
             <img
                 ref={imgRef}
                 src={src}
@@ -372,7 +371,7 @@ const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingC
                 className={`w-full h-full object-cover ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
                 loading="lazy"
             />
-            
+
             {error && fallback}
         </div>
     );
@@ -393,20 +392,20 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     const { getFavoriteStatus, toggleFavorite, isPending } = useFavorites();
     const isFavorite = getFavoriteStatus(product.id);
     const isLoading = isPending(product.id);
-    
+
     const preloaderTimeoutRef = useRef(null);
-    
+
     // Enhanced image preloading strategy
     useEffect(() => {
         // Preload the current image immediately
         const currentImage = selectedVariant.images[currentImageIndex];
         ImagePreloader.preload(currentImage);
-        
+
         // Clear any existing timeout to prevent race conditions
         if (preloaderTimeoutRef.current) {
             clearTimeout(preloaderTimeoutRef.current);
         }
-        
+
         // Preload next image with a small delay to prioritize current image
         if (selectedVariant.images.length > 1) {
             const nextIndex = (currentImageIndex + 1) % selectedVariant.images.length;
@@ -414,30 +413,30 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                 ImagePreloader.preload(selectedVariant.images[nextIndex]);
             }, 300);
         }
-        
+
         return () => {
             if (preloaderTimeoutRef.current) {
                 clearTimeout(preloaderTimeoutRef.current);
             }
         };
     }, [selectedVariant, currentImageIndex]);
-    
+
     // Image rotation timer with optimized checks
     useEffect(() => {
         if (selectedVariant.images.length <= 1 || showGallery || isChangingVariant) {
             return; // No need for interval
         }
-        
+
         const interval = setInterval(() => {
             setCurrentImageIndex(prev => (prev + 1) % selectedVariant.images.length);
         }, 3000);
-        
+
         return () => clearInterval(interval);
     }, [selectedVariant.images.length, showGallery, isChangingVariant]);
 
     // Mark image as loaded
     const handleImageLoad = useCallback((imageUrl) => {
-        setImagesLoaded(prev => ({...prev, [imageUrl]: true}));
+        setImagesLoaded(prev => ({ ...prev, [imageUrl]: true }));
     }, []);
 
     const handleFavoriteClick = useCallback(async (e) => {
@@ -458,10 +457,10 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
         const newIndex = (currentImageIndex + direction + selectedVariant.images.length) % selectedVariant.images.length;
         setCurrentImageIndex(newIndex);
     }, [currentImageIndex, selectedVariant.images.length]);
-    
+
     const handleVariantSelect = useCallback((variant) => {
         if (variant.id === selectedVariant.id) return;
-        
+
         setIsChangingVariant(true);
         // Preload the first image of the new variant
         ImagePreloader.preload(variant.images[0])
@@ -489,7 +488,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            whileHover={{ 
+            whileHover={{
                 scale: 1.02,
                 transition: { duration: 0.3, ease: "easeOut" }
             }}
@@ -501,11 +500,11 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             style={cardStyle}
         >
             {/* Main Card Container */}
-            <div className="relative bg-gradient-to-br from-white via-primary-50/30 to-secondary-100/20
+            <div className="relative bg-gradient-to-br from-white via-primary-50/30 to-primary-100/20
                           rounded-3xl border border-primary-100/60 overflow-hidden
                           shadow-lg shadow-primary-100/20 hover:shadow-xl hover:shadow-primary-200/30
                           transition-all duration-500">
-                
+
                 {/* Image Section */}
                 <div className="relative aspect-[4/5] overflow-hidden">
                     <motion.div
@@ -529,10 +528,10 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                     alt={product.name}
                                     className="w-full h-full"
                                     onLoad={() => handleImageLoad(selectedVariant.images[currentImageIndex])}
-                                    loadingClass="bg-gray-100/80"
+                                    loadingClass="bg-neutral-100/80"
                                     fallback={
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                                            <div className="text-gray-400">صورة غير متوفرة</div>
+                                        <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+                                            <div className="text-neutral-400">صورة غير متوفرة</div>
                                         </div>
                                     }
                                 />
@@ -541,7 +540,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                     </motion.div>
 
                     {/* Premium Glass Effect */}
-                    <motion.div 
+                    <motion.div
                         className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-white/10
                                  backdrop-blur-sm opacity-0 group-hover:opacity-100
                                  transition-all duration-700"
@@ -564,7 +563,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                     className="bg-white/80 backdrop-blur-md p-2 rounded-full
                                              shadow-lg shadow-primary-100/30 border border-primary-100/60"
                                 >
-                                                                          <Icon className={`w-5 h-5 text-primary-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
+                                    <Icon className={`w-5 h-5 text-primary-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
                                 </motion.button>
                             ))}
                         </div>
@@ -584,18 +583,18 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                             onClick={handleFavoriteClick}
                             className={`absolute top-3 left-3 p-3 rounded-full z-10
                                       backdrop-blur-md transition-all duration-500
-                                      ${isFavorite 
-                                        ? 'bg-rose-50/90 shadow-lg shadow-rose-200/50' 
-                                        : 'bg-white/90 shadow-lg shadow-primary-200/30'}`}
+                                      ${isFavorite
+                                    ? 'bg-rose-50/90 shadow-lg shadow-rose-200/50'
+                                    : 'bg-white/90 shadow-lg shadow-primary-200/30'}`}
                         >
                             {isLoading ? (
                                 <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
                             ) : (
                                 <Heart
                                     className={`w-5 h-5 transition-all duration-500
-                                              ${isFavorite 
-                                                ? 'text-rose-500 fill-rose-500 scale-110' 
-                                                : 'text-gray-600 hover:text-rose-500'}`}
+                                              ${isFavorite
+                                            ? 'text-rose-500 fill-rose-500 scale-110'
+                                            : 'text-neutral-600 hover:text-rose-500'}`}
                                 />
                             )}
                         </motion.button>
@@ -631,9 +630,9 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
 
                     {/* Price Display */}
                     <div className="flex items-baseline gap-2 justify-end">
-                        <motion.span 
+                        <motion.span
                             className="text-lg font-bold bg-gradient-to-r 
-                                     from-primary-600 to-secondary-500
+                                     from-primary-600 to-primary-500
                                      bg-clip-text text-transparent"
                             whileHover={{ scale: 1.05 }}
                         >
@@ -652,7 +651,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             <motion.div
                 className="absolute inset-0 bg-primary-100/20 rounded-3xl pointer-events-none"
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
+                animate={{
                     scale: isPressed ? 1.2 : 0,
                     opacity: isPressed ? 1 : 0
                 }}
@@ -673,7 +672,7 @@ const areProductsEqual = (prevProps, nextProps) => {
         if (prevProps.products?.length !== nextProps.products?.length) {
             return false;
         }
-        
+
         // If product IDs are different, re-render
         for (let i = 0; i < prevProps.products.length; i++) {
             if (prevProps.products[i].id !== nextProps.products[i].id) {
@@ -681,7 +680,7 @@ const areProductsEqual = (prevProps, nextProps) => {
             }
         }
     }
-    
+
     // Compare other props
     return (
         prevProps.loading === nextProps.loading &&
@@ -700,10 +699,10 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
     const { refresh } = useProducts();
     const containerRef = useRef(null);
     const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
-    
+
     // Virtualization logic for large product lists
     const isLargeList = products?.length > 20;
-    
+
     // Use intersection observer for infinite loading
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -726,38 +725,38 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
             }
         };
     }, [loading, onLoadMore]);
-    
+
     // Virtualization scroll handler for very large lists
     useEffect(() => {
         if (!isLargeList || !containerRef.current) return;
-        
+
         const handleScroll = () => {
             if (!containerRef.current) return;
-            
+
             const scrollTop = window.scrollY;
             const viewportHeight = window.innerHeight;
             const containerTop = containerRef.current.offsetTop;
-            
+
             // Calculate which items should be visible based on scroll position
             const itemHeight = 350; // Approximate height of a product card
             const buffer = 5; // Number of items to render above/below visible area
-            
+
             const start = Math.max(0, Math.floor((scrollTop - containerTop) / itemHeight) - buffer);
             const end = Math.min(
                 products.length,
                 Math.ceil((scrollTop - containerTop + viewportHeight) / itemHeight) + buffer
             );
-            
+
             setVisibleRange({ start, end });
         };
-        
+
         // Initial calculation
         handleScroll();
-        
+
         // Add scroll listener
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', handleScroll);
-        
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleScroll);
@@ -767,7 +766,7 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
     const handleProductSelection = useCallback((product) => {
         setSelectedProduct(product);
     }, []);
-    
+
     // Determine which products to render - either all or virtualized subset
     const productsToRender = useMemo(() => {
         if (!isLargeList || !products) return products || [];
@@ -779,7 +778,7 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
             <div className="flex flex-col items-center justify-center min-h-96 p-8">
                 <AlertCircle className="w-12 h-12 text-rose-500 mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-3">حدث خطأ</h3>
-                <p className="text-gray-600 text-center mb-6">{error}</p>
+                <p className="text-neutral-600 text-center mb-6">{error}</p>
                 <button
                     onClick={refresh}
                     className="px-6 py-3 bg-gradient-to-r from-violet-500 to-indigo-500 
@@ -797,21 +796,21 @@ export const ProductGrid = memo(({ products, loading, error, onLoadMore, onProdu
             <div className="flex flex-col items-center justify-center min-h-96 
                           bg-gradient-to-b from-white to-gray-50">
                 <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-                <p className="text-gray-600 mt-4 font-medium">جاري تحميل المنتجات...</p>
+                <p className="text-neutral-600 mt-4 font-medium">جاري تحميل المنتجات...</p>
             </div>
         );
     }
 
     return (
         <div className="" ref={containerRef}>
-            <div className="grid grid-cols-2 gap-6 p-6" style={{ 
+            <div className="grid grid-cols-2 gap-6 p-6" style={{
                 minHeight: isLargeList ? products.length * (350 / 2) : 'auto' // Approximate height calculation
             }}>
                 {/* For virtualized lists, we need placeholder spaces */}
                 {isLargeList && visibleRange.start > 0 && (
                     <div style={{ gridColumn: "span 2", height: visibleRange.start * (350 / 2) }} />
                 )}
-                
+
                 {productsToRender.map(product => (
                     <ProductCard
                         key={product.id}
@@ -866,7 +865,7 @@ export const ProductSheet = memo(({
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showImageViewer, setShowImageViewer] = useState(false);
     const [isImageLoading, setIsImageLoading] = useState(true);
-    
+
     // Reset state when product changes
     useEffect(() => {
         if (isOpen && product) {
@@ -875,18 +874,18 @@ export const ProductSheet = memo(({
             setSelectedSize(null);
             setQuantity(1);
             setCurrentImageIndex(0);
-            
+
             // Preload all images for this product to ensure smooth browsing
             if (initialVariant) {
                 // First prioritize current variant images
                 const currentVariantImages = initialVariant.images || [];
                 ImagePreloader.preloadBatch(currentVariantImages, [currentVariantImages[0]]);
-                
+
                 // Then preload first image of each other variant
                 const otherVariantImages = product.variants
                     .filter(v => v.id !== initialVariant.id)
                     .map(v => v.images[0]);
-                
+
                 if (otherVariantImages.length > 0) {
                     // Fixed requestIdleCallback implementation
                     if (window.requestIdleCallback) {
@@ -902,14 +901,14 @@ export const ProductSheet = memo(({
             }
         }
     }, [isOpen, product]);
-    
+
     const handleImageLoad = useCallback(() => {
         setIsImageLoading(false);
     }, []);
 
     const handleFavoriteToggle = useCallback(async () => {
         if (!product) return;
-        
+
         const canProceed = await checkAuthAndProceed({
             requiresAuth: true,
             onSuccess: async () => {
@@ -918,12 +917,12 @@ export const ProductSheet = memo(({
         });
         if (!canProceed) return;
     }, [checkAuthAndProceed, product, toggleFavorite]);
-    
+
     const handleVariantSelect = useCallback((variant) => {
         if (!variant || variant.id === selectedVariant?.id) return;
-        
+
         setIsImageLoading(true);
-        
+
         // Preload the images of the selected variant
         const imagesToPreload = variant.images || [];
         if (imagesToPreload.length > 0) {
@@ -933,7 +932,7 @@ export const ProductSheet = memo(({
                     setSelectedSize(null);
                     setCurrentImageIndex(0);
                     setIsImageLoading(false);
-                    
+
                     // Preload the rest of the images after setting the variant
                     if (imagesToPreload.length > 1) {
                         ImagePreloader.preloadBatch(imagesToPreload.slice(1));
@@ -975,7 +974,7 @@ export const ProductSheet = memo(({
                 onClose={onClose}
                 title="تفاصيل المنتج"
             >
-                <div className="p-6 space-y-6 bg-gray-50" dir="rtl">
+                <div className="p-6 space-y-6 bg-neutral-50" dir="rtl">
                     {/* Image Gallery with optimized loading */}
                     <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                         {selectedVariant && (
@@ -993,10 +992,10 @@ export const ProductSheet = memo(({
                                         alt={product.name}
                                         className="w-full h-full cursor-zoom-in"
                                         onLoad={handleImageLoad}
-                                        loadingClass="bg-gray-100/80 backdrop-blur-sm"
+                                        loadingClass="bg-neutral-100/80 backdrop-blur-sm"
                                         fallback={
-                                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                                                <div className="text-gray-400">صورة غير متوفرة</div>
+                                            <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+                                                <div className="text-neutral-400">صورة غير متوفرة</div>
                                             </div>
                                         }
                                     />
@@ -1032,7 +1031,7 @@ export const ProductSheet = memo(({
                                     {formatCurrency(product.discountPrice || product.basePrice)}
                                 </span>
                                 {product.discountPrice && (
-                                    <span className="text-sm text-gray-400 line-through">
+                                    <span className="text-sm text-neutral-400 line-through">
                                         {formatCurrency(product.basePrice)}
                                     </span>
                                 )}
@@ -1059,7 +1058,7 @@ export const ProductSheet = memo(({
                             ) : (
                                 <Heart
                                     className={`w-5 h-5 transition-transform
-                                    ${isFavorite ? 'text-rose-500 fill-rose-500 scale-110' : 'text-gray-700'}`}
+                                    ${isFavorite ? 'text-rose-500 fill-rose-500 scale-110' : 'text-neutral-700'}`}
                                 />
                             )}
                         </button>
@@ -1071,20 +1070,20 @@ export const ProductSheet = memo(({
                             <div className="flex items-center gap-2">
                                 {product.rating > 0 && (
                                     <div className="flex items-center gap-1">
-                                        <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+                                        <Star className="w-5 h-5 text-blue-400 fill-blue-400" />
                                         <span className="text-gray-900 font-bold">
                                             {product.rating.toFixed(1)}
                                         </span>
                                     </div>
                                 )}
                                 {product.ratingCount > 0 && (
-                                    <span className="text-gray-500 text-sm">
+                                    <span className="text-neutral-500 text-sm">
                                         ({product.ratingCount} تقييم)
                                     </span>
                                 )}
                             </div>
                             {product.salesCount > 0 && (
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-neutral-500">
                                     {product.salesCount} عملية شراء
                                 </span>
                             )}
@@ -1093,7 +1092,7 @@ export const ProductSheet = memo(({
                         <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
 
                         {product.description && (
-                            <p className="text-gray-600 leading-relaxed">
+                            <p className="text-neutral-600 leading-relaxed">
                                 {product.description}
                             </p>
                         )}
@@ -1106,7 +1105,7 @@ export const ProductSheet = memo(({
                                 <Palette className="w-5 h-5 text-primary-500" />
                                 <h3 className="font-bold text-gray-900">اللون</h3>
                             </div>
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-neutral-600">
                                 {selectedVariant?.colorName}
                             </span>
                         </div>
@@ -1127,7 +1126,7 @@ export const ProductSheet = memo(({
                                     <Ruler className="w-5 h-5 text-primary-500" />
                                     <h3 className="font-bold text-gray-900">المقاس</h3>
                                 </div>
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm text-neutral-600">
                                     {selectedSize?.size || 'اختر المقاس'}
                                 </span>
                             </div>
@@ -1156,7 +1155,7 @@ export const ProductSheet = memo(({
                                              flex items-center justify-center flex-shrink-0">
                                             <Check className="w-4 h-4 text-primary-500" />
                                         </div>
-                                        <span className="text-gray-700">{feature}</span>
+                                        <span className="text-neutral-700">{feature}</span>
                                     </div>
                                 ))}
                             </div>
@@ -1170,7 +1169,7 @@ export const ProductSheet = memo(({
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                                        className="w-10 h-10 rounded-xl bg-gray-50 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors border border-gray-200"
+                                        className="w-10 h-10 rounded-xl bg-neutral-50 text-neutral-700 flex items-center justify-center hover:bg-neutral-100 transition-colors border border-neutral-200"
                                     >
                                         <Minus className="w-4 h-4" />
                                     </button>
@@ -1179,13 +1178,13 @@ export const ProductSheet = memo(({
                                     </span>
                                     <button
                                         onClick={() => setQuantity(prev => prev + 1)}
-                                        className="w-10 h-10 rounded-xl bg-gray-50 text-gray-700 flex items-center justify-center hover:bg-gray-100 transition-colors border border-gray-200"
+                                        className="w-10 h-10 rounded-xl bg-neutral-50 text-neutral-700 flex items-center justify-center hover:bg-neutral-100 transition-colors border border-neutral-200"
                                     >
                                         <Plus className="w-4 h-4" />
                                     </button>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm text-gray-500">السعر الإجمالي</p>
+                                    <p className="text-sm text-neutral-500">السعر الإجمالي</p>
                                     <span className="text-xl font-bold text-primary-500">
                                         {formatCurrency((product.discountPrice || product.basePrice) * quantity)}
                                     </span>
@@ -1200,12 +1199,12 @@ export const ProductSheet = memo(({
                                 <span className="text-sm font-medium text-gray-900">متطلبات الشراء</span>
                             </div>
                             <div className="flex gap-2 items-center justify-center">
-                                <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedVariant ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'}`}>
+                                <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedVariant ? 'bg-green-50 text-green-600' : 'bg-neutral-50 text-neutral-500'}`}>
                                     <Palette className="w-4 h-4" />
                                     <span className="text-xs">اللون</span>
                                     {selectedVariant && <Check className="w-3.5 h-3.5" />}
                                 </div>
-                                <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedSize ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'}`}>
+                                <div className={`flex items-center gap-1 px-2 py-1.5 rounded-lg ${selectedSize ? 'bg-green-50 text-green-600' : 'bg-neutral-50 text-neutral-500'}`}>
                                     <Ruler className="w-4 h-4" />
                                     <span className="text-xs">المقاس</span>
                                     {selectedSize && <Check className="w-3.5 h-3.5" />}
@@ -1231,9 +1230,9 @@ export const ProductSheet = memo(({
                     {/* Support Section */}
                     <button
                         onClick={() => window.open('https://wa.me/+201033939828', '_blank')}
-                        className="w-full bg-emerald-50 text-emerald-600 rounded-xl p-4 
+                        className="w-full bg-success-50 text-success-600 rounded-xl p-4 
                                flex items-center justify-center gap-2 hover:brightness-105 
-                               transition-all shadow-sm border border-emerald-100"
+                               transition-all shadow-sm border border-success-100"
                     >
                         <MessageCircle className="w-5 h-5" />
                         <span>تحتاج مساعدة؟ تواصل معنا</span>

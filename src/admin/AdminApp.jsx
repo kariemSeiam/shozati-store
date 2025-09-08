@@ -219,24 +219,30 @@ const AdminDashboard = () => {
 
       {/* Bottom Navigation for Mobile */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-neutral-950/95 
-                     backdrop-blur-xl border-t border-neutral-800/50">
-        <div className="flex justify-around py-2">
-          {tabs.slice(0, 5).map(({ id, icon: Icon, label }) => (
+                     backdrop-blur-xl border-t border-neutral-800/50 shadow-2xl">
+        <div className="flex justify-around py-2 px-2">
+          {tabs.map(({ id, icon: Icon, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex flex-col items-center gap-1 py-2 px-2 rounded-xl
-                       transition-all duration-300 min-w-0 flex-1
+              className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl
+                       transition-all duration-300 min-w-0 flex-1 relative
                        ${activeTab === id
-                  ? 'text-primary-400'
-                  : 'text-neutral-500 hover:text-neutral-400'}`}
+                  ? 'text-primary-400 bg-primary-500/10'
+                  : 'text-neutral-500 hover:text-neutral-400 hover:bg-neutral-800/30'}`}
+              dir="rtl"
             >
-              <Icon className={`w-5 h-5 ${activeTab === id ? 'scale-110' : ''} transition-transform`} />
-              <span className="text-xs font-medium truncate w-full text-center">
+              <div className="relative">
+                <Icon className={`w-5 h-5 transition-all duration-300 ${activeTab === id ? 'scale-110' : ''}`} />
+                {activeTab === id && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
+                )}
+              </div>
+              <span className="text-xs font-medium truncate w-full text-center leading-tight">
                 {label}
               </span>
               {activeTab === id && (
-                <div className="w-6 h-0.5 rounded-full bg-primary-400 mt-1" />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 rounded-full bg-gradient-to-r from-primary-400 to-primary-600" />
               )}
             </button>
           ))}
@@ -244,9 +250,11 @@ const AdminDashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-8 min-h-screen
+      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-8 min-h-screen
                      bg-gradient-to-b from-neutral-950 via-neutral-950 to-neutral-900">
-        {renderContent()}
+        <div className="min-h-screen" dir="rtl">
+          {renderContent()}
+        </div>
       </main>
     </div>
   );

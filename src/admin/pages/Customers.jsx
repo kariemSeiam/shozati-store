@@ -224,7 +224,7 @@ const Customers = () => {
                                         >
                                             <Cell fill="#10B981" />
                                             <Cell fill="#3B82F6" />
-                                            <Cell fill="#F59E0B" />
+                                            <Cell fill="#0ea5e9" />
                                         </Pie>
                                         <Tooltip />
                                     </PieChart>
@@ -375,9 +375,9 @@ const Customers = () => {
 // Reusable Components (StatCard, CustomerCard, etc.)
 const StatCard = ({ title, value, icon: Icon, trend, subtitle, color = 'emerald' }) => {
     const colors = {
-        emerald: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+        emerald: 'bg-success-500/10 text-success-500 border-success-500/20',
         blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-        amber: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+        blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20'
     };
 
     return (
@@ -416,9 +416,9 @@ const CustomerCard = ({ customer, onClick }) => {
 
     const getCustomerTier = () => {
         const orderCount = customer.orderCount || 0;
-        if (orderCount > 5) return { label: 'عميل مخلص', color: 'text-amber-500' };
+        if (orderCount > 5) return { label: 'عميل مخلص', color: 'text-blue-500' };
         if (orderCount > 1) return { label: 'عميل منتظم', color: 'text-blue-500' };
-        return { label: 'عميل جديد', color: 'text-emerald-500' };
+        return { label: 'عميل جديد', color: 'text-success-500' };
     };
 
     const tier = getCustomerTier();
