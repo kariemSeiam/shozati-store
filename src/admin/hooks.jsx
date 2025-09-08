@@ -18,8 +18,16 @@ export const OrderStatus = {
 // Enhanced Admin Hook
 export const useAdmin = () => {
     // Authentication States
-    const [token, setToken] = useState(localStorage.getItem('adminToken'));
+    const [token, setToken] = useState(localStorage.getItem('adminToken') || 'admin_dev_token_123123');
     const [isInitialized, setIsInitialized] = useState(false);
+
+    // Set default token for development
+    useEffect(() => {
+        if (!localStorage.getItem('adminToken')) {
+            localStorage.setItem('adminToken', 'admin_dev_token_123123');
+        }
+        setIsInitialized(true);
+    }, []);
 
     // Loading States
     const [loading, setLoading] = useState(false);
@@ -614,7 +622,7 @@ export const useProducts = (config = {}) => {
 
             const response = await apiCall(`/admin/products?${queryParams}`, {
                 signal: abortController.current.signal
-            });
+            }, true); // Add authentication
 
 
 
@@ -1398,7 +1406,7 @@ export const useAnalytics = () => {
                 ...(customDateRange.endDate && { endDate: customDateRange.endDate.toISOString() }),
             }).toString();
 
-            const response = await apiCall(`/admin/analytics/dashboard?${queryParams}`);
+            const response = await apiCall(`/admin/analytics/dashboard?${queryParams}`, {}, true); // Add authentication
             if (response) {
                 setAnalytics(response);
             }
