@@ -264,7 +264,7 @@ const Products = () => {
         {/* Mobile View Mode Toggle */}
         <div className="md:hidden flex items-center justify-between">
           <span className="text-sm text-neutral-400">
-            {products.length} منتج
+            {products?.length || 0} منتج
           </span>
           <div className="flex items-center gap-2">
             <AdminButton
@@ -293,7 +293,7 @@ const Products = () => {
           <LoadingState />
         ) : error ? (
           <ErrorState message={error} />
-        ) : products.length === 0 ? (
+        ) : !products || products.length === 0 ? (
           <EmptyState
             icon={PackageSearch}
             title="لا توجد منتجات"
