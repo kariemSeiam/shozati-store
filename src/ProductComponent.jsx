@@ -92,7 +92,7 @@ export const ColorSelector = memo(({
                         exit={{ opacity: 0, scale: 0.8 }}
                         className={`relative p-0.5 rounded-full transition-all ${
                             selectedVariant?.id === variant.id
-                                ? 'ring-2 ring-sky-500 ring-offset-1 ring-offset-white'
+                                ? 'ring-2 ring-primary-500 ring-offset-1 ring-offset-white'
                                 : ''
                         }`}
                     >
@@ -186,7 +186,7 @@ export const SizeSelector = memo(({ sizes, selectedSize, onSizeSelect }) => {
                     className={`relative p-4 mb-6 rounded-xl font-bold text-sm transition-all
                         ${sizeObj.inStock
                             ? selectedSize?.size === sizeObj.size
-                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white ring-2 ring-blue-500/50 shadow-lg'
+                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white ring-2 ring-primary-500/50 shadow-lg'
                                 : 'bg-white text-slate-800 hover:bg-gray-50 border border-gray-200 shadow-sm'
                             : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
                         }`}
@@ -361,7 +361,7 @@ const LazyImage = memo(({ src, alt, className, onLoad, fallback = null, loadingC
         <div className={`relative ${className}`}>
             {isLoading && (
                 <div className={`absolute inset-0 flex items-center justify-center bg-gray-100/50 ${loadingClass}`}>
-                    <div className="w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             )}
             
@@ -501,9 +501,9 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
             style={cardStyle}
         >
             {/* Main Card Container */}
-            <div className="relative bg-gradient-to-br from-white via-sky-50/30 to-sky-100/20
-                          rounded-3xl border border-sky-100/60 overflow-hidden
-                          shadow-lg shadow-sky-100/20 hover:shadow-xl hover:shadow-sky-200/30
+            <div className="relative bg-gradient-to-br from-white via-primary-50/30 to-secondary-100/20
+                          rounded-3xl border border-primary-100/60 overflow-hidden
+                          shadow-lg shadow-primary-100/20 hover:shadow-xl hover:shadow-primary-200/30
                           transition-all duration-500">
                 
                 {/* Image Section */}
@@ -562,9 +562,9 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                         navigateImage(idx === 0 ? -1 : 1);
                                     }}
                                     className="bg-white/80 backdrop-blur-md p-2 rounded-full
-                                             shadow-lg shadow-sky-100/30 border border-sky-100/60"
+                                             shadow-lg shadow-primary-100/30 border border-primary-100/60"
                                 >
-                                    <Icon className={`w-5 h-5 text-sky-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
+                                                                          <Icon className={`w-5 h-5 text-primary-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
                                 </motion.button>
                             ))}
                         </div>
@@ -586,10 +586,10 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                       backdrop-blur-md transition-all duration-500
                                       ${isFavorite 
                                         ? 'bg-rose-50/90 shadow-lg shadow-rose-200/50' 
-                                        : 'bg-white/90 shadow-lg shadow-sky-200/30'}`}
+                                        : 'bg-white/90 shadow-lg shadow-primary-200/30'}`}
                         >
                             {isLoading ? (
-                                <Loader2 className="w-5 h-5 text-sky-500 animate-spin" />
+                                <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
                             ) : (
                                 <Heart
                                     className={`w-5 h-5 transition-all duration-500
@@ -606,7 +606,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                         <motion.div
                             whileHover={{ y: -4 }}
                             className="backdrop-blur-md rounded-full p-1
-                                     shadow-sm shadow-sky-100/30 border border-sky-100/50"
+                                     shadow-sm shadow-primary-100/30 border border-primary-100/50"
                         >
                             <ColorSelector
                                 variants={product.variants}
@@ -623,7 +623,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                 <div className="relative px-4 py-2 pt-3 pb-4 space-y-3 bg-white/80 backdrop-blur-md">
                     <motion.div className="relative">
                         <h3 className="font-bold text-base line-clamp-2 text-right
-                                     bg-gradient-to-r from-sky-900 to-sky-700
+                                     bg-gradient-to-r from-primary-900 to-primary-700
                                      bg-clip-text text-transparent">
                             {product.name}
                         </h3>
@@ -633,14 +633,14 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                     <div className="flex items-baseline gap-2 justify-end">
                         <motion.span 
                             className="text-lg font-bold bg-gradient-to-r 
-                                     from-sky-600 to-sky-500
+                                     from-primary-600 to-secondary-500
                                      bg-clip-text text-transparent"
                             whileHover={{ scale: 1.05 }}
                         >
                             {formatCurrency(product.discountPrice || product.basePrice)}
                         </motion.span>
                         {product.discountPrice && (
-                            <span className="text-sm text-sky-400/90 line-through">
+                            <span className="text-sm text-primary-400/90 line-through">
                                 {formatCurrency(product.basePrice)}
                             </span>
                         )}
@@ -650,7 +650,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
 
             {/* Touch Ripple Effect - Optimized using CSS transforms only */}
             <motion.div
-                className="absolute inset-0 bg-sky-100/20 rounded-3xl pointer-events-none"
+                className="absolute inset-0 bg-primary-100/20 rounded-3xl pointer-events-none"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ 
                     scale: isPressed ? 1.2 : 0,
@@ -1017,7 +1017,7 @@ export const ProductSheet = memo(({
                                         onClick={() => setCurrentImageIndex(index)}
                                         className={`w-2 h-2 rounded-full transition-all
                                         ${currentImageIndex === index
-                                                ? 'bg-sky-500 w-4'
+                                                ? 'bg-primary-500 w-4'
                                                 : 'bg-white/80'}`}
                                     />
                                 ))}
@@ -1103,7 +1103,7 @@ export const ProductSheet = memo(({
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
-                                <Palette className="w-5 h-5 text-sky-500" />
+                                <Palette className="w-5 h-5 text-primary-500" />
                                 <h3 className="font-bold text-gray-900">اللون</h3>
                             </div>
                             <span className="text-sm text-gray-600">
@@ -1124,7 +1124,7 @@ export const ProductSheet = memo(({
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
-                                    <Ruler className="w-5 h-5 text-sky-500" />
+                                    <Ruler className="w-5 h-5 text-primary-500" />
                                     <h3 className="font-bold text-gray-900">المقاس</h3>
                                 </div>
                                 <span className="text-sm text-gray-600">
@@ -1144,7 +1144,7 @@ export const ProductSheet = memo(({
                     {product.features?.length > 0 && (
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 p-2">
-                                <Check className="w-5 h-5 text-sky-500" />
+                                <Check className="w-5 h-5 text-primary-500" />
                                 <h3 className="font-bold text-gray-900">مميزات المنتج</h3>
                             </div>
 
@@ -1152,9 +1152,9 @@ export const ProductSheet = memo(({
                                 {product.features.map((feature, index) => (
                                     <div key={index} className="bg-white rounded-xl p-3 
                                          flex items-center gap-3 shadow-sm border border-gray-100">
-                                        <div className="w-8 h-8 rounded-xl bg-sky-50
+                                        <div className="w-8 h-8 rounded-xl bg-primary-50
                                              flex items-center justify-center flex-shrink-0">
-                                            <Check className="w-4 h-4 text-sky-500" />
+                                            <Check className="w-4 h-4 text-primary-500" />
                                         </div>
                                         <span className="text-gray-700">{feature}</span>
                                     </div>
@@ -1186,7 +1186,7 @@ export const ProductSheet = memo(({
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm text-gray-500">السعر الإجمالي</p>
-                                    <span className="text-xl font-bold text-sky-500">
+                                    <span className="text-xl font-bold text-primary-500">
                                         {formatCurrency((product.discountPrice || product.basePrice) * quantity)}
                                     </span>
                                 </div>
@@ -1196,7 +1196,7 @@ export const ProductSheet = memo(({
                         {/* Purchase Requirements Section */}
                         <div className="bg-white rounded-xl p-4 space-y-3 shadow-sm border border-gray-100">
                             <div className="flex items-center gap-2">
-                                <ClipboardList className="w-5 h-5 text-sky-500" />
+                                <ClipboardList className="w-5 h-5 text-primary-500" />
                                 <span className="text-sm font-medium text-gray-900">متطلبات الشراء</span>
                             </div>
                             <div className="flex gap-2 items-center justify-center">
@@ -1221,7 +1221,7 @@ export const ProductSheet = memo(({
                         <button
                             onClick={handleAddToCart}
                             disabled={!selectedSize}
-                            className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl py-4 font-bold hover:brightness-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                            className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl py-4 font-bold hover:brightness-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
                         >
                             <ShoppingBag className="w-5 h-5" />
                             <span>إضافة للسلة</span>
