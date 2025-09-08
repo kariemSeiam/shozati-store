@@ -93,20 +93,20 @@ const Coupons = () => {
                         value={filters.search}
                         onChange={e => updateFilters({ search: e.target.value })}
                         placeholder="ابحث برمز القسيمة أو رقم الهاتف..."
-                        className="w-full h-12 bg-gray-800/50 rounded-xl px-12 text-white text-right
-                     border border-gray-700/50 focus:border-blue-500/50
+                        className="w-full h-12 bg-neutral-800/50 rounded-xl px-12 text-white text-right
+                     border border-neutral-700/50 focus:border-blue-500/50
                      focus:ring-2 focus:ring-blue-500/50
-                     placeholder:text-gray-500"
+                     placeholder:text-neutral-500"
                         dir="rtl"
                     />
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                     {filters.search && (
                         <button
                             onClick={() => updateFilters({ search: '' })}
                             className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full
-                       hover:bg-gray-700/50 transition-colors"
+                       hover:bg-neutral-700/50 transition-colors"
                         >
-                            <X className="w-4 h-4 text-gray-400" />
+                            <X className="w-4 h-4 text-neutral-400" />
                         </button>
                     )}
                 </div>
@@ -128,7 +128,7 @@ const Coupons = () => {
                        whitespace-nowrap transition-colors
                        ${filters.type === id
                                     ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'}`}
+                                    : 'bg-neutral-800/50 text-neutral-400 hover:bg-neutral-700/50'}`}
                         >
                             <Icon className="w-4 h-4" />
                             <span>{label}</span>
@@ -149,8 +149,8 @@ const Coupons = () => {
                     </button>
                     <button
                         onClick={() => setIsStatsSheetOpen(true)}
-                        className="p-3 rounded-xl bg-gray-800/50 text-gray-400
-                     hover:bg-gray-700/50 transition-colors"
+                        className="p-3 rounded-xl bg-neutral-800/50 text-neutral-400
+                     hover:bg-neutral-700/50 transition-colors"
                     >
                         <PieChart className="w-5 h-5" />
                     </button>
@@ -213,27 +213,27 @@ const Coupons = () => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="fixed bottom-0 inset-x-0 bg-gray-900/95 backdrop-blur-xl 
-                      border-t border-gray-800/50 p-4">
+                <div className="fixed bottom-0 inset-x-0 bg-neutral-900/95 backdrop-blur-xl 
+                      border-t border-neutral-800/50 p-4">
                     <div className="flex justify-between items-center max-w-lg mx-auto">
                         <button
                             onClick={previousPage}
                             disabled={page <= 1}
-                            className="p-2 rounded-xl bg-gray-800/50 text-gray-400
+                            className="p-2 rounded-xl bg-neutral-800/50 text-neutral-400
                       disabled:opacity-50 disabled:cursor-not-allowed
-                      hover:bg-gray-700/50 transition-colors"
+                      hover:bg-neutral-700/50 transition-colors"
                         >
                             السابق
                         </button>
-                        <span className="text-gray-400">
+                        <span className="text-neutral-400">
                             صفحة {page} من {totalPages}
                         </span>
                         <button
                             onClick={nextPage}
                             disabled={page >= totalPages}
-                            className="p-2 rounded-xl bg-gray-800/50 text-gray-400
+                            className="p-2 rounded-xl bg-neutral-800/50 text-neutral-400
                       disabled:opacity-50 disabled:cursor-not-allowed
-                      hover:bg-gray-700/50 transition-colors"
+                      hover:bg-neutral-700/50 transition-colors"
                         >
                             التالي
                         </button>
@@ -251,7 +251,7 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
             <Icon className={`w-6 h-6 text-${color}-500`} />
         </div>
         <div className="mt-6">
-            <h3 className="text-sm font-medium text-gray-400">{title}</h3>
+            <h3 className="text-sm font-medium text-neutral-400">{title}</h3>
             <div className="mt-2">
                 <span className={`text-2xl font-bold text-${color}-500`}>{value}</span>
             </div>
@@ -276,8 +276,8 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
     return (
         <div
             onClick={onClick}
-            className="group bg-gray-800/30 rounded-2xl p-4 space-y-4 cursor-pointer
-               border border-gray-700/50 hover:border-blue-500/30
+            className="group bg-neutral-800/30 rounded-2xl p-4 space-y-4 cursor-pointer
+               border border-neutral-700/50 hover:border-blue-500/30
                transition-all duration-300"
         >
             <div className="flex justify-between items-start">
@@ -293,7 +293,7 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={copyCode}
-                            className="p-1 rounded-lg bg-gray-800/50 hover:bg-blue-500/10
+                            className="p-1 rounded-lg bg-neutral-800/50 hover:bg-blue-500/10
                        border border-transparent hover:border-blue-500/30
                        transition-all duration-300"
                         >
@@ -304,13 +304,13 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
                             {coupon.code}
                         </h3>
                     </div>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-neutral-400 mt-1">
                         {new Date(coupon.endDate).toLocaleDateString('ar-EG')}
                     </p>
                 </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+            <div className="flex items-center justify-between pt-4 border-t border-neutral-700/50">
                 <div className="flex items-center gap-2">
                     {coupon.discountType === 'percentage' ? (
                         <PercentIcon className="w-5 h-5 text-blue-500" />
@@ -323,7 +323,7 @@ const CouponCard = ({ coupon, onClick, onEdit, onDelete }) => {
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex items-center gap-2 text-neutral-400">
                     <Users className="w-5 h-5" />
                     <span>{coupon.usedCount}/{coupon.maxUses || '∞'}</span>
                 </div>
@@ -360,9 +360,9 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onClose}
-                        className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors"
+                        className="p-2 -m-2 rounded-full hover:bg-neutral-800/50 transition-colors"
                     >
-                        <ChevronDown className="w-6 h-6 text-gray-400" />
+                        <ChevronDown className="w-6 h-6 text-neutral-400" />
                     </button>
                     <h2 className="text-xl font-bold text-white">إنشاء قسيمة جديدة</h2>
                     <div className="w-10" />
@@ -371,7 +371,7 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Coupon Code */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-400">
+                        <label className="block text-sm font-medium text-neutral-400">
                             رمز القسيمة
                         </label>
                         <input
@@ -379,12 +379,12 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                             value={formData.code}
                             onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                             placeholder="SALE2025"
-                            className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                         border border-gray-700/50 focus:border-blue-500/50
+                            className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                         border border-neutral-700/50 focus:border-blue-500/50
                          focus:ring-2 focus:ring-blue-500/50"
                             dir="ltr"
                         />
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-neutral-500">
                             اتركه فارغاً لإنشاء رمز تلقائي
                         </p>
                     </div>
@@ -392,14 +392,14 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                     {/* Discount Type & Value */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-400">
+                            <label className="block text-sm font-medium text-neutral-400">
                                 نوع الخصم
                             </label>
                             <select
                                 value={formData.discountType}
                                 onChange={e => setFormData({ ...formData, discountType: e.target.value })}
-                                className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                           border border-gray-700/50 focus:border-blue-500/50
+                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                           border border-neutral-700/50 focus:border-blue-500/50
                            focus:ring-2 focus:ring-blue-500/50"
                             >
                                 <option value="percentage">نسبة مئوية</option>
@@ -407,7 +407,7 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-400">
+                            <label className="block text-sm font-medium text-neutral-400">
                                 قيمة الخصم
                             </label>
                             <div className="relative">
@@ -416,11 +416,11 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                                     value={formData.discountValue}
                                     onChange={e => setFormData({ ...formData, discountValue: e.target.value })}
                                     placeholder={formData.discountType === 'percentage' ? '10' : '100'}
-                                    className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                             border border-gray-700/50 focus:border-blue-500/50
+                                    className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                             border border-neutral-700/50 focus:border-blue-500/50
                              focus:ring-2 focus:ring-blue-500/50"
                                 />
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
                                     {formData.discountType === 'percentage' ? '%' : 'جنيه'}
                                 </span>
                             </div>
@@ -429,7 +429,7 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
 
                     {/* Usage Limit */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-400">
+                        <label className="block text-sm font-medium text-neutral-400">
                             الحد الأقصى للاستخدام
                         </label>
                         <input
@@ -437,8 +437,8 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                             value={formData.maxUses}
                             onChange={e => setFormData({ ...formData, maxUses: e.target.value })}
                             placeholder="اتركه فارغاً للاستخدام غير المحدود"
-                            className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                         border border-gray-700/50 focus:border-blue-500/50
+                            className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                         border border-neutral-700/50 focus:border-blue-500/50
                          focus:ring-2 focus:ring-blue-500/50"
                         />
                     </div>
@@ -446,28 +446,28 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                     {/* Date Range */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-400">
+                            <label className="block text-sm font-medium text-neutral-400">
                                 تاريخ البدء
                             </label>
                             <input
                                 type="date"
                                 value={formData.startDate}
                                 onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                                className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                           border border-gray-700/50 focus:border-blue-500/50
+                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                           border border-neutral-700/50 focus:border-blue-500/50
                            focus:ring-2 focus:ring-blue-500/50"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-400">
+                            <label className="block text-sm font-medium text-neutral-400">
                                 تاريخ الانتهاء
                             </label>
                             <input
                                 type="date"
                                 value={formData.endDate}
                                 onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                                className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                           border border-gray-700/50 focus:border-blue-500/50
+                                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                           border border-neutral-700/50 focus:border-blue-500/50
                            focus:ring-2 focus:ring-blue-500/50"
                             />
                         </div>
@@ -476,7 +476,7 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                     {/* Specific Users */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-sm font-medium text-gray-400">
+                            <h3 className="text-sm font-medium text-neutral-400">
                                 مستخدمين محددين
                             </h3>
                             <button
@@ -501,8 +501,8 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                                         setFormData({ ...formData, specificUsers: newUsers });
                                     }}
                                     placeholder="رقم الهاتف"
-                                    className="flex-1 h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                             border border-gray-700/50 focus:border-blue-500/50
+                                    className="flex-1 h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                             border border-neutral-700/50 focus:border-blue-500/50
                              focus:ring-2 focus:ring-blue-500/50"
                                     dir="ltr"
                                 />
@@ -515,8 +515,8 @@ const CreateCouponSheet = ({ isOpen, onClose, onCreate, isCreating }) => {
                                         setFormData({ ...formData, specificUsers: newUsers });
                                     }}
                                     placeholder="عدد مرات الاستخدام"
-                                    className="w-32 h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                             border border-gray-700/50 focus:border-blue-500/50
+                                    className="w-32 h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                             border border-neutral-700/50 focus:border-blue-500/50
                              focus:ring-2 focus:ring-blue-500/50"
                                 />
                                 <button
@@ -605,16 +605,16 @@ const CouponDetailsSheet = ({
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onClose}
-                        className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors"
+                        className="p-2 -m-2 rounded-full hover:bg-neutral-800/50 transition-colors"
                     >
-                        <ChevronDown className="w-6 h-6 text-gray-400" />
+                        <ChevronDown className="w-6 h-6 text-neutral-400" />
                     </button>
                     <h2 className="text-xl font-bold text-white">تفاصيل القسيمة</h2>
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors"
+                        className="p-2 -m-2 rounded-full hover:bg-neutral-800/50 transition-colors"
                     >
-                        <Edit3 className="w-6 h-6 text-gray-400" />
+                        <Edit3 className="w-6 h-6 text-neutral-400" />
                     </button>
                 </div>
 
@@ -642,8 +642,8 @@ const CouponDetailsSheet = ({
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="p-4 rounded-xl bg-gray-800/50 text-gray-400
-                           hover:bg-gray-700/50 transition-colors"
+                                className="p-4 rounded-xl bg-neutral-800/50 text-neutral-400
+                           hover:bg-neutral-700/50 transition-colors"
                             >
                                 إلغاء
                             </button>
@@ -652,11 +652,11 @@ const CouponDetailsSheet = ({
                 ) : (
                     <>
                         {/* Coupon Code */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4">
+                        <div className="bg-neutral-800/30 rounded-2xl p-4">
                             <div className="flex justify-between items-center">
                                 <button
                                     onClick={copyCode}
-                                    className="p-2 rounded-xl bg-gray-800/50 hover:bg-blue-500/10
+                                    className="p-2 rounded-xl bg-neutral-800/50 hover:bg-blue-500/10
                              border border-transparent hover:border-blue-500/30
                              transition-all duration-300"
                                 >
@@ -664,14 +664,14 @@ const CouponDetailsSheet = ({
                                 </button>
                                 <div className="text-right">
                                     <h3 className="text-2xl font-bold text-white">{coupon.code}</h3>
-                                    <p className="text-sm text-gray-400 mt-1">رمز القسيمة</p>
+                                    <p className="text-sm text-neutral-400 mt-1">رمز القسيمة</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Discount Info */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-gray-800/30 rounded-2xl p-4">
+                            <div className="bg-neutral-800/30 rounded-2xl p-4">
                                 <div className="flex items-center gap-2">
                                     {coupon.discountType === 'percentage' ? (
                                         <PercentIcon className="w-5 h-5 text-blue-500" />
@@ -683,34 +683,34 @@ const CouponDetailsSheet = ({
                                         {coupon.discountType === 'percentage' ? '%' : ' جنيه'}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-400 mt-1">قيمة الخصم</p>
+                                <p className="text-sm text-neutral-400 mt-1">قيمة الخصم</p>
                             </div>
-                            <div className="bg-gray-800/30 rounded-2xl p-4">
+                            <div className="bg-neutral-800/30 rounded-2xl p-4">
                                 <div className="flex items-center gap-2">
                                     <Users className="w-5 h-5 text-blue-500" />
                                     <span className="text-lg font-bold text-white">
                                         {coupon.usedCount}/{coupon.maxUses || '∞'}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-400 mt-1">عدد مرات الاستخدام</p>
+                                <p className="text-sm text-neutral-400 mt-1">عدد مرات الاستخدام</p>
                             </div>
                         </div>
 
                         {/* Date Range */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4 space-y-4">
+                        <div className="bg-neutral-800/30 rounded-2xl p-4 space-y-4">
                             <div className="flex items-start gap-3">
                                 <Calendar className="w-5 h-5 text-blue-500 mt-1" />
                                 <div className="flex-1">
                                     <h4 className="font-medium text-white">المدة الزمنية</h4>
                                     <div className="mt-2 space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-400">تاريخ البدء:</span>
+                                            <span className="text-neutral-400">تاريخ البدء:</span>
                                             <span className="text-white">
                                                 {new Date(coupon.startDate).toLocaleDateString('ar-EG')}
                                             </span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-400">تاريخ الانتهاء:</span>
+                                            <span className="text-neutral-400">تاريخ الانتهاء:</span>
                                             <span className="text-white">
                                                 {new Date(coupon.endDate).toLocaleDateString('ar-EG')}
                                             </span>
@@ -721,17 +721,17 @@ const CouponDetailsSheet = ({
                         </div>
 
                         {/* Usage Statistics */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4 space-y-4">
+                        <div className="bg-neutral-800/30 rounded-2xl p-4 space-y-4">
                             <h4 className="font-medium text-white">إحصائيات الاستخدام</h4>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <p className="text-sm text-gray-400">إجمالي التوفير</p>
+                                    <p className="text-sm text-neutral-400">إجمالي التوفير</p>
                                     <p className="text-lg font-bold text-blue-500">
                                         {coupon.totalDiscountGiven?.toLocaleString('ar-EG')} جنيه
                                     </p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm text-gray-400">متوسط التوفير</p>
+                                    <p className="text-sm text-neutral-400">متوسط التوفير</p>
                                     <p className="text-lg font-bold text-blue-500">
                                         {(coupon.totalDiscountGiven / coupon.usedCount || 0).toLocaleString('ar-EG')} جنيه
                                     </p>
@@ -745,13 +745,13 @@ const CouponDetailsSheet = ({
                                 <h4 className="font-medium text-white">آخر الاستخدامات</h4>
                                 <div className="space-y-3">
                                     {coupon.recentUsage.map((usage, index) => (
-                                        <div key={index} className="bg-gray-800/30 rounded-xl p-3 flex justify-between items-center">
+                                        <div key={index} className="bg-neutral-800/30 rounded-xl p-3 flex justify-between items-center">
                                             <span className="text-blue-500 font-medium">
                                                 {usage.discountAmount.toLocaleString('ar-EG')} جنيه
                                             </span>
                                             <div className="text-right">
                                                 <p className="text-sm text-white">{usage.orderId}</p>
-                                                <p className="text-xs text-gray-400">
+                                                <p className="text-xs text-neutral-400">
                                                     {new Date(usage.usedAt).toLocaleString('ar-EG')}
                                                 </p>
                                             </div>
@@ -767,12 +767,12 @@ const CouponDetailsSheet = ({
                                 <h4 className="font-medium text-white">المستخدمون المحددون</h4>
                                 <div className="space-y-3">
                                     {coupon.specificUsers.map((user, index) => (
-                                        <div key={index} className="bg-gray-800/30 rounded-xl p-3 flex justify-between items-center">
+                                        <div key={index} className="bg-neutral-800/30 rounded-xl p-3 flex justify-between items-center">
                                             <div className="flex items-center gap-2">
                                                 <Users className="w-5 h-5 text-blue-500" />
                                                 <span className="text-white">{user.usedCount}/{user.maxUses || '∞'}</span>
                                             </div>
-                                            <span className="text-gray-400 dir-ltr">{user.phone}</span>
+                                            <span className="text-neutral-400 dir-ltr">{user.phone}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -812,9 +812,9 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onClose}
-                        className="p-2 -m-2 rounded-full hover:bg-gray-800/50 transition-colors"
+                        className="p-2 -m-2 rounded-full hover:bg-neutral-800/50 transition-colors"
                     >
-                        <ChevronDown className="w-6 h-6 text-gray-400" />
+                        <ChevronDown className="w-6 h-6 text-neutral-400" />
                     </button>
                     <h2 className="text-xl font-bold text-white">إحصائيات القسائم</h2>
                     <div className="w-10" />
@@ -842,7 +842,7 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
                                 title="معدل الاستخدام"
                                 value={`${((stats.totalUsedCoupons / stats.totalCoupons) * 100).toFixed(1)}%`}
                                 icon={TrendingUp}
-                                color="amber"
+                                color="blue"
                             />
                             <StatCard
                                 title="قسائم منتهية"
@@ -853,15 +853,15 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
                         </div>
 
                         {/* Type Distribution */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4 space-y-4">
+                        <div className="bg-neutral-800/30 rounded-2xl p-4 space-y-4">
                             <h4 className="font-medium text-white">توزيع أنواع القسائم</h4>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-400">نسبة مئوية</span>
+                                        <span className="text-neutral-400">نسبة مئوية</span>
                                         <span className="text-white">{stats.couponsByType.percentage}</span>
                                     </div>
-                                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-neutral-700 rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-blue-500 rounded-full"
                                             style={{
@@ -872,10 +872,10 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-400">قيمة ثابتة</span>
+                                        <span className="text-neutral-400">قيمة ثابتة</span>
                                         <span className="text-white">{stats.couponsByType.fixed}</span>
                                     </div>
-                                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-neutral-700 rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-green-500 rounded-full"
                                             style={{
@@ -893,14 +893,14 @@ const StatsSheet = ({ stats, isOpen, onClose, isLoading }) => {
                                 <h4 className="font-medium text-white">آخر النشاطات</h4>
                                 <div className="space-y-3">
                                     {stats.recentActivities.map((activity, index) => (
-                                        <div key={index} className="bg-gray-800/30 rounded-xl p-3 flex justify-between items-center">
+                                        <div key={index} className="bg-neutral-800/30 rounded-xl p-3 flex justify-between items-center">
                                             <span className="text-blue-500 font-medium">
                                                 {activity.discountAmount.toLocaleString('ar-EG')} جنيه
                                             </span>
                                             <div className="text-right">
                                                 <p className="text-sm text-white">{activity.couponCode}</p>
-                                                <p className="text-xs text-gray-400 dir-ltr">{activity.userPhone}</p>
-                                                <p className="text-xs text-gray-500">
+                                                <p className="text-xs text-neutral-400 dir-ltr">{activity.userPhone}</p>
+                                                <p className="text-xs text-neutral-500">
                                                     {new Date(activity.usedAt).toLocaleString('ar-EG')}
                                                 </p>
                                             </div>
@@ -945,12 +945,12 @@ const Sheet = React.memo(({ isOpen, onClose, children }) => {
                     willChange: 'transform'
                 }}
             >
-                <div className="bg-gradient-to-b from-secondary-900/95 to-secondary-900 
-                        rounded-t-[2.5rem] border-t border-secondary-800/50 shadow-2xl
+                <div className="bg-gradient-to-b from-primary-900/95 to-primary-900 
+                        rounded-t-[2.5rem] border-t border-primary-800/50 shadow-2xl
                         max-h-[90vh] overflow-y-auto hide-scrollbar">
                     {/* Simplified Handle */}
                     <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-12 h-1 rounded-full bg-secondary-700/50" />
+                        <div className="w-12 h-1 rounded-full bg-primary-700/50" />
                     </div>
 
                     {children}
@@ -964,7 +964,7 @@ const LoadingState = () => (
     <div className="flex items-center justify-center py-12">
         <div className="space-y-4 text-center">
             <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" />
-            <p className="text-gray-400">جاري تحميل القسائم...</p>
+            <p className="text-neutral-400">جاري تحميل القسائم...</p>
         </div>
     </div>
 );
@@ -973,15 +973,15 @@ const ErrorState = ({ message }) => (
     <div className="text-center py-12">
         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-white mb-2">حدث خطأ</h3>
-        <p className="text-gray-400">{message}</p>
+        <p className="text-neutral-400">{message}</p>
     </div>
 );
 
 const EmptyState = () => (
     <div className="text-center py-12">
-        <Ticket className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+        <Ticket className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-white mb-2">لا توجد قسائم</h3>
-        <p className="text-gray-400">قم بإنشاء قسيمة جديدة للبدء</p>
+        <p className="text-neutral-400">قم بإنشاء قسيمة جديدة للبدء</p>
     </div>
 );
 

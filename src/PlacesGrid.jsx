@@ -24,30 +24,30 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`group relative isolate bg-gradient-to-br 
-                 from-secondary-900/90 via-secondary-800/90 to-secondary-900/90
-                 backdrop-blur-xl border border-secondary-800/50 rounded-3xl 
+                 from-primary-900/90 via-primary-800/90 to-primary-900/90
+                 backdrop-blur-xl border border-primary-800/50 rounded-3xl 
                  overflow-hidden transition-all duration-500 
                  hover:scale-[1.02] hover:shadow-2xl
-                 ${place.status === 'not_connected' ? 'ring-2 ring-amber-500/20' : ''}
+                 ${place.status === 'not_connected' ? 'ring-2 ring-blue-500/20' : ''}
                  hover:border-primary-500/20 hover:shadow-primary-500/5`}
         >
             {/* Dynamic Background Glow */}
             <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 
                       transition-opacity duration-500 ${place.status === 'connected'
-                    ? 'bg-gradient-conic from-emerald-500/30 via-transparent to-emerald-500/30' :
+                    ? 'bg-gradient-conic from-success-500/30 via-transparent to-success-500/30' :
                     place.status === 'unsupported'
                         ? 'bg-gradient-conic from-rose-500/30 via-transparent to-rose-500/30' :
-                        'bg-gradient-conic from-amber-500/30 via-transparent to-amber-500/30'
+                        'bg-gradient-conic from-blue-500/30 via-transparent to-blue-500/30'
                 }`} />
 
             {/* Status Indicator Light */}
             <div className={`absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 
                       rounded-full text-sm border backdrop-blur-lg 
                       transition-all duration-300 ${place.status === 'connected'
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                    ? 'bg-success-500/10 text-success-400 border-success-500/30' :
                     place.status === 'unsupported'
                         ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
-                        'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                        'bg-blue-500/10 text-blue-400 border-blue-500/30'
                 }`}>
                 <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
                 <span>{
@@ -70,18 +70,18 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
                     <div className="space-y-2">
                         <button
                             onClick={() => copyToClipboard(place.phone)}
-                            className="flex items-center gap-2 w-full text-secondary-400 
-                       bg-secondary-800/40 hover:bg-secondary-800/60 px-4 py-2.5 
+                            className="flex items-center gap-2 w-full text-primary-400 
+                       bg-primary-800/40 hover:bg-primary-800/60 px-4 py-2.5 
                        rounded-xl text-sm transition-all group/phone
                        relative overflow-hidden"
                         >
                             <Phone size={16} className="shrink-0" />
                             <span className="font-mono flex-1 text-right">{place.phone}</span>
-                            <div className={`absolute inset-0 bg-emerald-500/10 
+                            <div className={`absolute inset-0 bg-success-500/10 
                            transition-transform duration-500 ease-out
                            ${copiedPhone ? 'translate-x-0' : 'translate-x-full'}`} />
                             {copiedPhone ? (
-                                <CheckCircle size={16} className="text-emerald-400 shrink-0 relative" />
+                                <CheckCircle size={16} className="text-success-400 shrink-0 relative" />
                             ) : (
                                 <Copy size={16} className="opacity-0 group-hover/phone:opacity-100 
                                        transition-opacity relative" />
@@ -168,7 +168,7 @@ const PlaceCard = ({ place, onUpdateStatus, onSendMessage }) => {
 // StatusFilter component
 const StatusFilter = ({ counts, activeStatus, onStatusChange }) => {
     const filters = [
-        { id: 'not_connected', label: 'غير متصل', color: 'amber' },
+        { id: 'not_connected', label: 'غير متصل', color: 'blue' },
         { id: 'connected', label: 'متصل', color: 'emerald' },
         { id: 'all', label: 'الكل', color: 'blue' }
     ];
@@ -362,7 +362,7 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
                 <p className="text-gray-400 text-sm mb-8 max-w-md">{error}</p>
                 <button
                     onClick={() => fetchPlaces(1, true)}
-                                    className="bg-primary-600 px-8 py-3 rounded-full hover:bg-primary-700
+                    className="bg-primary-600 px-8 py-3 rounded-full hover:bg-primary-700
                          transition-all duration-300 shadow-lg shadow-primary-500/20"
                 >
                     إعادة المحاولة
@@ -402,8 +402,8 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
                        backdrop-blur-xl border border-gray-700/20 rounded-2xl p-6">
                         <div className="flex items-center gap-4">
                             <div className="relative">
-                                                <div className="absolute inset-0 bg-primary-500 blur-xl opacity-20"></div>
-                <Loader2 className="animate-spin text-primary-400 relative" size={24} />
+                                <div className="absolute inset-0 bg-primary-500 blur-xl opacity-20"></div>
+                                <Loader2 className="animate-spin text-primary-400 relative" size={24} />
                             </div>
                             <span className="text-lg">جاري التحميل...</span>
                         </div>
@@ -414,9 +414,9 @@ export const PlacesGrid = ({ selectedList, searchTerm, onUpdateStatus, onSendMes
             {!loading && places.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                     <div className="relative mb-8 animate-float">
-                                        <div className="absolute inset-0 bg-primary-500 blur-2xl opacity-20"></div>
-                <div className="relative bg-primary-500/10 p-6 rounded-full">
-                    <MessageCircle size={56} className="text-primary-400" />
+                        <div className="absolute inset-0 bg-primary-500 blur-2xl opacity-20"></div>
+                        <div className="relative bg-primary-500/10 p-6 rounded-full">
+                            <MessageCircle size={56} className="text-primary-400" />
                         </div>
                     </div>
                     <h3 className="text-xl font-medium mb-3">لا توجد نتائج</h3>

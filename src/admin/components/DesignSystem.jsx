@@ -6,18 +6,19 @@ import { AlertCircle } from 'lucide-react';
 
 // Color Palette
 export const ADMIN_COLORS = {
-    // Primary colors
+    // Primary colors - Clean Blue
     primary: {
-        50: '#eff6ff',
-        100: '#dbeafe',
-        200: '#bfdbfe',
-        300: '#93c5fd',
-        400: '#60a5fa',
-        500: '#3b82f6', // Main blue
-        600: '#2563eb',
-        700: '#1d4ed8',
-        800: '#1e40af',
-        900: '#1e3a8a',
+        50: '#f0f9ff',
+        100: '#e0f2fe',
+        200: '#bae6fd',
+        300: '#7dd3fc',
+        400: '#38bdf8',
+        500: '#0ea5e9', // Main blue
+        600: '#0284c7',
+        700: '#0369a1',
+        800: '#075985',
+        900: '#0c4a6e',
+        950: '#082f49'
     },
 
     // Status colors
@@ -35,16 +36,16 @@ export const ADMIN_COLORS = {
     },
 
     warning: {
-        50: '#fffbeb',
-        100: '#fef3c7',
-        200: '#fde68a',
-        300: '#fcd34d',
-        400: '#fbbf24',
-        500: '#f59e0b', // Main amber
-        600: '#d97706',
-        700: '#b45309',
-        800: '#92400e',
-        900: '#78350f',
+        50: '#f0f9ff',
+        100: '#e0f2fe',
+        200: '#bae6fd',
+        300: '#7dd3fc',
+        400: '#38bdf8',
+        500: '#0ea5e9', // Main blue
+        600: '#0284c7',
+        700: '#0369a1',
+        800: '#075985',
+        900: '#0c4a6e',
     },
 
     danger: {
@@ -137,6 +138,7 @@ export const AdminCard = ({
         ${hoverEffect}
         ${className}
       `}
+            dir="rtl"
             {...props}
         >
             {children}
@@ -213,6 +215,7 @@ export const AdminButton = ({
         ${className}
       `}
             disabled={disabled || loading}
+            dir="rtl"
             {...props}
         >
             {loading && (
@@ -424,17 +427,17 @@ export const AdminStatCard = ({ title, value, icon: Icon, color = 'primary', tre
 
     return (
         <AdminCard
-            className={`${colors.border} ${colors.bg}`}
+            className={`${colors.border} ${colors.bg} hover:shadow-lg hover:shadow-black/20`}
             variant="glass"
-            padding="lg"
+            padding="md"
         >
-            <div className="flex items-start justify-between">
-                <div className="flex-1" dir="rtl">
-                    <h3 className="text-xs md:text-sm font-medium text-neutral-400 mb-2 leading-tight">
+            <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0" dir="rtl">
+                    <h3 className="text-xs font-medium text-neutral-400 mb-1 leading-tight truncate">
                         {title}
                     </h3>
-                    <div className="flex items-baseline gap-2">
-                        <span className={`text-lg md:text-3xl font-bold ${colors.text} leading-none`}>
+                    <div className="flex items-baseline gap-1">
+                        <span className={`text-lg font-bold ${colors.text} leading-none`}>
                             {value}
                         </span>
                         {subtitle && (
@@ -442,7 +445,7 @@ export const AdminStatCard = ({ title, value, icon: Icon, color = 'primary', tre
                         )}
                     </div>
                     {trend !== undefined && (
-                        <div className={`mt-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
+                        <div className={`mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
                           ${trend >= 0
                                 ? 'bg-success-500/10 border border-success-500/20 text-success-400'
                                 : 'bg-danger-500/10 border border-danger-500/20 text-danger-400'
@@ -452,8 +455,8 @@ export const AdminStatCard = ({ title, value, icon: Icon, color = 'primary', tre
                         </div>
                     )}
                 </div>
-                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center ${colors.iconBg} flex-shrink-0`}>
-                    <Icon className={`w-5 h-5 md:w-6 md:h-6 ${colors.text}`} />
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colors.iconBg} flex-shrink-0`}>
+                    <Icon className={`w-4 h-4 ${colors.text}`} />
                 </div>
             </div>
         </AdminCard>
@@ -486,9 +489,11 @@ export const AdminModal = ({
         relative bg-neutral-900 rounded-xl md:rounded-2xl border border-neutral-700/50
         w-full ${fullScreen ? 'h-full md:max-h-[95vh]' : sizes[size]} 
         overflow-y-auto backdrop-blur-xl
-      `}>
+      `}
+                dir="rtl"
+            >
                 {title && (
-                    <div className="sticky top-0 bg-neutral-900 border-b border-neutral-800/50 px-4 md:px-6 py-4 flex items-center justify-between" dir="ltr">
+                    <div className="sticky top-0 bg-neutral-900 border-b border-neutral-800/50 px-4 md:px-6 py-4 flex items-center justify-between">
                         <button
                             onClick={onClose}
                             className="p-2 hover:bg-neutral-800/50 rounded-xl transition-colors"

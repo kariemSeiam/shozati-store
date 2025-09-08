@@ -24,13 +24,13 @@ const COLOR_OPTIONS = [
   { label: 'أحمر', value: 'red', code: '#FF0000' },
   { label: 'أخضر', value: 'green', code: '#008000' },
   { label: 'أزرق', value: 'blue', code: '#0000FF' },
-  { label: 'أصفر', value: 'yellow', code: '#FFFF00' },
+  { label: 'أزرق', value: 'blue', code: '#0ea5e9' },
   { label: 'برتقالي', value: 'orange', code: '#FFA500' },
   { label: 'بنفسجي', value: 'purple', code: '#800080' },
   { label: 'وردي', value: 'pink', code: '#FFC0CB' },
   { label: 'رمادي', value: 'gray', code: '#808080' },
   { label: 'بني', value: 'brown', code: '#A52A2A' },
-  { label: 'ذهبي', value: 'gold', code: '#FFD700' },
+  { label: 'أزرق فاتح', value: 'lightblue', code: '#38bdf8' },
   { label: 'فضي', value: 'silver', code: '#C0C0C0' }
 ];
 
@@ -699,7 +699,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages, ediState = tru
                   { label: 'أزرق', value: '#3B82F6' },    // Blue
                   { label: 'أخضر', value: '#10B981' },    // Green
                   { label: 'أحمر', value: '#EF4444' },    // Red
-                  { label: 'أصفر', value: '#F59E0B' },    // Yellow/Orange
+                  { label: 'أزرق', value: '#0ea5e9' },    // Blue
                   { label: 'بنفسجي', value: '#8B5CF6' },  // Purple
                   { label: 'رمادي', value: '#64748B' },   // Gray
                   { label: 'وردي', value: '#EC4899' },    // Pink
@@ -758,7 +758,7 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages, ediState = tru
             {formData.variants.map((variant, variantIndex) => (
               <div
                 key={variantIndex}
-                className="bg-gray-800/30 rounded-xl p-4 space-y-4"
+                className="bg-neutral-800/30 rounded-xl p-4 space-y-4"
               >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 pb-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
@@ -921,8 +921,8 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
     sum + variant.sizes.length, 0);
 
   return (
-    <div className="group bg-gray-800/30 rounded-2xl p-4 
-                  border border-gray-700/50 hover:border-blue-500/30
+    <div className="group bg-neutral-800/30 rounded-2xl p-4 
+                  border border-neutral-700/50 hover:border-blue-500/30
                   transition-all duration-300"
       dir='ltr'>
       <div className="flex gap-4"
@@ -947,7 +947,7 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
                            transition-colors">
                 {product.name}
               </h3>
-              <p className="text-sm text-gray-400" dir='rtl'>
+              <p className="text-sm text-neutral-400" dir='rtl'>
                 كود: {product.code}
               </p>
             </div>
@@ -962,7 +962,7 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
                 {product.basePrice.toLocaleString('ar-EG')} جنيه
               </span>
               {product.discountPrice && (
-                <span className="text-sm text-gray-500 line-through">
+                <span className="text-sm text-neutral-500 line-through">
                   {product.discountPrice.toLocaleString('ar-EG')} جنيه
                 </span>
               )}
@@ -970,17 +970,17 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
 
             {/* Inventory */}
             <div className="flex items-center gap-2">
-              <Package className="w-4 h-4 text-gray-400" />
-              <span className="text-gray-400">
+              <Package className="w-4 h-4 text-neutral-400" />
+              <span className="text-neutral-400">
                 المخزون: {totalStock}
               </span>
             </div>
 
             {/* Variants Count */}
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full border-2 border-amber-500"
+              <div className="w-4 h-4 rounded-full border-2 border-blue-500"
                 style={{ backgroundColor: product.variants[0]?.colorCode }} />
-              <span className="text-gray-400">
+              <span className="text-neutral-400">
                 {variantCount} لون, {sizesCount} مقاس
               </span>
             </div>
@@ -991,13 +991,13 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
             <div className="mt-2 flex flex-wrap gap-2">
               {product.features.slice(0, 3).map((feature, index) => (
                 <span key={index}
-                  className="px-2 py-1 rounded-lg bg-gray-800 text-gray-400 
+                  className="px-2 py-1 rounded-lg bg-neutral-800 text-neutral-400 
                                text-sm">
                   {feature}
                 </span>
               ))}
               {product.features.length > 3 && (
-                <span className="px-2 py-1 rounded-lg bg-gray-800 text-gray-400 
+                <span className="px-2 py-1 rounded-lg bg-neutral-800 text-neutral-400 
                                text-sm">
                   +{product.features.length - 3}
                 </span>
@@ -1026,7 +1026,7 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
       </div>
 
       {/* Variants Preview */}
-      <div className="mt-4 pt-4 border-t border-gray-700/50">
+      <div className="mt-4 pt-4 border-t border-neutral-700/50">
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
           {product.variants.map((variant, index) => (
             <div key={index}
@@ -1044,10 +1044,10 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
                   style={{ backgroundColor: variant.colorCode }} />
               </div>
               <div className="mt-1 text-center">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-neutral-400">
                   {variant.colorName}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-neutral-500">
                   {variant.sizes.length} مقاس
                 </p>
               </div>
@@ -1235,7 +1235,7 @@ const LoadingState = () => (
     <div className="space-y-4 text-center">
       <div className="animate-spin w-8 h-8 border-4 border-blue-500 
                     border-t-transparent rounded-full mx-auto" />
-      <p className="text-gray-400">جاري تحميل المنتجات...</p>
+      <p className="text-neutral-400">جاري تحميل المنتجات...</p>
     </div>
   </div>
 );
@@ -1244,15 +1244,15 @@ const ErrorState = ({ message }) => (
   <div className="col-span-full text-center py-12">
     <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
     <h3 className="text-xl font-bold text-white mb-2">حدث خطأ</h3>
-    <p className="text-gray-400">{message}</p>
+    <p className="text-neutral-400">{message}</p>
   </div>
 );
 
 const EmptyState = () => (
   <div className="col-span-full text-center py-12">
-    <PackageSearch className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+    <PackageSearch className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
     <h3 className="text-xl font-bold text-white mb-2">لا توجد منتجات</h3>
-    <p className="text-gray-400">لم يتم العثور على منتجات تطابق معايير البحث</p>
+    <p className="text-neutral-400">لم يتم العثور على منتجات تطابق معايير البحث</p>
   </div>
 );
 

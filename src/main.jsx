@@ -14,7 +14,7 @@ const LoadingSpinner = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
       <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-      <p className="text-gray-600 text-sm">جاري التحميل...</p>
+      <p className="text-neutral-600 text-sm">جاري التحميل...</p>
     </div>
   </div>
 );
@@ -24,7 +24,7 @@ const RouteHandler = () => {
   const [searchParams] = useSearchParams();
   const key = searchParams.get('key');
   const productCode = searchParams.get('code');
-  
+
   // If admin key is present, show admin dashboard
   if (key === '123123') {
     return <AdminDashboard />;

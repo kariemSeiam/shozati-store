@@ -1,9 +1,9 @@
-import React, { useState, useContext, useRef, useEffect, useCallback,useMemo  } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import {
   X, ChevronDown, ShoppingBag, Heart, ChevronRight, Share2, Star, Tag, ArrowRight, ArrowLeft,
-  Plus, Minus, Clock, Package, AlertCircle, Trash2, Truck, Palette, Check, Loader2, MapPin,Ticket 
+  Plus, Minus, Clock, Package, AlertCircle, Trash2, Truck, Palette, Check, Loader2, MapPin, Ticket
 } from 'lucide-react';
 import { CartContext, AuthContext, useOrders, useCoupons } from './hooks';
 import { BottomSheet } from './ProfileComponent';
@@ -89,11 +89,11 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-10 rounded-2xl bg-sky-50/30 
+            className="absolute inset-0 z-10 rounded-2xl bg-primary-50/30 
                       flex items-center justify-center"
           >
             <div className="bg-white/90 p-2 rounded-full shadow-lg">
-              <Check className="w-5 h-5 text-sky-500" />
+              <Check className="w-5 h-5 text-primary-500" />
             </div>
           </motion.div>
         )}
@@ -107,8 +107,8 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
         {/* Product Image */}
         <div className="relative flex-none w-20 sm:w-28 aspect-square">
           <div className="relative h-full rounded-xl overflow-hidden 
-                         bg-gradient-to-b from-gray-50 to-white
-                         ring-1 ring-gray-100 group-hover:ring-sky-100
+                         bg-gradient-to-b from-neutral-50 to-white
+                         ring-1 ring-neutral-100 group-hover:ring-primary-100
                          transition-all duration-300">
             <img
               src={item.image}
@@ -121,8 +121,8 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
               className="absolute bottom-1.5 left-1.5 
                          bg-white/95 backdrop-blur-sm
                          px-2 py-0.5 text-xs font-semibold
-                         text-sky-600 rounded-full shadow-md
-                         ring-1 ring-sky-100"
+                         text-primary-600 rounded-full shadow-md
+                         ring-1 ring-primary-100"
             >
               ×{item.quantity}
             </motion.div>
@@ -147,15 +147,15 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
 
           <div className="space-y-1">
 
-            <h3 className="font-bold text-gray-900 
-                          group-hover:text-sky-600 
+            <h3 className="font-bold text-neutral-900 
+                          group-hover:text-primary-600 
                           transition-colors duration-300
                           text-sm sm:text-base truncate">
               {item.name}
             </h3>
             <div className="flex items-center gap-1.5">
-              <Package className="w-3.5 h-3.5 text-gray-400" />
-              <p className="text-xs sm:text-sm text-gray-500">
+              <Package className="w-3.5 h-3.5 text-neutral-400" />
+              <p className="text-xs sm:text-sm text-neutral-500">
                 {item.size} - {item.colorName}
               </p>
             </div>
@@ -165,29 +165,29 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
               <motion.span
                 layout
                 className="text-base sm:text-lg font-bold 
-                           bg-gradient-to-l from-sky-600 to-sky-500 
+                           bg-gradient-to-l from-primary-600 to-primary-500 
                            bg-clip-text text-transparent"
               >
                 {formatCurrency(item.price)}
               </motion.span>
-              <span className="text-xs sm:text-sm text-gray-400">/ القطعة</span>
+              <span className="text-xs sm:text-sm text-neutral-400">/ القطعة</span>
             </div>
           </div>
 
           {/* Quantity Controls */}
           <div className="flex justify-between items-end 
                          pt-2 sm:pt-3 mt-1 sm:mt-2
-                         border-t border-gray-100">
+                         border-t border-neutral-100">
             <div className="flex items-center gap-1 p-1 
-                           bg-gray-50 rounded-lg 
-                           group-hover:bg-sky-50/50">
+                           bg-neutral-50 rounded-lg 
+                           group-hover:bg-primary-50/50">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleQuantityChange(item.quantity + 1)}
                 className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-white 
-                           text-gray-600 flex items-center justify-center 
-                           shadow-sm hover:bg-sky-50 hover:text-sky-600"
+                           text-neutral-600 flex items-center justify-center 
+                           shadow-sm hover:bg-primary-50 hover:text-primary-600"
                 disabled={isUpdating}
               >
                 <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -195,7 +195,7 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
 
               <motion.div layout
                 className="w-8 sm:w-10 text-center">
-                <span className="text-gray-800 font-semibold 
+                <span className="text-neutral-800 font-semibold 
                                 text-sm sm:text-base">
                   {item.quantity}
                 </span>
@@ -206,8 +206,8 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleQuantityChange(item.quantity - 1)}
                 className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-white 
-                           text-gray-600 flex items-center justify-center 
-                           shadow-sm hover:bg-sky-50 hover:text-sky-600
+                           text-neutral-600 flex items-center justify-center 
+                           shadow-sm hover:bg-primary-50 hover:text-primary-600
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={item.quantity <= 1 || isUpdating}
               >
@@ -216,11 +216,11 @@ const CartItem = React.memo(({ item, onRemove, onUpdateQuantity }) => {
             </div>
 
             <div className="text-right ">
-              <span className="text-xs sm:text-sm text-gray-500">الإجمالي</span>
+              <span className="text-xs sm:text-sm text-neutral-500">الإجمالي</span>
               <motion.div
                 layout
                 className="text-base sm:text-lg font-bold 
-                           bg-gradient-to-l from-sky-600 to-sky-500 
+                           bg-gradient-to-l from-primary-600 to-primary-500 
                            bg-clip-text text-transparent"
               >
                 {formatCurrency(item.price * item.quantity)}
@@ -290,20 +290,20 @@ const CouponInput = ({ isProcessing, onApplyCoupon }) => {
             onChange={handleCouponChange}
             placeholder="أدخل كود الخصم"
             maxLength={8}
-            className="w-full px-4 py-3 rounded-xl bg-white border border-sky-100
-                     focus:border-sky-500 focus:ring-2 focus:ring-sky-200
-                     transition-all duration-300 text-gray-800
-                     placeholder:text-gray-400 tracking-wide
+            className="w-full px-4 py-3 rounded-xl bg-white border border-primary-100
+                     focus:border-primary-500 focus:ring-2 focus:ring-primary-200
+                     transition-all duration-300 text-neutral-800
+                     placeholder:text-neutral-400 tracking-wide
                      disabled:opacity-60 disabled:cursor-not-allowed
-                     group-hover:border-sky-200"
+                     group-hover:border-primary-200"
             disabled={isProcessing || validatingCoupon}
           />
-          
+
           {couponCode && (
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute left-28 top-1/2 -translate-y-1/2 text-xs text-gray-400"
+              className="absolute left-28 top-1/2 -translate-y-1/2 text-xs text-neutral-400"
             >
               {couponCode.length}/8
             </motion.span>
@@ -314,10 +314,10 @@ const CouponInput = ({ isProcessing, onApplyCoupon }) => {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={!couponCode.trim() || isProcessing || validatingCoupon}
-            className="absolute left-2 top-2 px-4 py-1.5 bg-sky-500 text-white rounded-lg
-                     font-medium hover:bg-sky-600 transition-all duration-300
+            className="absolute left-2 top-2 px-4 py-1.5 bg-primary-500 text-white rounded-lg
+                     font-medium hover:bg-primary-600 transition-all duration-300
                      disabled:opacity-50 disabled:cursor-not-allowed
-                     hover:shadow-md hover:shadow-sky-100
+                     hover:shadow-md hover:shadow-primary-100
                      flex items-center gap-2"
           >
             {validatingCoupon ? (
@@ -332,7 +332,7 @@ const CouponInput = ({ isProcessing, onApplyCoupon }) => {
         <motion.p
           initial={false}
           animate={{ opacity: couponCode ? 0 : 0.7 }}
-          className="absolute -bottom-6 right-2 text-xs text-gray-500 pointer-events-none"
+          className="absolute -bottom-6 right-2 text-xs text-neutral-500 pointer-events-none"
         >
           ادخل كود الخصم الخاص بك للحصول على خصم إضافي
         </motion.p>
@@ -352,41 +352,41 @@ const CouponInput = ({ isProcessing, onApplyCoupon }) => {
             <span>{error}</span>
           </motion.div>
         )}
-        
+
         {currentCoupon && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="flex items-center justify-between gap-2 
-                     bg-emerald-50/80 backdrop-blur-sm px-4 py-3 rounded-xl
-                     border border-emerald-100 shadow-sm"
+                     bg-success-50/80 backdrop-blur-sm px-4 py-3 rounded-xl
+                     border border-success-100 shadow-sm"
           >
             <div className="flex items-center gap-3">
-              <div className="bg-emerald-100 p-2 rounded-lg">
-                <Ticket className="w-5 h-5 text-emerald-600" />
+              <div className="bg-success-100 p-2 rounded-lg">
+                <Ticket className="w-5 h-5 text-success-600" />
               </div>
               <div>
-                <p className="font-bold text-emerald-700">
-                  {currentCoupon.discountType === 'percentage' 
+                <p className="font-bold text-success-700">
+                  {currentCoupon.discountType === 'percentage'
                     ? `خصم ${currentCoupon.discountValue}%`
                     : `خصم ${formatCurrency(currentCoupon.discountValue)}`
                   }
                 </p>
-                <p className="text-sm text-emerald-600">
+                <p className="text-sm text-success-600">
                   تم تطبيق كود الخصم بنجاح
                 </p>
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-bold text-emerald-600">
+              <span className="font-bold text-success-600">
                 {formatCurrency(calculateDiscount(cartTotal))}
               </span>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleRemoveCoupon}
-                className="text-xs text-emerald-600 hover:text-emerald-700
+                className="text-xs text-success-600 hover:text-success-700
                          underline underline-offset-2"
               >
                 إزالة
@@ -405,27 +405,27 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
   const [localCouponData, setLocalCouponData] = useState(null);
 
   // Memoize calculations with enhanced coupon handling
-  const { 
-    shippingCost, 
-    discount, 
+  const {
+    shippingCost,
+    discount,
     finalTotal,
-    itemsWithDiscount 
+    itemsWithDiscount
   } = useMemo(() => {
     const shipping = cartTotal > 500 ? 0 : 25;
-    
+
     // Use coupon data from local state if available
     const activeCoupon = localCouponData || currentCoupon;
-    const discountAmount = activeCoupon ? 
-      (activeCoupon.discountType === 'percentage' 
+    const discountAmount = activeCoupon ?
+      (activeCoupon.discountType === 'percentage'
         ? (cartTotal * activeCoupon.discountValue / 100)
-        : activeCoupon.discountValue) 
+        : activeCoupon.discountValue)
       : 0;
-    
+
     // Calculate per-item discounts
     const itemsWithDisc = cart.map(item => {
       const itemTotal = item.price * item.quantity;
-      const itemDiscount = activeCoupon ? 
-        (activeCoupon.discountType === 'percentage' 
+      const itemDiscount = activeCoupon ?
+        (activeCoupon.discountType === 'percentage'
           ? (itemTotal * activeCoupon.discountValue / 100)
           : (itemTotal / cartTotal) * discountAmount)
         : 0;
@@ -466,8 +466,8 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
       exit={{ opacity: 0, y: -20 }}
       className="space-y-4 font-arabic"
     >
-      <div className="bg-gradient-to-br from-white to-sky-50 rounded-3xl p-6 space-y-6
-                    border border-sky-100 shadow-sm relative overflow-hidden">
+      <div className="bg-gradient-to-br from-white to-primary-50 rounded-3xl p-6 space-y-6
+                    border border-primary-100 shadow-sm relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5 bg-repeat" />
 
@@ -475,74 +475,74 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
         <div className="relative space-y-2" dir="rtl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-sky-100 rounded-full p-2">
-                <Ticket className="w-5 h-5 text-sky-600" />
+              <div className="bg-primary-100 rounded-full p-2">
+                <Ticket className="w-5 h-5 text-primary-600" />
               </div>
-              <h4 className="font-bold text-xl text-gray-800">كوبون الخصم</h4>
+              <h4 className="font-bold text-xl text-neutral-800">كوبون الخصم</h4>
             </div>
-            
+
           </div>
-          
-          <CouponInput 
+
+          <CouponInput
             onApplyCoupon={setLocalCouponData}
             isProcessing={isLoading}
           />
         </div>
 
         {/* Shipping Address Section */}
-        <div className="relative space-y-2 pt-4 border-t border-sky-100" dir="rtl">
-            <div className="flex items-center gap-3">
-              <div className="bg-sky-100 rounded-full p-2">
-                <MapPin className="w-5 h-5 text-sky-600" />
-              </div>
-              <h4 className="font-bold text-xl text-gray-800">عنوان التوصيل</h4>
+        <div className="relative space-y-2 pt-4 border-t border-primary-100" dir="rtl">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary-100 rounded-full p-2">
+              <MapPin className="w-5 h-5 text-primary-600" />
             </div>
-
-            <motion.div
-              className="bg-white rounded-2xl p-5 space-y-3 border border-sky-100 shadow-sm
-                         hover:shadow-md transition-shadow duration-300"
-              whileHover={{ scale: 1.01 }}
-            >
-              <p className="text-gray-800 text-lg leading-relaxed">
-                {orderDetails.address.details}
-              </p>
-              <p className="text-gray-500 flex items-center gap-2">
-                <span>{orderDetails.address.governorate}</span>
-                <span className="text-sky-500">•</span>
-                <span>{orderDetails.address.district}</span>
-              </p>
-            </motion.div>
+            <h4 className="font-bold text-xl text-neutral-800">عنوان التوصيل</h4>
           </div>
 
+          <motion.div
+            className="bg-white rounded-2xl p-5 space-y-3 border border-primary-100 shadow-sm
+                         hover:shadow-md transition-shadow duration-300"
+            whileHover={{ scale: 1.01 }}
+          >
+            <p className="text-neutral-800 text-lg leading-relaxed">
+              {orderDetails.address.details}
+            </p>
+            <p className="text-neutral-500 flex items-center gap-2">
+              <span>{orderDetails.address.governorate}</span>
+              <span className="text-primary-500">•</span>
+              <span>{orderDetails.address.district}</span>
+            </p>
+          </motion.div>
+        </div>
+
         {/* Order Details Section */}
-        <div className="relative space-y-4 pt-6 border-t border-sky-100" dir="rtl">
-          <div className="space-y-4 bg-white rounded-2xl p-5 border border-sky-100">
+        <div className="relative space-y-4 pt-6 border-t border-primary-100" dir="rtl">
+          <div className="space-y-4 bg-white rounded-2xl p-5 border border-primary-100">
             {itemsWithDiscount.map((item, index) => (
-              <div key={index} className="flex justify-between items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+              <div key={index} className="flex justify-between items-start pb-4 border-b border-neutral-100 last:border-0 last:pb-0">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-800">{item.name}</span>
-                    <span className="text-gray-500">×{item.quantity}</span>
+                    <span className="font-medium text-neutral-800">{item.name}</span>
+                    <span className="text-neutral-500">×{item.quantity}</span>
                   </div>
                   {item.discountAmount > 0 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm text-emerald-600"
+                      className="text-sm text-success-600"
                     >
                       وفرت {formatCurrency(item.discountAmount)}
                     </motion.div>
                   )}
                 </div>
                 <div className="text-left">
-                  <div className="font-bold text-gray-800">
+                  <div className="font-bold text-neutral-800">
                     {formatCurrency(item.originalTotal)}
                   </div>
                   {item.discountAmount > 0 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm text-emerald-600 font-bold"
+                      className="text-sm text-success-600 font-bold"
                     >
                       {formatCurrency(item.finalTotal)}
                     </motion.div>
@@ -552,32 +552,32 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
             ))}
 
             {/* Totals Section */}
-            <div className="space-y-3 pt-4 border-t border-sky-100">
-              <div className="flex justify-between text-gray-600">
+            <div className="space-y-3 pt-4 border-t border-primary-100">
+              <div className="flex justify-between text-neutral-600">
                 <span>المجموع الفرعي</span>
                 <span className="font-bold">{formatCurrency(cartTotal)}</span>
               </div>
-              
-              <div className="flex justify-between text-gray-600">
+
+              <div className="flex justify-between text-neutral-600">
                 <span>رسوم التوصيل</span>
-                <span className={`font-bold ${shippingCost === 0 ? 'text-emerald-600' : ''}`}>
+                <span className={`font-bold ${shippingCost === 0 ? 'text-success-600' : ''}`}>
                   {shippingCost === 0 ? 'مجاناً' : formatCurrency(shippingCost)}
                 </span>
               </div>
 
               {discount > 0 && (
-                <div className="flex justify-between text-emerald-600">
+                <div className="flex justify-between text-success-600">
                   <span>الخصم</span>
                   <span className="font-bold">- {formatCurrency(discount)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between items-center pt-3 border-t border-gray-100"
-              dir='ltr'>
-                <span className="text-xl font-bold text-sky-600">
+              <div className="flex justify-between items-center pt-3 border-t border-neutral-100"
+                dir='ltr'>
+                <span className="text-xl font-bold text-primary-600">
                   {formatCurrency(finalTotal)}
                 </span>
-                <span className="text-lg text-gray-800">المجموع الكلي</span>
+                <span className="text-lg text-neutral-800">المجموع الكلي</span>
               </div>
             </div>
           </div>
@@ -591,7 +591,7 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
           whileTap={{ scale: 0.98 }}
           disabled={isLoading}
           onClick={handleConfirm}
-          className="w-full bg-gradient-to-r from-sky-500 to-sky-600 
+          className="w-full bg-gradient-to-r from-primary-500 to-primary-600 
                    text-white rounded-xl py-4 font-bold text-lg
                    disabled:opacity-50 flex items-center justify-center gap-3"
         >
@@ -609,7 +609,7 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onBack}
-          className="w-full bg-gray-100 text-gray-700 rounded-xl py-4 
+          className="w-full bg-neutral-100 text-neutral-700 rounded-xl py-4 
                    font-bold text-lg flex items-center justify-center gap-3"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -622,9 +622,9 @@ const OrderSummary = ({ orderDetails, handleConfirmOrder, onBack, isLoading }) =
 
 
 // Helper component for cost breakdown items
-const CostItem = ({ label, value, valueClass = 'text-gray-800' }) => (
+const CostItem = ({ label, value, valueClass = 'text-neutral-800' }) => (
   <div className="flex justify-between text-base items-center">
-    <span className="text-gray-600">{label}</span>
+    <span className="text-neutral-600">{label}</span>
     <span className={`font-bold ${valueClass}`}>{value}</span>
   </div>
 );
@@ -635,18 +635,18 @@ const OrderSuccess = ({ orderId, onViewOrders, emptyCart }) => (
     animate={{ opacity: 1, scale: 1 }}
     className="text-center py-12 space-y-6"
   >
-    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 mx-auto flex items-center justify-center shadow-md">
+    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-success-100 to-success-50 mx-auto flex items-center justify-center shadow-md">
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.2, type: "spring" }}
       >
-        <Check className="w-12 h-12 text-emerald-500" />
+        <Check className="w-12 h-12 text-success-500" />
       </motion.div>
     </div>
 
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-800 p-2">
+      <h3 className="text-xl font-bold text-neutral-800 p-2">
         تم تأكيد طلبك بنجاح
       </h3>
     </div>
@@ -658,7 +658,7 @@ const OrderSuccess = ({ orderId, onViewOrders, emptyCart }) => (
         emptyCart();
         onViewOrders();
       }}
-      className="bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl px-8 py-3 font-bold hover:shadow-lg hover:brightness-105 transition-all duration-300"
+      className="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl px-8 py-3 font-bold hover:shadow-lg hover:brightness-105 transition-all duration-300"
     >
       متابعة الطلب
     </motion.button>
@@ -667,16 +667,16 @@ const OrderSuccess = ({ orderId, onViewOrders, emptyCart }) => (
 
 
 const EmptyCart = () => (
-  <div className="text-center py-12 space-y-4 bg-sky-50 rounded-xl">
-    <div className="w-24 h-24 rounded-full bg-sky-100 mx-auto flex items-center justify-center">
-      <ShoppingBag className="w-12 h-12 text-sky-600" />
+  <div className="text-center py-12 space-y-4 bg-primary-50 rounded-xl">
+    <div className="w-24 h-24 rounded-full bg-primary-100 mx-auto flex items-center justify-center">
+      <ShoppingBag className="w-12 h-12 text-primary-600" />
     </div>
-    <h3 className="text-xl font-bold text-gray-800">السلة فارغة</h3>
-    <p className="text-gray-600">لم تقم بإضافة أي منتجات للسلة بعد</p>
+    <h3 className="text-xl font-bold text-neutral-800">السلة فارغة</h3>
+    <p className="text-neutral-600">لم تقم بإضافة أي منتجات للسلة بعد</p>
   </div>
 );
 
-export const CartSheet = ({ onOrderCreated, checkAuthAndProceed }) => {
+export const CartSheet = ({ onOrderCreated, checkAuthAndProceed, openModal }) => {
   const {
     cart,
     isCartOpen,
@@ -714,65 +714,71 @@ export const CartSheet = ({ onOrderCreated, checkAuthAndProceed }) => {
             total: 0
           }
         }));
+      },
+      onNotAuthenticated: () => {
+        openModal('showLogin');
+      },
+      onNoAddress: () => {
+        openModal('showLocation');
       }
     });
-  }, [checkAuthAndProceed]);
+  }, [checkAuthAndProceed, openModal]);
 
   const handleConfirmOrder = useCallback(async (couponCode) => {
     try {
+      setOrderState(prev => ({
+        ...prev,
+        isProcessing: true,
+        error: null
+      }));
+
+      const orderData = {
+        items: cart.map(item => ({
+          variant_id: item.variantId,
+          size: item.size,
+          quantity: item.quantity
+        })),
+        addressId: userInfo.addresses[0].id,
+        coupon: couponCode || 0 // Add the coupon code to the order data
+      };
+
+      const response = await createOrder(orderData);
+
+      if (response.success) {
         setOrderState(prev => ({
-            ...prev,
-            isProcessing: true,
-            error: null
+          ...prev,
+          isProcessing: false,
+          confirmation: {
+            show: true,
+            orderId: response.order.id,
+            success: true,
+            total: response.order.total, // This will now include the coupon discount
+            coupon: response.order.coupon // Store coupon details if needed
+          }
         }));
-
-        const orderData = {
-            items: cart.map(item => ({
-                variant_id: item.variantId,
-                size: item.size,
-                quantity: item.quantity
-            })),
-            addressId: userInfo.addresses[0].id,
-            coupon: couponCode || 0 // Add the coupon code to the order data
-        };
-
-        const response = await createOrder(orderData);
-
-        if (response.success) {
-            setOrderState(prev => ({
-                ...prev,
-                isProcessing: false,
-                confirmation: {
-                    show: true,
-                    orderId: response.order.id,
-                    success: true,
-                    total: response.order.total, // This will now include the coupon discount
-                    coupon: response.order.coupon // Store coupon details if needed
-                }
-            }));
-            toast.success('تم إنشاء طلبك بنجاح', {
-                style: {
-                    background: '#EFF6FF',
-                    color: '#1E40AF'
-                }
-            });
-        } else {
-            setOrderState(prev => ({
-                ...prev,
-                isProcessing: false,
-                error: response.error
-            }));
-            toast.error(response.error);
-        }
+        toast.success('تم إنشاء طلبك بنجاح', {
+          style: {
+            background: '#EFF6FF',
+            color: '#1E40AF'
+          }
+        });
+      } else {
+        setOrderState(prev => ({
+          ...prev,
+          isProcessing: false,
+          error: response.error
+        }));
+        toast.error(response.error);
+      }
     } catch (error) {
-        setOrderState(prev => ({
-            ...prev,
-            isProcessing: false,
-            error: error.message
-        }));
-        toast.error(error.message);
+      setOrderState(prev => ({
+        ...prev,
+        isProcessing: false,
+        error: error.message
+      }));
+      toast.error(error.message);
     }
-}, [cart, userInfo?.addresses, createOrder]);
+  }, [cart, userInfo?.addresses, createOrder]);
 
   const handleBack = useCallback(() => {
     setOrderState(prev => ({
@@ -848,7 +854,7 @@ export const CartSheet = ({ onOrderCreated, checkAuthAndProceed }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl py-4 font-bold hover:shadow-lg hover:brightness-105 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl py-4 font-bold hover:shadow-lg hover:brightness-105 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>متابعة الشراء</span>

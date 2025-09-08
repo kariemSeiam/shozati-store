@@ -110,7 +110,7 @@ const PromotionalSlider = ({ onSelect }) => {
   if (!slides?.length) return null;
 
   return (
-    <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-gray-50 shadow-md">
+    <div className="relative h-48 md:h-96 rounded-xl overflow-hidden bg-neutral-50 shadow-md">
       <div
         ref={sliderRef}
         className="absolute inset-0 transition-transform duration-300"
@@ -123,18 +123,18 @@ const PromotionalSlider = ({ onSelect }) => {
           {slides.map((slide, index) => (
             <motion.div
               key={slide.id}
-              initial={{ 
+              initial={{
                 opacity: 0,
-                x: swipeDirection === 'left' ? 100 : -100 
+                x: swipeDirection === 'left' ? 100 : -100
               }}
-              animate={{ 
+              animate={{
                 opacity: index === currentIndex ? 1 : 0,
                 x: index === currentIndex ? 0 : swipeDirection === 'left' ? -100 : 100,
                 transition: { duration: 0.3 }
               }}
-              exit={{ 
+              exit={{
                 opacity: 0,
-                x: swipeDirection === 'left' ? -100 : 100 
+                x: swipeDirection === 'left' ? -100 : 100
               }}
               className="absolute inset-0 cursor-pointer"
               onClick={() => onSelect?.(slide.product)}
@@ -151,7 +151,7 @@ const PromotionalSlider = ({ onSelect }) => {
                   <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
                     {slide.title}
                   </h3>
-                  <p className="text-sm text-gray-100 drop-shadow-md">
+                  <p className="text-sm text-neutral-100 drop-shadow-md">
                     {slide.description}
                   </p>
                 </div>

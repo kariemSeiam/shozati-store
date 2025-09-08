@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef ,useMemo  } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import {
   Package, MapPin, Clock, RefreshCw, X, Phone, MessageCircle,
   ChevronDown, ArrowLeft, Shield, Check, Search, ChevronRight,
   AlertCircle, Building2, Truck, Star, Navigation, Calendar,
-  ShoppingBag, Box, ArrowUpRight,Tag 
+  ShoppingBag, Box, ArrowUpRight, Tag
 } from 'lucide-react';
 import { useOrders } from './hooks';
 import { BottomSheet } from './ProfileComponent';
@@ -31,7 +31,7 @@ const StatusBadge = ({ status }) => {
       icon: Truck,
       text: 'في الطريق',
       class: 'bg-gradient-to-r from-warning-50 to-warning-100 text-warning-600 border-warning-200',
-      iconClass: 'text-warning-500',
+      iconClass: 'text-primary-500',
       shadowClass: 'shadow-warning-200/20'
     },
     delivered: {
@@ -90,17 +90,17 @@ const OrderCard = ({ order, onSelect }) => {
       onClick={() => onSelect(order)}
     >
       <div className="relative overflow-hidden backdrop-blur-xl rounded-3xl 
-                    border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-5
+                    border border-neutral-200 bg-gradient-to-b from-white to-gray-50 p-5
                     hover:border-gray-300 hover:shadow-lg
                     transition-all duration-500">
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/20 to-indigo-100/20 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
+
         <div className="relative">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <StatusBadge status={order.status} />
-            <div className="flex items-center gap-2 text-sky-600">
+            <div className="flex items-center gap-2 text-primary-600">
               <Calendar className="w-4 h-4" />
               <span className="text-sm">{formatDate(order.createdAt)}</span>
             </div>
@@ -110,20 +110,20 @@ const OrderCard = ({ order, onSelect }) => {
           <div className="flex gap-3 mb-6 overflow-x-auto hide-scrollbar py-2">
             {order.items.map((item, idx) => (
               <div key={idx} className="relative flex-shrink-0 group/item">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-sky-200
-                              group-hover:border-sky-300 transition-all duration-500
+                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-primary-200
+                              group-hover:border-primary-300 transition-all duration-500
                               shadow-sm group-hover:shadow-md">
-                  <img 
-                    src={item.image || 'http://localhost:5000/uploads/3fdf62c5-d260-4c86-8a24-617fe4035232.png'} 
+                  <img
+                    src={item.image || 'http://localhost:5000/uploads/3fdf62c5-d260-4c86-8a24-617fe4035232.png'}
                     alt={item.productName}
                     className="w-full h-full object-cover transform group-hover/item:scale-110 
                              transition-transform duration-500"
                   />
                 </div>
                 <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full 
-                              bg-gradient-to-r from-sky-500 to-sky-600
+                              bg-gradient-to-r from-primary-500 to-primary-600
                               flex items-center justify-center text-xs font-bold text-white
-                              shadow-md shadow-sky-400/25">
+                              shadow-md shadow-primary-400/25">
                   {item.quantity}
                 </div>
               </div>
@@ -131,18 +131,18 @@ const OrderCard = ({ order, onSelect }) => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center pt-4 border-t border-sky-200">
+          <div className="flex justify-between items-center pt-4 border-t border-primary-200">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-sky-100">
-                <ShoppingBag className="w-4 h-4 text-sky-500" />
+              <div className="p-2 rounded-xl bg-primary-100">
+                <ShoppingBag className="w-4 h-4 text-primary-500" />
               </div>
-              <span className="text-sky-600 text-sm">{order.totalQuantity} منتج</span>
+              <span className="text-primary-600 text-sm">{order.totalQuantity} منتج</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sky-500 font-bold text-lg">
+              <span className="text-primary-500 font-bold text-lg">
                 {formatCurrency(order.total)}
               </span>
-              <ArrowUpRight className="w-4 h-4 text-sky-500 transform 
+              <ArrowUpRight className="w-4 h-4 text-primary-500 transform 
                                      group-hover:translate-x-1 group-hover:-translate-y-1
                                      transition-transform duration-300" />
             </div>
@@ -178,9 +178,9 @@ const OrderTimeline = ({ steps }) => {
     <div className="relative py-4 px-4">
       {/* Premium Animated Timeline Line */}
       <div className="absolute right-12 w-0 overflow-hidden h-full">
-        <div className="absolute inset-0 bg-gradient-to-b from-sky-300/0 via-sky-400/50 to-sky-300/0" />
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-b from-sky-300/0 via-sky-400 to-sky-300/0"
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-300/0 via-primary-400/50 to-primary-300/0" />
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-b from-primary-300/0 via-primary-400 to-primary-300/0"
           animate={{
             y: ["0%", "200%"],
             opacity: [0, 1, 0]
@@ -214,35 +214,34 @@ const OrderTimeline = ({ steps }) => {
                   className={`w-8 h-8 rounded-xl relative z-10
                            flex items-center justify-center
                            transition-all duration-500 
-                           border-2 ${
-                             isCompleted 
-                               ? 'bg-gradient-to-br from-sky-400 to-sky-500 border-sky-300' 
-                               : 'bg-gradient-to-br from-white to-sky-50 border-sky-200'
-                           }
-                           'ring-4 ring-sky-200/50'
-                           shadow-lg shadow-sky-200/20 hover:shadow-xl hover:shadow-sky-300/30`}
+                           border-2 ${isCompleted
+                      ? 'bg-gradient-to-br from-primary-400 to-primary-500 border-primary-300'
+                      : 'bg-gradient-to-br from-white to-primary-50 border-primary-200'
+                    }
+                           'ring-4 ring-primary-200/50'
+                           shadow-lg shadow-primary-200/20 hover:shadow-xl hover:shadow-primary-300/30`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <StatusIcon className={`w-4 h-4 text-sky-400`} />
+                  <StatusIcon className={`w-4 h-4 text-primary-400`} />
                 </motion.div>
-                
+
                 {/* Time Connection Line */}
                 {!isLast && (
-                  <div className="absolute top-8 right-4 bottom-0 w-px bg-gradient-to-b from-sky-200 to-transparent" />
+                  <div className="absolute top-8 right-4 bottom-0 w-px bg-gradient-to-b from-primary-200 to-transparent" />
                 )}
               </div>
 
               {/* Premium Content Box */}
-              <motion.div 
+              <motion.div
                 className={`flex-1 p-4 rounded-2xl backdrop-blur-xl
                          border transition-all duration-300
-                         ${isCompleted 
-                           ? 'bg-gradient-to-br from-sky-50 to-white border-sky-200' 
-                           : 'bg-gradient-to-br from-sky-50 to-white border-sky-200'
-                         }
-                         ${step.isLatest ? 'shadow-lg shadow-sky-200/30' : 'shadow-lg shadow-sky-200/30'}
-                         hover:shadow-xl hover:shadow-sky-300/20
+                         ${isCompleted
+                    ? 'bg-gradient-to-br from-primary-50 to-white border-primary-200'
+                    : 'bg-gradient-to-br from-primary-50 to-white border-primary-200'
+                  }
+                         ${step.isLatest ? 'shadow-lg shadow-primary-200/30' : 'shadow-lg shadow-primary-200/30'}
+                         hover:shadow-xl hover:shadow-primary-300/20
                          group`}
                 whileHover={{ scale: 1.02, x: 5 }}
                 transition={{ duration: 0.2 }}
@@ -250,22 +249,21 @@ const OrderTimeline = ({ steps }) => {
                 {/* Enhanced Status Badge */}
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-2
                               text-sm font-medium backdrop-blur-xl
-                              ${isCompleted 
-                                ? 'bg-gradient-to-r from-sky-100 to-sky-50 text-sky-600' 
-                                : 'bg-gradient-to-r from-sky-100 to-sky-50 text-sky-600'
-                              }
+                              ${isCompleted
+                    ? 'bg-gradient-to-r from-primary-100 to-primary-50 text-primary-600'
+                    : 'bg-gradient-to-r from-primary-100 to-primary-50 text-primary-600'
+                  }
                               shadow-sm group-hover:shadow-md transition-all duration-300`}>
-                  <div className={`w-2 h-2 rounded-full ${
-                    isCompleted ? 'bg-sky-500 animate-pulse' : 'bg-sky-500 animate-pulse'
-                  }`} />
+                  <div className={`w-2 h-2 rounded-full ${isCompleted ? 'bg-primary-500 animate-pulse' : 'bg-primary-500 animate-pulse'
+                    }`} />
                   <span>{step.description}</span>
-                  
+
                 </div>
 
                 {/* Enhanced Timestamp */}
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className={`w-4 h-4 ${isCompleted ? 'text-sky-500' : 'text-slate-400'}`} />
-                  <span className={`${isCompleted ? 'text-sky-900' : 'text-slate-500'} text-sm`}>
+                  <Calendar className={`w-4 h-4 ${isCompleted ? 'text-primary-500' : 'text-slate-400'}`} />
+                  <span className={`${isCompleted ? 'text-primary-900' : 'text-slate-500'} text-sm`}>
                     {new Intl.DateTimeFormat('ar-EG', {
                       year: 'numeric',
                       month: 'long',
@@ -278,7 +276,7 @@ const OrderTimeline = ({ steps }) => {
 
                 {/* Time Elapsed (for non-latest steps) */}
                 {!step.isLatest && (
-                  <div className="mt-2 text-xs text-sky-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="mt-2 text-xs text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     {formatTimeAgo(step.timestamp)}
                   </div>
                 )}
@@ -312,15 +310,15 @@ const SupportActions = () => {
     {
       icon: MessageCircle,
       label: 'محادثة واتساب',
-      color: 'text-sky-600',
-      gradient: 'from-sky-50/80 via-sky-100/50 to-white',
+      color: 'text-primary-600',
+      gradient: 'from-primary-50/80 via-primary-100/50 to-white',
       onClick: () => window.open('https://wa.me/+201033939828', '_blank')
     },
     {
       icon: Phone,
       label: 'اتصل بنا',
-      color: 'text-sky-600',
-      gradient: 'from-sky-50/80 via-sky-100/50 to-white',
+      color: 'text-primary-600',
+      gradient: 'from-primary-50/80 via-primary-100/50 to-white',
       onClick: () => window.open('tel:+201033939828', '_blank')
     }
   ];
@@ -335,21 +333,21 @@ const SupportActions = () => {
           onClick={action.onClick}
           className={`bg-gradient-to-br ${action.gradient} 
                      rounded-2xl p-4 flex flex-col items-center gap-3
-                     border border-sky-200/60 backdrop-blur-xl 
-                     shadow-lg shadow-sky-200/30
-                     hover:shadow-xl hover:border-sky-300/60
+                     border border-primary-200/60 backdrop-blur-xl 
+                     shadow-lg shadow-primary-200/30
+                     hover:shadow-xl hover:border-primary-300/60
                      transition-all duration-300 group`}
         >
-          <motion.div 
-            className={`p-3 rounded-xl bg-gradient-to-br from-white to-sky-50 ${action.color}
+          <motion.div
+            className={`p-3 rounded-xl bg-gradient-to-br from-white to-primary-50 ${action.color}
                        group-hover:scale-110 transition-all duration-300 
-                       shadow-md shadow-sky-200/40 ring-1 ring-sky-100`}
+                       shadow-md shadow-primary-200/40 ring-1 ring-primary-100`}
             whileHover={{ rotate: [0, -10, 10, -10, 0] }}
             transition={{ duration: 0.5 }}
           >
             <action.icon className="w-6 h-6" />
           </motion.div>
-          <span className="text-sm text-sky-900 font-medium">{action.label}</span>
+          <span className="text-sm text-primary-900 font-medium">{action.label}</span>
         </motion.button>
       ))}
     </div>
@@ -377,8 +375,8 @@ const OrderDetailsContent = ({ order, onCancel }) => {
 
       <div className="px-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-sky-900">المنتجات</h3>
-          <span className="text-sm text-sky-600">
+          <h3 className="text-lg font-bold text-primary-900">المنتجات</h3>
+          <span className="text-sm text-primary-600">
             {order.totalQuantity} منتج
           </span>
         </div>
@@ -390,35 +388,35 @@ const OrderDetailsContent = ({ order, onCancel }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="group bg-gradient-to-br from-sky-50 via-white to-sky-50
-                       backdrop-blur-xl rounded-2xl p-4 border border-sky-200
-                       shadow-lg shadow-sky-200/20 hover:shadow-xl 
-                       hover:shadow-sky-300/20 transition-all duration-300"
+              className="group bg-gradient-to-br from-primary-50 via-white to-primary-50
+                       backdrop-blur-xl rounded-2xl p-4 border border-primary-200
+                       shadow-lg shadow-primary-200/20 hover:shadow-xl 
+                       hover:shadow-primary-300/20 transition-all duration-300"
             >
               <div className="flex gap-4">
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-sky-200
-                              group-hover:border-sky-300 transition-all duration-300 shadow-md">
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-primary-200
+                              group-hover:border-primary-300 transition-all duration-300 shadow-md">
                   <img
                     src={item.image}
                     alt={item.productName}
                     className="w-full h-full object-cover transform group-hover:scale-110 
                              transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-sky-900/30 to-transparent" />
-                  <div className="absolute bottom-2 right-2 bg-sky-900/40 backdrop-blur-md
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/30 to-transparent" />
+                  <div className="absolute bottom-2 right-2 bg-primary-900/40 backdrop-blur-md
                                 rounded-full px-2 py-1 text-xs text-white shadow-lg">
                     {item.quantity}×
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between">
-                    <span className="font-bold text-sky-500">
+                    <span className="font-bold text-primary-500">
                       {formatCurrency(item.totalPrice)}
                     </span>
                     <div className="text-right">
-                      <h4 className="font-bold text-sky-900 mb-1">{item.productName}</h4>
-                      <p className="text-sm text-sky-600">{item.variant}</p>
-                      <p className="text-sm text-sky-400 mt-1">{item.size}</p>
+                      <h4 className="font-bold text-primary-900 mb-1">{item.productName}</h4>
+                      <p className="text-sm text-primary-600">{item.variant}</p>
+                      <p className="text-sm text-primary-400 mt-1">{item.size}</p>
                     </div>
                   </div>
                 </div>
@@ -429,14 +427,14 @@ const OrderDetailsContent = ({ order, onCancel }) => {
       </div>
 
       <div className="px-6">
-        <div className="bg-gradient-to-br from-sky-50 via-white to-sky-50 backdrop-blur-xl
-                     rounded-2xl p-5 border border-sky-200 space-y-4 shadow-lg shadow-sky-200/20
-                     hover:shadow-xl hover:shadow-sky-300/20 transition-all duration-300">
+        <div className="bg-gradient-to-br from-primary-50 via-white to-primary-50 backdrop-blur-xl
+                     rounded-2xl p-5 border border-primary-200 space-y-4 shadow-lg shadow-primary-200/20
+                     hover:shadow-xl hover:shadow-primary-300/20 transition-all duration-300">
           <div className="flex justify-between items-center">
-            <span className="text-sky-600">المجموع</span>
-            <span className="text-sky-900">{formatCurrency(order.subtotal)}</span>
+            <span className="text-primary-600">المجموع</span>
+            <span className="text-primary-900">{formatCurrency(order.subtotal)}</span>
           </div>
-          
+
           {order.coupon && (
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -451,19 +449,19 @@ const OrderDetailsContent = ({ order, onCancel }) => {
               </span>
             </div>
           )}
-          
+
           <div className="flex justify-between items-center">
-            <span className="text-sky-600">الشحن</span>
-            <span className="text-sky-500 font-medium">
+            <span className="text-primary-600">الشحن</span>
+            <span className="text-primary-500 font-medium">
               {order.shippingFee === 0 ? 'مجاناً' : formatCurrency(order.shippingFee)}
             </span>
           </div>
-          
-          <div className="h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
-          
+
+          <div className="h-px bg-gradient-to-r from-transparent via-primary-200 to-transparent" />
+
           <div className="flex justify-between items-center">
-            <span className="font-bold text-sky-900">الإجمالي</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-sky-500 to-sky-600 
+            <span className="font-bold text-primary-900">الإجمالي</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-primary-500 to-primary-600 
                            bg-clip-text text-transparent">
               {formatCurrency(order.total)}
             </span>
@@ -511,16 +509,16 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="fixed inset-0 bg-white z-50 flex items-center justify-center"
       >
         <div className="relative">
-          <div className="w-16 h-16 rounded-full border-4 border-sky-300/30 
-                       animate-spin border-t-sky-500 shadow-lg" />
+          <div className="w-16 h-16 rounded-full border-4 border-primary-300/30 
+                       animate-spin border-t-primary-500 shadow-lg" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Package className="w-6 h-6 text-sky-500" />
+            <Package className="w-6 h-6 text-primary-500" />
           </div>
         </div>
       </motion.div>
@@ -529,24 +527,24 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
 
   if (error) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4"
         dir="rtl"
       >
-        <div className="max-w-md w-full bg-gradient-to-br from-white to-sky-50 backdrop-blur-xl 
-                     rounded-3xl p-8 border border-sky-200 text-center shadow-xl shadow-sky-200/20">
+        <div className="max-w-md w-full bg-gradient-to-br from-white to-primary-50 backdrop-blur-xl 
+                     rounded-3xl p-8 border border-primary-200 text-center shadow-xl shadow-primary-200/20">
           <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-sky-900 mb-2">حدث خطأ</h3>
-          <p className="text-sky-600 mb-6">{error}</p>
+          <h3 className="text-xl font-bold text-primary-900 mb-2">حدث خطأ</h3>
+          <p className="text-primary-600 mb-6">{error}</p>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={fetchOrders}
-            className="bg-gradient-to-r from-sky-500 to-sky-600 text-white 
-                     rounded-xl px-6 py-3 font-medium shadow-lg shadow-sky-500/25 
-                     hover:shadow-xl hover:shadow-sky-500/30 
+            className="bg-gradient-to-r from-primary-500 to-primary-600 text-white 
+                     rounded-xl px-6 py-3 font-medium shadow-lg shadow-primary-500/25 
+                     hover:shadow-xl hover:shadow-primary-500/30 
                      transition-all duration-300"
           >
             إعادة المحاولة
@@ -574,8 +572,8 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
       <div className="fixed inset-0 bg-white z-40">
         <div className="h-full flex flex-col">
           {/* Enhanced Header */}
-          <motion.div 
-            className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-sky-100
+          <motion.div
+            className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-primary-100
                       shadow-sm"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -586,18 +584,18 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={onClose}
-                  className="p-2 rounded-xl bg-sky-50 text-sky-500 
-                           hover:bg-sky-100 transition-colors"
+                  className="p-2 rounded-xl bg-primary-50 text-primary-500 
+                           hover:bg-primary-100 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </motion.button>
-                <h2 className="text-xl font-bold text-sky-900">طلباتي</h2>
+                <h2 className="text-xl font-bold text-primary-900">طلباتي</h2>
                 <div className="w-9" />
               </div>
             </div>
 
             {/* Premium Filter Tabs */}
-            <motion.div 
+            <motion.div
               className="px-4 pb-4 overflow-hidden"
               animate={{ height: isFiltersVisible ? 'auto' : 0 }}
               transition={{ duration: 0.3 }}
@@ -612,8 +610,8 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                     onClick={() => setFilterStatus(tab.id)}
                     className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all
                               shadow-sm ${filterStatus === tab.id
-                                ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white font-medium shadow-lg shadow-sky-500/25'
-                                : 'bg-sky-50 text-sky-600 hover:bg-sky-100'}`}
+                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium shadow-lg shadow-primary-500/25'
+                        : 'bg-primary-50 text-primary-600 hover:bg-primary-100'}`}
                   >
                     {tab.label}
                   </motion.button>
@@ -648,25 +646,25 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                     className="text-center py-16"
                   >
                     <div className="w-24 h-24 mx-auto mb-6 relative">
-                      <div className="absolute inset-0 bg-sky-400/20 rounded-full animate-ping" />
+                      <div className="absolute inset-0 bg-primary-400/20 rounded-full animate-ping" />
                       <div className="relative w-full h-full rounded-full bg-gradient-to-b 
-                                  from-sky-50 to-white flex items-center justify-center
-                                  border border-sky-200 shadow-lg shadow-sky-200/20">
-                        <Package className="w-12 h-12 text-sky-500" />
+                                  from-primary-50 to-white flex items-center justify-center
+                                  border border-primary-200 shadow-lg shadow-primary-200/20">
+                        <Package className="w-12 h-12 text-primary-500" />
                       </div>
                     </div>
-                    <h3 className="text-xl font-bold text-sky-900 mb-2">لا توجد طلبات</h3>
-                    <p className="text-sky-600 mb-8">
+                    <h3 className="text-xl font-bold text-primary-900 mb-2">لا توجد طلبات</h3>
+                    <p className="text-primary-600 mb-8">
                       ابدأ التسوق الآن واستمتع بمجموعتنا المميزة
                     </p>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onClose}
-                      className="bg-gradient-to-r from-sky-500 to-sky-600 
+                      className="bg-gradient-to-r from-primary-500 to-primary-600 
                                text-white rounded-2xl px-8 py-3 font-medium
-                               shadow-lg shadow-sky-500/25 hover:shadow-xl 
-                               hover:shadow-sky-500/30 transition-all duration-300"
+                               shadow-lg shadow-primary-500/25 hover:shadow-xl 
+                               hover:shadow-primary-500/30 transition-all duration-300"
                     >
                       تسوق الآن
                     </motion.button>

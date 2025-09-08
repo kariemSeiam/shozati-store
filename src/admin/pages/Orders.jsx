@@ -77,7 +77,7 @@ const Orders = () => {
                     title="متوسط قيمة الطلب"
                     value={(analytics?.avgOrderValue?.toLocaleString('ar-EG') || 0) + ' جنيه'}
                     icon={TrendingUp}
-                    color="amber"
+                    color="blue"
                 />
                 <StatCard
                     title="طلبات معلقة"
@@ -160,10 +160,10 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
             text: 'text-blue-500',
             border: 'border-blue-500/20'
         },
-        amber: {
-            bg: 'bg-amber-500/10',
-            text: 'text-amber-500',
-            border: 'border-amber-500/20'
+        blue: {
+            bg: 'bg-blue-500/10',
+            text: 'text-blue-500',
+            border: 'border-blue-500/20'
         },
         red: {
             bg: 'bg-red-500/10',
@@ -180,7 +180,7 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
                 <Icon className={`w-5 h-5 md:w-6 md:h-6 ${colorClasses.text}`} />
             </div>
             <div className="mt-5 md:mt-6">
-                <h3 className="text-xs md:text-sm font-medium text-gray-400 leading-tight">{title}</h3>
+                <h3 className="text-xs md:text-sm font-medium text-neutral-400 leading-tight">{title}</h3>
                 <div className="mt-1 md:mt-2">
                     <span className={`text-lg md:text-2xl font-bold ${colorClasses.text}`}>{value}</span>
                 </div>
@@ -196,20 +196,20 @@ const SearchBar = ({ value, onChange }) => (
             value={value}
             onChange={e => onChange(e.target.value)}
             placeholder="ابحث برقم الطلب أو رقم الهاتف..."
-            className="w-full h-12 bg-gray-800/50 rounded-xl px-12 text-white text-right
-                 border border-gray-700/50 focus:border-blue-500/50
+            className="w-full h-12 bg-neutral-800/50 rounded-xl px-12 text-white text-right
+                 border border-neutral-700/50 focus:border-blue-500/50
                  focus:ring-2 focus:ring-blue-500/50
-                 placeholder:text-gray-500"
+                 placeholder:text-neutral-500"
             dir="rtl"
         />
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
         {value && (
             <button
                 onClick={() => onChange('')}
                 className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full
-                   hover:bg-gray-700/50 transition-colors"
+                   hover:bg-neutral-700/50 transition-colors"
             >
-                <X className="w-4 h-4 text-gray-400" />
+                <X className="w-4 h-4 text-neutral-400" />
             </button>
         )}
     </div>
@@ -234,7 +234,7 @@ const FilterTabs = ({ activeStatus, onStatusChange }) => {
                      whitespace-nowrap transition-colors
                      ${activeStatus === id
                             ? 'bg-blue-500 text-white'
-                            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'}`}
+                            : 'bg-neutral-800/50 text-neutral-400 hover:bg-neutral-700/50'}`}
                 >
                     <Icon className="w-4 h-4" />
                     <span>{label}</span>
@@ -246,11 +246,11 @@ const FilterTabs = ({ activeStatus, onStatusChange }) => {
 
 const OrderCard = ({ order, onClick }) => {
     const statusConfig = {
-        pending: { icon: Clock, color: 'text-yellow-500', bgColor: 'bg-yellow-500/10', label: 'معلق' },
+        pending: { icon: Clock, color: 'text-blue-500', bgColor: 'bg-blue-500/10', label: 'معلق' },
         processing: { icon: RefreshCw, color: 'text-blue-500', bgColor: 'bg-blue-500/10', label: 'قيد التنفيذ' },
         delivered: { icon: CheckCircle, color: 'text-green-500', bgColor: 'bg-green-500/10', label: 'تم التسليم' },
         cancelled: { icon: Ban, color: 'text-red-500', bgColor: 'bg-red-500/10', label: 'ملغي' }
-    }[order.status] || { icon: Package, color: 'text-gray-500', bgColor: 'bg-gray-500/10', label: 'غير معروف' };
+    }[order.status] || { icon: Package, color: 'text-neutral-500', bgColor: 'bg-neutral-500/10', label: 'غير معروف' };
 
     const StatusIcon = statusConfig.icon;
     const phone = order.userPhone || order.user?.phone_number;
@@ -284,12 +284,12 @@ const OrderCard = ({ order, onClick }) => {
     return (
         <div
             onClick={onClick}
-            className="group bg-gray-800/30 rounded-xl md:rounded-2xl p-3 md:p-4 space-y-3 md:space-y-4 cursor-pointer
-                  border border-gray-700/50 hover:border-blue-500/30
+            className="group bg-neutral-800/30 rounded-xl md:rounded-2xl p-3 md:p-4 space-y-3 md:space-y-4 cursor-pointer
+                  border border-neutral-700/50 hover:border-blue-500/30
                   transition-all duration-300 relative overflow-hidden"
         >
             {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800/0 to-gray-800/50 opacity-0 
+            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/0 to-neutral-800/50 opacity-0 
                       group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Content */}
@@ -310,12 +310,12 @@ const OrderCard = ({ order, onClick }) => {
                             </h3>
                         )}
                         {phone && (
-                            <p className="text-xs md:text-sm text-gray-400 mt-0.5" dir="ltr">
+                            <p className="text-xs md:text-sm text-neutral-400 mt-0.5" dir="ltr">
                                 {phone}
                             </p>
                         )}
                         {createdAt && (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-neutral-500 mt-1">
                                 {new Date(createdAt).toLocaleString('ar-EG', {
                                     weekday: 'short',
                                     year: 'numeric',
@@ -329,13 +329,13 @@ const OrderCard = ({ order, onClick }) => {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700/50 mt-3 md:mt-4">
+                <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-neutral-700/50 mt-3 md:mt-4">
                     <div className="flex gap-1 md:gap-2">
                         {phone && (
                             <>
                                 <button
                                     onClick={handleWhatsAppClick}
-                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-green-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-neutral-800/50 hover:bg-green-500/10
                             border border-transparent hover:border-green-500/30
                             transition-all duration-300 group/btn"
                                     title="واتساب"
@@ -345,7 +345,7 @@ const OrderCard = ({ order, onClick }) => {
                                 </button>
                                 <button
                                     onClick={handlePhoneClick}
-                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-blue-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-neutral-800/50 hover:bg-blue-500/10
                             border border-transparent hover:border-blue-500/30
                             transition-all duration-300 group/btn"
                                     title="اتصال"
@@ -355,7 +355,7 @@ const OrderCard = ({ order, onClick }) => {
                                 </button>
                                 <button
                                     onClick={handleCopyPhoneNumber}
-                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gray-800/50 hover:bg-blue-500/10
+                                    className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-neutral-800/50 hover:bg-blue-500/10
                             border border-transparent hover:border-blue-500/30
                             transition-all duration-300 group/btn"
                                     title="نسخ رقم الهاتف"
@@ -373,12 +373,12 @@ const OrderCard = ({ order, onClick }) => {
                                 {total.toLocaleString('ar-EG')} جنيه
                             </span>
                             {order.items?.length > 0 && (
-                                <span className="text-xs text-gray-400">
+                                <span className="text-xs text-neutral-400">
                                     {order.items.length} منتج
                                 </span>
                             )}
                         </div>
-                        <Package className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-blue-500
+                        <Package className="w-4 h-4 md:w-5 md:h-5 text-neutral-400 group-hover:text-blue-500
                               transition-colors duration-300" />
                     </div>
                 </div>
@@ -618,23 +618,23 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         <div className="bg-neutral-850/30 rounded-xl md:rounded-2xl p-3 md:p-4 border border-neutral-700/30">
                             <div className="flex items-center justify-between">
                                 <h4 className="text-base md:text-lg font-bold text-white">معلومات العميل</h4>
-                                <span className="text-xs md:text-sm text-gray-400" dir="ltr">{phone}</span>
+                                <span className="text-xs md:text-sm text-neutral-400" dir="ltr">{phone}</span>
                             </div>
 
                             <div className="flex gap-2 mt-3 md:mt-4">
                                 <button onClick={() => window.open(`https://wa.me/${phone}`, '_blank')}
                                     className="flex-1 flex items-center justify-center gap-2 p-2.5 md:p-3 rounded-lg md:rounded-xl
-                                   bg-gray-800/50 hover:bg-green-500/10 border border-transparent
+                                   bg-neutral-800/50 hover:bg-green-500/10 border border-transparent
                                    hover:border-green-500/30 transition-all duration-300">
                                     <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
-                                    <span className="text-xs md:text-sm text-gray-400">واتساب</span>
+                                    <span className="text-xs md:text-sm text-neutral-400">واتساب</span>
                                 </button>
                                 <button onClick={() => window.open(`tel:${phone}`, '_blank')}
                                     className="flex-1 flex items-center justify-center gap-2 p-2.5 md:p-3 rounded-lg md:rounded-xl
-                                   bg-gray-800/50 hover:bg-blue-500/10 border border-transparent
+                                   bg-neutral-800/50 hover:bg-blue-500/10 border border-transparent
                                    hover:border-blue-500/30 transition-all duration-300">
                                     <Phone className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
-                                    <span className="text-xs md:text-sm text-gray-400">اتصال</span>
+                                    <span className="text-xs md:text-sm text-neutral-400">اتصال</span>
                                 </button>
                             </div>
                         </div>
@@ -644,13 +644,13 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                             <div className="flex items-center justify-between"
                                 dir='rtl'>
                                 <h4 className="text-lg font-bold text-white">المنتجات</h4>
-                                <span className="text-sm text-gray-400">{items.length} منتج</span>
+                                <span className="text-sm text-neutral-400">{items.length} منتج</span>
                             </div>
 
                             <div className="space-y-3">
                                 {items.map((item, index) => (
                                     <div key={index}
-                                        className="bg-gray-800/30 rounded-xl p-3 flex gap-3">
+                                        className="bg-neutral-800/30 rounded-xl p-3 flex gap-3">
                                         <div className="relative w-16 h-16 rounded-lg overflow-hidden hide-scrollbar group">
                                             <img src={item.image} alt={item.productName}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
@@ -671,10 +671,10 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                                 </h4>
                                             </div>
                                             <div className="mt-1 flex justify-end items-center gap-3">
-                                                <span className="text-sm text-gray-400">
+                                                <span className="text-sm text-neutral-400">
                                                     المقاس: {item.size}
                                                 </span>
-                                                <span className="text-sm text-gray-400">
+                                                <span className="text-sm text-neutral-400">
                                                     اللون: {item.variant}
                                                 </span>
                                             </div>
@@ -685,12 +685,12 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         </div>
 
                         {/* Order Summary */}
-                        <div className="bg-gray-800/30 rounded-2xl p-4 space-y-3">
+                        <div className="bg-neutral-800/30 rounded-2xl p-4 space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-blue-500 font-bold">
                                     {subtotal.toLocaleString('ar-EG')} جنيه
                                 </span>
-                                <span className="text-gray-400">المجموع</span>
+                                <span className="text-neutral-400">المجموع</span>
                             </div>
 
                             {(order.shipping != 0) && (
@@ -698,11 +698,11 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                     <span className="text-green-500 font-bold">
                                         {order.shipping.toLocaleString('ar-EG')} جنيه
                                     </span>
-                                    <span className="text-gray-400">الشحن</span>
+                                    <span className="text-neutral-400">الشحن</span>
                                 </div>
                             )}
 
-                            <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                            <div className="h-px bg-gradient-to-r from-transparent via-neutral-700 to-transparent" />
 
                             <div className="flex justify-between items-center">
                                 <span className="text-xl font-bold text-white">
@@ -724,17 +724,17 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                         <div key={index} className="flex items-start gap-4">
                                             {index !== tracking.length - 1 && (
                                                 <div className="absolute top-8 bottom-0 left-4 w-px 
-                                        bg-gradient-to-b from-gray-700 to-transparent" />
+                                        bg-gradient-to-b from-neutral-700 to-transparent" />
                                             )}
 
                                             <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center
-                                      ${step.completed ? 'bg-blue-500' : 'bg-gray-700'}`}>
+                                      ${step.completed ? 'bg-blue-500' : 'bg-neutral-700'}`}>
                                                 <StatusIcon status={step.status} className="w-4 h-4 text-white" />
                                             </div>
 
                                             <div className="flex-1">
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-sm text-gray-400">
+                                                    <span className="text-sm text-neutral-400">
                                                         {new Date(step.timestamp).toLocaleString('ar-EG')}
                                                     </span>
                                                     <span className="font-medium text-white">
@@ -742,7 +742,7 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                                     </span>
                                                 </div>
                                                 {step.description && (
-                                                    <p className="text-sm text-gray-500 mt-1">{step.description}</p>
+                                                    <p className="text-sm text-neutral-500 mt-1">{step.description}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -754,13 +754,13 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                         {/* Status Actions */}
                         <div className="grid grid-cols-2 gap-2 md:gap-3">
                             {[
-                                { status: 'pending', label: 'تعليق', icon: Clock, color: 'yellow' },
+                                { status: 'pending', label: 'تعليق', icon: Clock, color: 'blue' },
                                 { status: 'processing', label: 'معالجة', icon: RefreshCw, color: 'blue' },
                                 { status: 'delivered', label: 'تسليم', icon: CheckCircle, color: 'green' },
                                 { status: 'cancelled', label: 'إلغاء', icon: Ban, color: 'red' }
                             ].map(({ status, label, icon: Icon, color }) => {
                                 const colorClasses = {
-                                    yellow: { text: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' },
+                                    blue: { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
                                     blue: { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
                                     green: { text: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/30' },
                                     red: { text: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' }
@@ -774,17 +774,17 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                         className={`flex items-center justify-center gap-1.5 md:gap-2 p-2.5 md:p-3 
                                                rounded-lg md:rounded-xl font-medium transition-all duration-300 group
                                                ${order.status === status
-                                                ? 'bg-gray-800/50 text-gray-500 cursor-not-allowed'
-                                                : `bg-gray-800/30 hover:${colorClasses.bg} 
+                                                ? 'bg-neutral-800/50 text-neutral-500 cursor-not-allowed'
+                                                : `bg-neutral-800/30 hover:${colorClasses.bg} 
                                                   border border-transparent hover:${colorClasses.border}`}`}
                                     >
                                         <Icon className={`w-4 h-4 md:w-5 md:h-5 ${order.status === status
-                                            ? 'text-gray-500'
+                                            ? 'text-neutral-500'
                                             : `${colorClasses.text} 
                                               ${status === 'processing' ? 'group-hover:animate-spin' : ''}`}`} />
                                         <span className={`text-xs md:text-sm ${order.status === status
-                                            ? 'text-gray-500'
-                                            : `text-gray-400 group-hover:${colorClasses.text}`}`}>
+                                            ? 'text-neutral-500'
+                                            : `text-neutral-400 group-hover:${colorClasses.text}`}`}>
                                             {label}
                                         </span>
                                     </button>
@@ -797,17 +797,17 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                 </div>
 
             </div>
-            {/*        <div className="fixed bottom-0 inset-x-0 bg-gray-900/95 backdrop-blur-xl 
-                  border-t border-gray-800/50 p-4">
+            {/*        <div className="fixed bottom-0 inset-x-0 bg-neutral-900/95 backdrop-blur-xl 
+                  border-t border-neutral-800/50 p-4">
     <div className="grid grid-cols-3 gap-2">
       <button
         onClick={() => printOrder('A4')}
         className="flex items-center justify-center gap-2 p-3 rounded-xl
-                  bg-gray-800/30 hover:bg-blue-500/10 border border-transparent 
+                  bg-neutral-800/30 hover:bg-blue-500/10 border border-transparent 
                   hover:border-blue-500/30 transition-all duration-300 group"
       >
         <Printer className="w-5 h-5 text-blue-500" />
-        <span className="text-sm text-gray-400 group-hover:text-blue-500">
+        <span className="text-sm text-neutral-400 group-hover:text-blue-500">
           طباعة A4
         </span>
       </button>
@@ -815,11 +815,11 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
       <button
         onClick={() => printOrder('A5')}
         className="flex items-center justify-center gap-2 p-3 rounded-xl
-                  bg-gray-800/30 hover:bg-green-500/10 border border-transparent 
+                  bg-neutral-800/30 hover:bg-green-500/10 border border-transparent 
                   hover:border-green-500/30 transition-all duration-300 group"
       >
         <Printer className="w-5 h-5 text-green-500" />
-        <span className="text-sm text-gray-400 group-hover:text-green-500">
+        <span className="text-sm text-neutral-400 group-hover:text-green-500">
           طباعة A5
         </span>
       </button>
@@ -827,11 +827,11 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
       <button
         onClick={() => printOrder('receipt')}
         className="flex items-center justify-center gap-2 p-3 rounded-xl
-                  bg-gray-800/30 hover:bg-amber-500/10 border border-transparent 
-                  hover:border-amber-500/30 transition-all duration-300 group"
+                  bg-neutral-800/30 hover:bg-blue-500/10 border border-transparent 
+                  hover:border-blue-500/30 transition-all duration-300 group"
       >
-        <Receipt className="w-5 h-5 text-amber-500" />
-        <span className="text-sm text-gray-400 group-hover:text-amber-500">
+        <Receipt className="w-5 h-5 text-blue-500" />
+        <span className="text-sm text-neutral-400 group-hover:text-blue-500">
           طباعة إيصال
         </span>
       </button>
@@ -874,40 +874,40 @@ const ErrorState = ({ message }) => (
     <div className="text-center py-12">
         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-white mb-2">حدث خطأ</h3>
-        <p className="text-gray-400">{message}</p>
+        <p className="text-neutral-400">{message}</p>
     </div>
 );
 
 const EmptyState = () => (
     <div className="text-center py-12">
-        <Package className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+        <Package className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-white mb-2">لا توجد طلبات</h3>
-        <p className="text-gray-400">لم يتم العثور على طلبات تطابق معايير البحث</p>
+        <p className="text-neutral-400">لم يتم العثور على طلبات تطابق معايير البحث</p>
     </div>
 );
 
 const Pagination = ({ page, totalPages, onNext, onPrevious }) => (
-    <div className="fixed bottom-0 inset-x-0 bg-gray-900/95 backdrop-blur-xl 
-                  border-t border-gray-800/50 p-4">
+    <div className="fixed bottom-0 inset-x-0 bg-neutral-900/95 backdrop-blur-xl 
+                  border-t border-neutral-800/50 p-4">
         <div className="flex justify-between items-center max-w-lg mx-auto">
             <button
                 onClick={onPrevious}
                 disabled={page <= 1}
-                className="p-2 rounded-xl bg-gray-800/50 text-gray-400
+                className="p-2 rounded-xl bg-neutral-800/50 text-neutral-400
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  hover:bg-gray-700/50 transition-colors"
+                  hover:bg-neutral-700/50 transition-colors"
             >
                 السابق
             </button>
-            <span className="text-gray-400">
+            <span className="text-neutral-400">
                 صفحة {page} من {totalPages}
             </span>
             <button
                 onClick={onNext}
                 disabled={page >= totalPages}
-                className="p-2 rounded-xl bg-gray-800/50 text-gray-400
+                className="p-2 rounded-xl bg-neutral-800/50 text-neutral-400
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  hover:bg-gray-700/50 transition-colors"
+                  hover:bg-neutral-700/50 transition-colors"
             >
                 التالي
             </button>

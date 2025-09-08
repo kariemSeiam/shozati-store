@@ -50,8 +50,8 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         animate={{
           background: isHovered
             ? [
-              'linear-gradient(45deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%)',
-              'linear-gradient(45deg, transparent 0%, rgba(245, 158, 11, 0.15) 100%)'
+              'linear-gradient(45deg, rgba(14, 165, 233, 0.15) 0%, transparent 100%)',
+              'linear-gradient(45deg, transparent 0%, rgba(56, 189, 248, 0.15) 100%)'
             ]
             : 'none'
         }}
@@ -64,8 +64,8 @@ const ActionButton = ({ icon: Icon, onClick, isActive, label }) => {
         animate={{
           boxShadow: isHovered
             ? [
-              'inset 0 0 0 1px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(59, 130, 246, 0.1)',
-              'inset 0 0 0 1px rgba(245, 158, 11, 0.3), 0 4px 12px rgba(245, 158, 11, 0.1)',
+              'inset 0 0 0 1px rgba(14, 165, 233, 0.3), 0 4px 12px rgba(14, 165, 233, 0.1)',
+              'inset 0 0 0 1px rgba(56, 189, 248, 0.3), 0 4px 12px rgba(56, 189, 248, 0.1)',
             ]
             : 'none'
         }}
@@ -118,14 +118,14 @@ const Logo = () => (
     className="relative px-4"
   >
     <div className="relative inline-block">
-      <img 
-        src="/logo.png" 
-        alt="Shozati Logo" 
-        className="h-10 w-auto" 
+      <img
+        src="/logo.png"
+        alt="Shozati Logo"
+        className="h-10 w-auto"
       />
       {/* Premium Glow Effect */}
       <motion.div
-        className="absolute -inset-2 bg-gradient-to-r from-primary-500/20 via-secondary-400/20 to-primary-500/20 
+        className="absolute -inset-2 bg-gradient-to-r from-primary-500/20 via-primary-400/20 to-primary-500/20 
                    blur-xl opacity-0 rounded-full"
         animate={{
           opacity: [0, 0.6, 0],
@@ -183,7 +183,7 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
       className="sticky top-0 z-40"
     >
       {/* Premium Glass Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary-50/95 via-white/90 to-secondary-50/95 
+      <div className="absolute inset-0 bg-gradient-to-b from-primary-50/95 via-white/90 to-primary-50/95 
                     backdrop-blur-lg shadow-lg shadow-primary-100/50" />
 
       {/* Enhanced Content Layout */}
@@ -195,7 +195,7 @@ export const Header = ({ onOrdersClick, onProfileClick }) => {
             label="Profile"
           />
 
-          <Logo/>
+          <Logo />
 
           <ActionButton
             icon={Package}

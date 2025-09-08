@@ -17,7 +17,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
 
   if (loading && favorites.length === 0) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -35,7 +35,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -43,15 +43,15 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
       className="fixed inset-0 bg-white z-40"
     >
       <div className="h-full flex flex-col">
-        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm">
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-neutral-200 shadow-sm">
           <div className="px-4 py-4">
             <div className="flex justify-between items-center">
-              <motion.button 
+              <motion.button
                 onClick={handleClose}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-xl bg-gray-50 text-slate-600 
-                         hover:bg-gray-100 hover:text-slate-800 transition-all duration-200"
+                className="p-2 rounded-xl bg-neutral-50 text-slate-600 
+                         hover:bg-neutral-100 hover:text-slate-800 transition-all duration-200"
               >
                 <X className="w-6 h-6" />
               </motion.button>
@@ -61,7 +61,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
           </div>
         </div>
 
-        <motion.div 
+        <motion.div
           className="flex-1 overflow-auto pb-8"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -84,7 +84,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                     />
                   ))}
                 </div>
-                
+
                 {loading && (
                   <div className="flex justify-center py-4">
                     <div className="relative">
@@ -98,7 +98,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 )}
               </>
             ) : (
-              <motion.div 
+              <motion.div
                 className="text-center py-12"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -117,7 +117,7 @@ export const FavoritesView = ({ onClose, onProductSelect, checkAuthAndProceed })
                 <p className="text-slate-600 mb-6">
                   اكتشف منتجاتنا وأضف ما يعجبك إلى المفضلة
                 </p>
-                <motion.button 
+                <motion.button
                   onClick={handleClose}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

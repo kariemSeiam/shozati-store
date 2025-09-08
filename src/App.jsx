@@ -24,15 +24,15 @@ import { useCategoryHandler } from './hooks/useCategoryHandler';
 
 const MainContent = ({ productCode }) => {
   const { setIsCartOpen } = useContext(CartContext);
-  
+
   // Custom hooks for cleaner state management
-  const { 
-    uiState, 
-    closeModal, 
-    openModal, 
-    selectCategory, 
-    selectProduct, 
-    setOrderId 
+  const {
+    uiState,
+    closeModal,
+    openModal,
+    selectCategory,
+    selectProduct,
+    setOrderId
   } = useUIState({ selectedCategory: 'all' });
 
   const {
@@ -44,9 +44,9 @@ const MainContent = ({ productCode }) => {
     userInfo
   } = useAuthActions();
 
-  const { 
-    products, 
-    loading: productsLoading, 
+  const {
+    products,
+    loading: productsLoading,
     loadMore,
     updateFilters,
     setPage,
@@ -56,7 +56,7 @@ const MainContent = ({ productCode }) => {
   });
 
   const { slides, loading: slidesLoading } = useSlides();
-  
+
   const { handleCategorySelect } = useCategoryHandler({
     updateFilters,
     setPage,
@@ -73,7 +73,7 @@ const MainContent = ({ productCode }) => {
       openModal('showLogin');
       return;
     }
-    
+
     checkAuthAndProceed({
       requiresAuth: true,
       requiresAddress: true,
@@ -140,22 +140,22 @@ const MainContent = ({ productCode }) => {
       }
     }
   }, [productCode, products, selectProduct]);
-  
+
 
 
   return (
     <div className="min-h-screen bg-white">
-      <Toaster 
+      <Toaster
         position="top-center"
         toastOptions={{
-          className: 'bg-white backdrop-blur-xl border border-gray-200 rounded-2xl px-6 py-4 shadow-lg',
+          className: 'bg-white backdrop-blur-xl border border-neutral-200 rounded-2xl px-6 py-4 shadow-lg',
           duration: 3000,
           style: {
             color: '#1e293b',
             fontSize: '14px',
             fontWeight: '500'
           }
-        }} 
+        }}
       />
 
       {/* Premium Header */}
@@ -167,7 +167,7 @@ const MainContent = ({ productCode }) => {
       </header>
 
       {/* Category Navigation */}
-      <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-gray-200">
+      <nav className="sticky top-0 z-10 bg-white/95 backdrop-blur-xl border-b border-neutral-200">
         <HorizontalCategoryScroller
           selectedCategory={uiState.selectedCategory}
           onSelect={handleCategorySelect}
@@ -209,6 +209,7 @@ const MainContent = ({ productCode }) => {
       <CartSheet
         onOrderCreated={handleOrderCreated}
         checkAuthAndProceed={checkAuthAndProceed}
+        openModal={openModal}
       />
 
       {/* Modal Manager */}

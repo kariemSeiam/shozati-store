@@ -32,10 +32,10 @@ const Slides = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary-900 p-4 pt-0 pb-20" dir="rtl">
+    <div className="min-h-screen bg-primary-900 p-4 pt-0 pb-20" dir="rtl">
       {/* Header */}
-              <div className="sticky top-0 z-30 -mx-4 bg-secondary-900/95 backdrop-blur-xl px-4 py-3 
-                      border-b border-secondary-800/50 pt-0">
+      <div className="sticky top-0 z-30 -mx-4 bg-primary-900/95 backdrop-blur-xl px-4 py-3 
+                      border-b border-primary-800/50 pt-0">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">إدارة العروض</h1>
           <button
@@ -103,7 +103,7 @@ const StatusToggle = ({ checked, onChange, disabled }) => {
     >
       <div className={`
         w-10 h-5 rounded-full transition-colors duration-200 ml-[-48px]
-        ${checked ? 'bg-blue-500' : 'bg-gray-700'}
+        ${checked ? 'bg-blue-500' : 'bg-neutral-700'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}>
         <div className={`
@@ -120,7 +120,7 @@ const StatusToggle = ({ checked, onChange, disabled }) => {
       </div>
       <span className={`
         text-sm transition-colors duration-200
-        ${checked ? 'text-blue-500' : 'text-gray-400'}
+        ${checked ? 'text-blue-500' : 'text-neutral-400'}
         ${disabled ? 'opacity-50' : ''}
       `}>
         {checked ? 'نشط' : 'غير نشط'}
@@ -129,10 +129,10 @@ const StatusToggle = ({ checked, onChange, disabled }) => {
   );
 };
 
-const SlideCard = ({ 
-  slide, 
-  onDelete, 
-  onUpdate, 
+const SlideCard = ({
+  slide,
+  onDelete,
+  onUpdate,
   onToggleStatus,
   products,
   loading,
@@ -159,7 +159,7 @@ const SlideCard = ({
   };
 
   return (
-    <div className="bg-gray-800/30 rounded-2xl border border-gray-700/50 overflow-hidden">
+    <div className="bg-neutral-800/30 rounded-2xl border border-neutral-700/50 overflow-hidden">
       <div className="p-4">
         <div className="flex items-start gap-4">
           {/* Image */}
@@ -178,10 +178,10 @@ const SlideCard = ({
             {product && (
               <div className="flex items-center gap-2 mt-1">
                 <Package className="w-4 h-4 text-blue-500" />
-                <span className="text-sm text-gray-400">{product.name}</span>
+                <span className="text-sm text-neutral-400">{product.name}</span>
               </div>
             )}
-            
+
             {/* Status Toggle */}
             <div className="mt-6" dir="ltr">
               <StatusToggle
@@ -195,12 +195,12 @@ const SlideCard = ({
           {/* Expand Button */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-xl hover:bg-gray-700/50 transition-colors"
+            className="p-2 rounded-xl hover:bg-neutral-700/50 transition-colors"
           >
             {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-gray-400" />
+              <ChevronUp className="w-5 h-5 text-neutral-400" />
             ) : (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+              <ChevronDown className="w-5 h-5 text-neutral-400" />
             )}
           </button>
         </div>
@@ -208,9 +208,9 @@ const SlideCard = ({
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-gray-700/50 p-4 space-y-4">
+        <div className="border-t border-neutral-700/50 p-4 space-y-4">
           {slide.description && (
-            <p className="text-gray-400 text-sm">{slide.description}</p>
+            <p className="text-neutral-400 text-sm">{slide.description}</p>
           )}
 
           <div className="flex gap-2">
@@ -284,7 +284,7 @@ const CreateSlideSheet = ({
         setValidationError('Please select a valid image file');
         return;
       }
-      
+
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setValidationError('Image size should be less than 5MB');
@@ -299,7 +299,7 @@ const CreateSlideSheet = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.image) {
       setValidationError('Please select an image');
       return;
@@ -319,8 +319,8 @@ const CreateSlideSheet = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
       <div className="fixed inset-x-0 bottom-0 transform transition-transform duration-300">
-        <div className="bg-gray-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
-                     border-gray-800/50 p-6 max-h-[90vh] overflow-y-auto">
+        <div className="bg-neutral-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
+                     border-neutral-800/50 p-6 max-h-[90vh] overflow-y-auto">
           <h2 className="text-xl font-bold text-white mb-6">إضافة عرض جديد</h2>
 
           {(error || validationError) && (
@@ -332,7 +332,7 @@ const CreateSlideSheet = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Image Upload */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 الصورة
               </label>
               <ImageUpload
@@ -344,36 +344,36 @@ const CreateSlideSheet = ({
 
             {/* Title Input */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 العنوان
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                       border border-gray-700/50 focus:border-blue-500/50"
+                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                       border border-neutral-700/50 focus:border-blue-500/50"
                 placeholder="عنوان العرض"
               />
             </div>
 
             {/* Description Input */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 الوصف
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full h-24 bg-gray-800/50 rounded-xl p-4 text-white
-                       border border-gray-700/50 focus:border-blue-500/50 resize-none"
+                className="w-full h-24 bg-neutral-800/50 rounded-xl p-4 text-white
+                       border border-neutral-700/50 focus:border-blue-500/50 resize-none"
                 placeholder="وصف العرض"
               />
             </div>
 
             {/* Product Select */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 المنتج
               </label>
               <ProductSelect
@@ -388,8 +388,8 @@ const CreateSlideSheet = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 h-12 rounded-xl bg-gray-800/50 text-gray-400
-                       hover:bg-gray-700/50 transition-colors"
+                className="flex-1 h-12 rounded-xl bg-neutral-800/50 text-neutral-400
+                       hover:bg-neutral-700/50 transition-colors"
               >
                 إلغاء
               </button>
@@ -428,7 +428,7 @@ const ImageUpload = ({ imagePreview, onChange, inputId }) => (
     <label
       htmlFor={inputId}
       className="block w-full aspect-video rounded-xl border-2 border-dashed
-               border-gray-700/50 hover:border-blue-500/50 transition-colors
+               border-neutral-700/50 hover:border-blue-500/50 transition-colors
                cursor-pointer overflow-hidden"
     >
       {imagePreview ? (
@@ -439,8 +439,8 @@ const ImageUpload = ({ imagePreview, onChange, inputId }) => (
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full">
-          <Image className="w-8 h-8 text-gray-400 mb-2" />
-          <span className="text-sm text-gray-400">
+          <Image className="w-8 h-8 text-neutral-400 mb-2" />
+          <span className="text-sm text-neutral-400">
             اختر صورة أو اسحبها هنا
           </span>
         </div>
@@ -454,8 +454,8 @@ const ProductSelect = ({ value, onChange, products }) => (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-               border border-gray-700/50 focus:border-blue-500/50
+      className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+               border border-neutral-700/50 focus:border-blue-500/50
                appearance-none"
     >
       <option value="">اختر منتج</option>
@@ -466,17 +466,17 @@ const ProductSelect = ({ value, onChange, products }) => (
       ))}
     </select>
     <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 
-                         w-5 h-5 text-gray-400 pointer-events-none" />
+                         w-5 h-5 text-neutral-400 pointer-events-none" />
   </div>
 );
 
-const EditSlideSheet = ({ 
-  slide, 
-  onClose, 
-  onUpdate, 
-  products, 
+const EditSlideSheet = ({
+  slide,
+  onClose,
+  onUpdate,
+  products,
   isLoading,
-  error 
+  error
 }) => {
   const [formData, setFormData] = useState({
     title: slide.title,
@@ -494,7 +494,7 @@ const EditSlideSheet = ({
         setValidationError('Please select a valid image file');
         return;
       }
-      
+
       if (file.size > 5 * 1024 * 1024) {
         setValidationError('Image size should be less than 5MB');
         return;
@@ -508,7 +508,7 @@ const EditSlideSheet = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.productId) {
       setValidationError('Please fill in all required fields');
       return;
@@ -523,8 +523,8 @@ const EditSlideSheet = ({
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm">
       <div className="fixed inset-x-0 bottom-0 transform transition-transform duration-300">
-        <div className="bg-gray-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
-                     border-gray-800/50 p-6 max-h-[90vh] overflow-y-auto">
+        <div className="bg-neutral-900/95 backdrop-blur-xl rounded-t-[2.5rem] border-t 
+                     border-neutral-800/50 p-6 max-h-[90vh] overflow-y-auto">
           <h2 className="text-xl font-bold text-white mb-6">تعديل العرض</h2>
 
           {(error || validationError) && (
@@ -535,7 +535,7 @@ const EditSlideSheet = ({
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 الصورة
               </label>
               <ImageUpload
@@ -546,34 +546,34 @@ const EditSlideSheet = ({
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 العنوان
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full h-12 bg-gray-800/50 rounded-xl px-4 text-white
-                       border border-gray-700/50 focus:border-blue-500/50"
+                className="w-full h-12 bg-neutral-800/50 rounded-xl px-4 text-white
+                       border border-neutral-700/50 focus:border-blue-500/50"
                 placeholder="عنوان العرض"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 الوصف
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full h-24 bg-gray-800/50 rounded-xl p-4 text-white
-                       border border-gray-700/50 focus:border-blue-500/50 resize-none"
+                className="w-full h-24 bg-neutral-800/50 rounded-xl p-4 text-white
+                       border border-neutral-700/50 focus:border-blue-500/50 resize-none"
                 placeholder="وصف العرض"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-400">
+              <label className="block text-sm font-medium text-neutral-400">
                 المنتج
               </label>
               <ProductSelect
@@ -584,9 +584,9 @@ const EditSlideSheet = ({
             </div>
 
             {formData.productId && (
-              <div className="bg-gray-800/30 rounded-xl p-4">
-                <ProductPreview 
-                  product={products.find(p => p.id === formData.productId)} 
+              <div className="bg-neutral-800/30 rounded-xl p-4">
+                <ProductPreview
+                  product={products.find(p => p.id === formData.productId)}
                 />
               </div>
             )}
@@ -595,8 +595,8 @@ const EditSlideSheet = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 h-12 rounded-xl bg-gray-800/50 text-gray-400
-                       hover:bg-gray-700/50 transition-colors"
+                className="flex-1 h-12 rounded-xl bg-neutral-800/50 text-neutral-400
+                       hover:bg-neutral-700/50 transition-colors"
               >
                 إلغاء
               </button>
@@ -627,7 +627,7 @@ const LoadingState = () => (
   <div className="flex items-center justify-center py-12">
     <div className="text-center space-y-4">
       <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" />
-      <p className="text-gray-400">جاري تحميل العروض...</p>
+      <p className="text-neutral-400">جاري تحميل العروض...</p>
     </div>
   </div>
 );
@@ -636,30 +636,30 @@ const ErrorState = ({ message }) => (
   <div className="text-center py-12">
     <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
     <h3 className="text-xl font-bold text-white mb-2">حدث خطأ</h3>
-    <p className="text-gray-400">{message}</p>
+    <p className="text-neutral-400">{message}</p>
   </div>
 );
 
 const EmptyState = () => (
   <div className="text-center py-12">
-    <Image className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+    <Image className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
     <h3 className="text-xl font-bold text-white mb-2">لا توجد عروض</h3>
-    <p className="text-gray-400">ابدأ بإضافة عروض جديدة لعرضها للعملاء</p>
+    <p className="text-neutral-400">ابدأ بإضافة عروض جديدة لعرضها للعملاء</p>
   </div>
 );
 
 const ProductPreview = ({ product }) => {
   if (!product) return null;
-  
+
   const firstVariant = product.variants[0];
   const firstImage = firstVariant?.images[0];
-  
+
   return (
     <div className="flex items-start gap-3">
       {firstImage && (
         <div className="relative w-16 h-16 rounded-lg overflow-hidden">
-          <img 
-            src={firstImage} 
+          <img
+            src={firstImage}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -668,11 +668,11 @@ const ProductPreview = ({ product }) => {
       <div className="flex-1 min-w-0">
         <h4 className="font-medium text-white truncate">{product.name}</h4>
         <div className="flex items-center gap-4 mt-1">
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-neutral-400">
             {product.variants.length} {product.variants.length === 1 ? 'لون' : 'ألوان'}
           </span>
-          <span className="text-sm text-gray-400">
-            {product.variants.reduce((total, variant) => 
+          <span className="text-sm text-neutral-400">
+            {product.variants.reduce((total, variant) =>
               total + variant.sizes.length, 0
             )} مقاسات
           </span>
