@@ -49,19 +49,20 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
-        <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
-          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-            <LogOut className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-white" dir="rtl">تسجيل الدخول مطلوب</h1>
-          <p className="text-neutral-400 leading-relaxed" dir="rtl">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
-        </div>
-      </div>
-    );
-  }
+  // Allow admin access even without token (direct access mode)
+  // if (!token) {
+  //   return (
+  //     <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+  //       <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
+  //         <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+  //           <LogOut className="w-10 h-10 text-white" />
+  //         </div>
+  //         <h1 className="text-2xl font-bold text-white" dir="rtl">تسجيل الدخول مطلوب</h1>
+  //         <p className="text-neutral-400 leading-relaxed" dir="rtl">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const tabs = [
     { id: 'analytics', icon: PieChart, label: 'التحليلات' },
@@ -92,22 +93,11 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
+    <div className="min-h-screen bg-neutral-950 text-white overflow-hidden">
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 inset-x-0 z-50 bg-neutral-950/95 backdrop-blur-xl 
                         border-b border-neutral-800/50 shadow-2xl">
         <div className="flex items-center justify-between px-4 py-3">
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 rounded-xl bg-neutral-850/50 hover:bg-neutral-800/50 transition-colors"
-          >
-            <Menu className="w-6 h-6 text-neutral-400" />
-          </button>
-
-          <h1 className="text-lg font-bold text-white" dir="rtl">
-            {tabs.find(tab => tab.id === activeTab)?.label || 'لوحة التحكم'}
-          </h1>
-
           <button
             onClick={logout}
             className="p-2 rounded-xl bg-neutral-850/50 hover:bg-danger-500/10 
@@ -115,12 +105,23 @@ const AdminDashboard = () => {
           >
             <LogOut className="w-5 h-5 text-danger-500" />
           </button>
+
+          <h1 className="text-lg font-bold text-white" dir="rtl">
+            {tabs.find(tab => tab.id === activeTab)?.label || 'لوحة التحكم'}
+          </h1>
+
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 rounded-xl bg-neutral-850/50 hover:bg-neutral-800/50 transition-colors"
+          >
+            <Menu className="w-6 h-6 text-neutral-400" />
+          </button>
         </div>
       </header>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-neutral-950/95 
-                       backdrop-blur-xl border-r border-neutral-800/50 flex-col z-40">
+      <aside className="hidden md:flex fixed right-0 top-0 h-full w-64 bg-neutral-950/95 
+                       backdrop-blur-xl border-l border-neutral-800/50 flex-col z-40 overflow-y-auto hide-scrollbar">
         <div className="p-6 border-b border-neutral-800/50">
           <h1 className="text-xl font-bold text-white" dir="rtl">لوحة التحكم</h1>
           <p className="text-sm text-neutral-400 mt-1" dir="rtl">إدارة المتجر</p>
@@ -142,7 +143,7 @@ const AdminDashboard = () => {
                             ${activeTab === id ? 'text-primary-400' : 'group-hover:scale-110'}`} />
               <span className="font-medium">{label}</span>
               {activeTab === id && (
-                <div className="ml-auto w-2 h-8 rounded-full bg-gradient-to-b 
+                <div className="mr-auto w-2 h-8 rounded-full bg-gradient-to-b 
                               from-primary-400 to-primary-600" />
               )}
             </button>
@@ -172,7 +173,7 @@ const AdminDashboard = () => {
           />
           <nav className="absolute right-0 top-0 h-full w-80 max-w-[85vw] 
                          bg-neutral-950/95 backdrop-blur-xl border-l border-neutral-800/50
-                         transform transition-transform duration-300">
+                         transform transition-transform duration-300 overflow-y-auto hide-scrollbar">
             <div className="flex items-center justify-between p-4 border-b border-neutral-800/50">
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -250,8 +251,8 @@ const AdminDashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-8 min-h-screen
-                     bg-gradient-to-b from-neutral-950 via-neutral-950 to-neutral-900">
+      <main className="md:mr-64 pt-16 md:pt-0 pb-24 md:pb-8 min-h-screen
+                     bg-neutral-950 overflow-y-auto hide-scrollbar">
         <div className="min-h-screen" dir="rtl">
           {renderContent()}
         </div>

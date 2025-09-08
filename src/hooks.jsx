@@ -153,13 +153,13 @@ export const useCoupons = () => {
     const [validatingCoupon, setValidatingCoupon] = useState(false);
     const [currentCoupon, setCurrentCoupon] = useState(null);
     const [error, setError] = useState(null);
-    
+
     // Context
     const { isAuthenticated } = useContext(AuthContext);
-    
+
     // Request tracking
     const pendingValidation = useRef(null);
-    
+
     // Enhanced caching system
     const cache = useRef({
         validations: new Map(),
@@ -175,15 +175,15 @@ export const useCoupons = () => {
     const isValidationCached = useCallback((code, subtotal) => {
         const cacheKey = `${code}-${subtotal}`;
         const cached = cache.current.validations.get(cacheKey);
-        
+
         if (!cached) return false;
-        
+
         const isExpired = (Date.now() - cached.timestamp) > cache.current.expiryTime;
         if (isExpired) {
             cache.current.validations.delete(cacheKey);
             return false;
         }
-        
+
         return true;
     }, []);
 
@@ -246,13 +246,13 @@ export const useCoupons = () => {
             // Cache successful validation
             setCachedValidation(code, subtotal, response);
             setError(response);
-            
+
             // Update current coupon state
             setCurrentCoupon(response);
-            
+
             // Clear error if exists
             setError(null);
-            
+
             return response;
 
         } catch (err) {
@@ -262,10 +262,10 @@ export const useCoupons = () => {
             const errorMessage = err.message || 'Failed to validate coupon';
             setError(errorMessage);
             setCurrentCoupon(null);
-            
+
             // Show error toast
             toast.error(errorMessage);
-            
+
             return null;
         } finally {
             setValidatingCoupon(false);
@@ -280,7 +280,7 @@ export const useCoupons = () => {
         if (currentCoupon.discountType === 'percentage') {
             return Math.round((subtotal * currentCoupon.discountValue / 100) * 100) / 100;
         }
-        
+
         return Math.min(currentCoupon.discountValue, subtotal);
     }, [currentCoupon]);
 
@@ -411,7 +411,7 @@ export const useProducts = (config = {}) => {
         setError('fetchError', null);
 
         const cacheKey = getCacheKey(pageNum, filterParams);
-        
+
         try {
             if (cache.current.has(cacheKey)) {
                 const cachedData = cache.current.get(cacheKey);
@@ -434,12 +434,12 @@ export const useProducts = (config = {}) => {
             }).toString();
 
             const response = await apiRequest(`products?${queryParams}`);
-            
+
             if (response) {
                 setProducts(response.products);
                 setTotalProducts(response.total);
                 setTotalPages(response.pages);
-                
+
                 cache.current.set(cacheKey, response);
                 return response;
             }
@@ -535,7 +535,7 @@ export const useProducts = (config = {}) => {
             const formData = new FormData();
             formData.append('productCode', productCode);
             formData.append('colorName', colorName);
-            
+
             images.forEach(image => {
                 formData.append('images', image);
             });
@@ -876,20 +876,20 @@ export const useFavorites = () => {
     // Get favorite status synchronously
     const getFavoriteStatus = useCallback((productId) => {
         if (!isAuthenticated || !productId) return false;
-        
+
         // Priority 1: Check optimistic updates
         const optimisticStatus = optimisticUpdates.get(productId);
         if (optimisticStatus !== undefined) return optimisticStatus;
-        
+
         // Priority 2: Check favorites list
         if (favorites.some(f => f.id === productId)) return true;
-        
+
         // Priority 3: Check status cache
         const cachedStatus = cache.current.status.get(productId);
         if (cachedStatus && (Date.now() - cachedStatus.timestamp) < cache.current.favorites.expiryTime) {
             return cachedStatus.status;
         }
-        
+
         return false;
     }, [isAuthenticated, favorites, optimisticUpdates]);
 
@@ -916,7 +916,7 @@ export const useFavorites = () => {
             cache.current.favorites.promise = fetchPromise;
 
             const response = await fetchPromise;
-            
+
             // Update pagination state
             setPagination({
                 currentPage: page,
@@ -967,7 +967,7 @@ export const useFavorites = () => {
         try {
             pendingOperations.current.add(productId);
             const currentStatus = getFavoriteStatus(productId);
-            
+
             // Optimistic update
             setOptimisticUpdates(prev => new Map(prev).set(productId, !currentStatus));
 
@@ -979,7 +979,7 @@ export const useFavorites = () => {
 
             // Update cache and state based on server response
             const isNowFavorite = !currentStatus;
-            
+
             setFavorites(prev => {
                 const newFavorites = isNowFavorite
                     ? [...prev, { id: productId, isFavorite: true }]
@@ -1026,9 +1026,9 @@ export const useFavorites = () => {
         try {
             const promise = apiRequest(`/favorites/${productId}/status`, {}, true);
             statusRequests.current.set(productId, promise);
-            
+
             const response = await promise;
-            
+
             // Update cache with server response
             cache.current.status.set(productId, {
                 status: response.isFavorite,

@@ -1,24 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600&display=swap&text=أبجدهوزحطيكلمنسعفصقرشتثخذضظغ0123456789');
+@import url('https://fonts.googleapis.com/css2?family=Cairo+Play:wght@200;300;400;500;600;700;800;900&display=swap&text=أبجدهوزحطيكلمنسعفصقرشتثخذضظغ0123456789');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Global Theme Variables - Clean Light Theme */
+/* Global Theme Variables - Unified Blue Theme (70% Blue Elements) */
 :root {
-  /* Primary Colors - Clean Blue */
-  --primary-50: #f0f9ff;
-  --primary-100: #e0f2fe;
-  --primary-200: #bae6fd;
-  --primary-300: #7dd3fc;
-  --primary-400: #38bdf8;
-  --primary-500: #0ea5e9;
-  --primary-600: #0284c7;
-  --primary-700: #0369a1;
-  --primary-800: #075985;
-  --primary-900: #0c4a6e;
+  /* Primary Colors - Main Blue (40% of elements) */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+  --primary-950: #172554;
   
-  /* Secondary Colors - Clean Blue Accent (matching primary) */
+  /* Secondary Colors - Cyan Blue (30% of elements) */
   --secondary-50: #f0f9ff;
   --secondary-100: #e0f2fe;
   --secondary-200: #bae6fd;
@@ -29,6 +30,7 @@
   --secondary-700: #0369a1;
   --secondary-800: #075985;
   --secondary-900: #0c4a6e;
+  --secondary-950: #082f49;
   
   /* Success Colors - Clean Green */
   --success-50: #f0fdf4;
@@ -42,33 +44,34 @@
   --success-800: #166534;
   --success-900: #14532d;
   
-  /* Text Colors - Perfect Contrast */
-  --text-primary: #171717;
-  --text-secondary: #404040;
-  --text-tertiary: #737373;
-  --text-muted: #a3a3a3;
-  --text-disabled: #d4d4d4;
+  /* Text Colors - Blue-tinted Contrast */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  --text-disabled: #cbd5e1;
   --text-inverse: #ffffff;
   
-  /* Surface Colors - Clean & Minimal */
+  /* Surface Colors - Blue-tinted Minimal */
   --surface-default: #ffffff;
-  --surface-elevated: #fafafa;
-  --surface-hover: #f5f5f5;
-  --surface-border: #e5e5e5;
-  --surface-border-hover: #d4d4d4;
+  --surface-elevated: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --surface-border-hover: #cbd5e1;
   
-  /* Background Colors - Pure Light */
+  /* Background Colors - Blue-tinted Light */
   --background-default: #ffffff;
-  --background-secondary: #fafafa;
-  --background-tertiary: #f5f5f5;
-  --background-muted: #f8fafc;
+  --background-secondary: #f8fafc;
+  --background-tertiary: #f1f5f9;
+  --background-muted: #eff6ff;
   
-  /* Gradients - Clean & Modern */
-  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  /* Gradients - Unified Blue Theme */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --gradient-primary-light: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   --gradient-secondary: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  --gradient-mixed: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  --gradient-surface: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-  --gradient-overlay: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(2, 132, 199, 0.02) 100%);
+  --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-overlay: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
 /* Base Styles */
@@ -77,7 +80,7 @@ html {
 }
 
 body {
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo Play', sans-serif;
   background: var(--background-default);
   color: var(--text-primary);
   font-weight: 400;
@@ -118,6 +121,85 @@ body {
   opacity: 1;
 }
 
+/* Creative Background Patterns - Ultra Light */
+.bg-pattern-dots {
+  background-image: radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.03) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+.bg-pattern-grid {
+  background-image: 
+    linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-pattern-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 15px,
+    rgba(59, 130, 246, 0.015) 15px,
+    rgba(59, 130, 246, 0.015) 30px
+  );
+}
+
+.bg-pattern-waves {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.02'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm10 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-pattern-hexagon {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='m20 20 8.66-15h-17.32l8.66 15zm-8.66 15h17.32l-8.66-15-8.66 15z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-pattern-circuit {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.02'%3E%3Cpath d='M0 0h40v40H0zm40 40h40v40H40z'/%3E%3Ccircle cx='20' cy='20' r='4'/%3E%3Ccircle cx='60' cy='60' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-pattern-triangles {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='M20 20L0 0h40zm0 20L0 20h40z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(135deg, 
+    rgba(239, 246, 255, 0.3) 0%, 
+    rgba(219, 234, 254, 0.2) 25%, 
+    rgba(255, 255, 255, 0.95) 50%, 
+    rgba(240, 249, 255, 0.25) 75%, 
+    rgba(239, 246, 255, 0.3) 100%
+  );
+}
+
+.bg-mesh-gradient {
+  background: 
+    radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.04) 0px, transparent 35%),
+    radial-gradient(at 80% 0%, rgba(14, 165, 233, 0.03) 0px, transparent 45%),
+    radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.025) 0px, transparent 40%),
+    radial-gradient(at 80% 50%, rgba(14, 165, 233, 0.04) 0px, transparent 45%),
+    radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.03) 0px, transparent 35%),
+    radial-gradient(at 80% 100%, rgba(14, 165, 233, 0.025) 0px, transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.99) 100%);
+}
+
+/* Enhanced Animation Classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pattern-drift {
+  animation: pattern-drift 60s linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in 0.6s ease-out;
+}
+
+.bg-animated-dots {
+  background-image: radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.02) 1px, transparent 0);
+  background-size: 32px 32px;
+  animation: pattern-drift 120s linear infinite;
+}
+
 /* Enhanced Animations */
 @keyframes fade-in {
   from {
@@ -127,6 +209,42 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pattern-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes gentle-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -372,11 +490,11 @@ select {
 }
 
 .status-warning {
-  @apply bg-blue-50 text-blue-700 border-blue-200;
+  @apply bg-accent-50 text-accent-700 border-accent-200;
 }
 
 .status-error {
-  @apply bg-rose-50 text-rose-700 border-rose-200;
+  @apply bg-error-50 text-error-700 border-error-200;
 }
 
 /* Performance optimized utility classes */

@@ -16,6 +16,19 @@ import {
   AdminModal,
   ADMIN_COLORS
 } from '../components/DesignSystem';
+import {
+  ResponsiveModal,
+  ResponsiveFormField,
+  ResponsiveInput,
+  ResponsiveSelect,
+  ResponsiveTextarea,
+  ResponsiveButtonGroup,
+  ResponsiveGrid,
+  getDefaultValue,
+  formatNumber,
+  formatCurrency
+} from '../components/ResponsiveSheet';
+import EmptyState from '../../components/ui/EmptyState';
 
 // First, let's define our color options constant
 const COLOR_OPTIONS = [
@@ -24,13 +37,13 @@ const COLOR_OPTIONS = [
   { label: 'أحمر', value: 'red', code: '#FF0000' },
   { label: 'أخضر', value: 'green', code: '#008000' },
   { label: 'أزرق', value: 'blue', code: '#0000FF' },
-  { label: 'أزرق', value: 'blue', code: '#0ea5e9' },
+  { label: 'أزرق فاتح', value: 'lightblue', code: '#0ea5e9' },
   { label: 'برتقالي', value: 'orange', code: '#FFA500' },
   { label: 'بنفسجي', value: 'purple', code: '#800080' },
   { label: 'وردي', value: 'pink', code: '#FFC0CB' },
   { label: 'رمادي', value: 'gray', code: '#808080' },
   { label: 'بني', value: 'brown', code: '#A52A2A' },
-  { label: 'أزرق فاتح', value: 'lightblue', code: '#38bdf8' },
+  { label: 'أزرق سماوي', value: 'skyblue', code: '#38bdf8' },
   { label: 'فضي', value: 'silver', code: '#C0C0C0' }
 ];
 
@@ -146,6 +159,24 @@ const Products = () => {
         </AdminButton>
       </div>
 
+      {/* Header for desktop */}
+      <div className="hidden md:block bg-gradient-to-b from-neutral-950/95 to-neutral-950 border-b border-neutral-800/50 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">إدارة المنتجات</h1>
+            <p className="text-neutral-400 mt-1">إضافة وتعديل وإدارة منتجات المتجر</p>
+          </div>
+          <AdminButton
+            onClick={() => setIsCreateModalOpen(true)}
+            variant="primary"
+            size="md"
+          >
+            <Plus className="w-5 h-5" />
+            <span>إضافة منتج جديد</span>
+          </AdminButton>
+        </div>
+      </div>
+
       {/* Stats Grid - Mobile Optimized */}
       <div className="p-4 md:p-6 grid grid-cols-2 gap-3 md:gap-6">
         <AdminStatCard
@@ -199,7 +230,8 @@ const Products = () => {
           <AdminInput
             value={filters.search}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="ابحث عن منتج..."
+            placeholder=""
+            hint="ابحث عن منتج..."
           />
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none" />
           {filters.search && (
@@ -262,7 +294,11 @@ const Products = () => {
         ) : error ? (
           <ErrorState message={error} />
         ) : products.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            icon={PackageSearch}
+            title="لا توجد منتجات"
+            description="ابدأ بإضافة منتجاتك الأولى لبناء متجرك"
+          />
         ) : (
           products.map(product => (
             viewMode === 'grid' ? (
@@ -594,319 +630,320 @@ const ProductModal = ({ product, onClose, onSubmit, uploadImages, ediState = tru
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+    <ResponsiveModal
+      isOpen={true}
+      onClose={onClose}
+      title={product ? 'تعديل منتج' : 'إضافة منتج'}
+      size="xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
 
-      <div className="relative bg-neutral-900 rounded-xl md:rounded-2xl w-full max-w-full md:max-w-3xl 
-                    h-full md:max-h-[95vh] overflow-y-auto hide-scrollbar border border-neutral-700/50 backdrop-blur-xl">
-        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 p-4 md:p-6">
-          {/* Modal Header */}
-          <div className="flex justify-between items-center sticky top-0 bg-neutral-900 py-2 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-neutral-800/50"
-            dir='ltr'>
+        {/* Basic Info Section */}
+        <div className="space-y-6">
+          <ResponsiveInput
+            name="اسم المنتج"
+            value={getDefaultValue(formData.name)}
+            onChange={handleChange}
+            placeholder=""
+            hint="أدخل اسم المنتج"
+            error={errors.name}
+            required
+          />
+
+          <ResponsiveSelect
+            name="الفئة"
+            value={getDefaultValue(formData.category)}
+            onChange={handleChange}
+            error={errors.category}
+            required
+            options={[
+              { value: 'men', label: 'رجالي' },
+              { value: 'women', label: 'حريمي' },
+              { value: 'bags', label: 'حقائب' }
+            ]}
+          />
+
+          <ResponsiveTextarea
+            name="الوصف"
+            value={getDefaultValue(formData.description)}
+            onChange={handleChange}
+            placeholder=""
+            hint="أدخل وصف المنتج"
+            error={errors.description}
+            rows={3}
+          />
+
+          <ResponsiveGrid cols={2}>
+            <ResponsiveInput
+              name="السعر الأساسي"
+              type="number"
+              value={getDefaultValue(formData.basePrice, 0)}
+              onChange={handleChange}
+              placeholder=""
+              error={errors.basePrice}
+              hint="السعر بالجنيه المصري"
+              required
+            />
+            <ResponsiveInput
+              name="سعر الخصم (اختياري)"
+              type="number"
+              value={getDefaultValue(formData.discountPrice, 0)}
+              onChange={handleChange}
+              placeholder=""
+              error={errors.discountPrice}
+              hint="السعر بعد الخصم"
+            />
+          </ResponsiveGrid>
+
+          <ResponsiveSelect
+            name="الحالة"
+            value={getDefaultValue(formData.status, 'active')}
+            onChange={handleChange}
+            error={errors.status}
+            required
+            options={[
+              { value: 'active', label: 'نشط' },
+              { value: 'inactive', label: 'غير نشط' }
+            ]}
+          />
+        </div>
+
+        {/* Tag Section */}
+        <ResponsiveGrid cols={2}>
+          <ResponsiveInput
+            name="العلامة (اختياري)"
+            type="text"
+            value={getDefaultValue(formData.tag)}
+            onChange={e => setFormData({ ...formData, tag: e.target.value })}
+            placeholder=""
+            hint="مثال: جديد، مبيع سريع"
+          />
+          <ResponsiveSelect
+            name="لون العلامة"
+            value={getDefaultValue(formData.tagColor, '#3B82F6')}
+            onChange={e => setFormData({ ...formData, tagColor: e.target.value })}
+            options={[
+              { label: 'أزرق', value: '#3B82F6' },
+              { label: 'أخضر', value: '#10B981' },
+              { label: 'أحمر', value: '#EF4444' },
+              { label: 'بنفسجي', value: '#8B5CF6' },
+              { label: 'رمادي', value: '#64748B' },
+              { label: 'وردي', value: '#EC4899' },
+              { label: 'سماوي', value: '#0EA5E9' }
+            ]}
+          />
+        </ResponsiveGrid>
+
+        {/* Features Section */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold text-white">المميزات (اختياري)</h3>
             <button
               type="button"
-              onClick={onClose}
-              className="p-2 hover:bg-neutral-800/50 rounded-xl transition-colors"
+              onClick={addFeature}
+              className="p-2 bg-primary-500/10 text-primary-500 rounded-xl
+               hover:bg-primary-500/20 transition-colors"
             >
-              <X className="w-6 h-6 text-neutral-400" />
+              <Plus className="w-5 h-5" />
             </button>
-            <h2 className="text-lg md:text-xl font-bold text-white" dir="rtl">
-              {product ? 'تعديل منتج' : 'إضافة منتج'}
-            </h2>
           </div>
 
-          {/* Basic Info Section */}
-          <div className="space-y-4">
-            <Input
-              label="اسم المنتج"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={errors.name}
-            />
-
-            <Select
-              label="الفئة"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              error={errors.category}
-              options={[
-                { value: 'men', label: 'رجالي' },
-                { value: 'women', label: 'حريمي' },
-                { value: 'bags', label: 'حقائب' }
-              ]}
-            />
-
-            <Textarea
-              label="الوصف"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              error={errors.description}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="السعر الأساسي"
-                name="basePrice"
-                type="number"
-                value={formData.basePrice}
-                onChange={handleChange}
-                error={errors.basePrice}
+          {formData.features?.map((feature, index) => (
+            <div key={index} className="flex gap-2">
+              <ResponsiveInput
+                value={getDefaultValue(feature)}
+                onChange={(e) => handleFeatureChange(index, e.target.value)}
+                placeholder=""
+                hint="أدخل ميزة المنتج..."
+                className="flex-1"
               />
-              <Input
-                label="سعر الخصم (اختياري)"
-                name="discountPrice"
-                type="number"
-                value={formData.discountPrice}
-                onChange={handleChange}
-                error={errors.discountPrice}
-              />
-            </div>
-
-            <Select
-              label="الحالة"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              error={errors.status}
-              options={[
-                { value: 'active', label: 'نشط' },
-                { value: 'inactive', label: 'غير نشط' }
-              ]}
-            />
-          </div>
-
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="العلامة (اختياري)"
-                name="tag"
-                type="text"
-                value={formData.tag}
-                onChange={e => setFormData({ ...formData, tag: e.target.value })}
-                error={errors.discountPrice}
-              />
-              <Select
-                label="لون العلامة"
-                name="tagColor"
-                value={formData.tagColor}
-                onChange={e => setFormData({ ...formData, tagColor: e.target.value })}
-                error={errors.status}
-                options={[
-                  // Essential colors
-                  { label: 'أزرق', value: '#3B82F6' },    // Blue
-                  { label: 'أخضر', value: '#10B981' },    // Green
-                  { label: 'أحمر', value: '#EF4444' },    // Red
-                  { label: 'أزرق', value: '#0ea5e9' },    // Blue
-                  { label: 'بنفسجي', value: '#8B5CF6' },  // Purple
-                  { label: 'رمادي', value: '#64748B' },   // Gray
-                  { label: 'وردي', value: '#EC4899' },    // Pink
-                  { label: 'سماوي', value: '#0EA5E9' }    // Sky blue
-                ]}
-              />
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold text-white">المميزات (اختياري)</h3>
               <button
                 type="button"
-                onClick={addFeature}
-                className="p-2 bg-blue-500/10 text-blue-500 rounded-xl
-                 hover:bg-blue-500/20 transition-colors"
+                onClick={() => removeFeature(index)}
+                className="p-2 bg-error-500/10 text-error-500 rounded-xl
+                 hover:bg-error-500/20 transition-colors"
               >
-                <Plus className="w-5 h-5" />
+                <Trash2 className="w-5 h-5" />
               </button>
             </div>
-
-            {formData.features?.map((feature, index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  value={feature}
-                  onChange={(e) => handleFeatureChange(index, e.target.value)}
-                  placeholder="أدخل ميزة المنتج..."
-                />
-                <button
-                  type="button"
-                  onClick={() => removeFeature(index)}
-                  className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                   hover:bg-red-500/20 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            ))}
-          </div>
-          {/* Variants Section */}
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold text-white">الألوان والمقاسات</h3>
-              <button
-                type="button"
-                onClick={addVariant}
-                className="p-2 bg-blue-500/10 text-blue-500 rounded-xl
-                         hover:bg-blue-500/20 transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            </div>
-
-            {formData.variants.map((variant, variantIndex) => (
-              <div
-                key={variantIndex}
-                className="bg-neutral-800/30 rounded-xl p-4 space-y-4"
-              >
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 pb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
-                    <Select
-                      label="اللون"
-                      value={variant.colorName}
-                      onChange={(e) => {
-                        const selectedColor = COLOR_OPTIONS.find(color => color.value === e.target.value);
-                        handleVariantChange(variantIndex, 'colorName', e.target.value);
-                        handleVariantChange(variantIndex, 'colorCode', selectedColor?.code || '#000000');
-                      }}
-                      error={errors[`variant${variantIndex}Color`]}
-                      options={COLOR_OPTIONS}
-                    />
-
-                    <Input
-                      label="كود اللون"
-                      type="color"
-                      value={variant.colorCode}
-                      onChange={(e) => handleVariantChange(variantIndex, 'colorCode', e.target.value)}
-                    />
-                  </div>
-                  {formData.variants.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeVariant(variantIndex)}
-                      className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                              hover:bg-red-500/20 transition-colors md:mr-4 self-start"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  )}
-                </div>
-
-                {ediState && (
-                  <ProductImageUpload
-                    variant={variant}
-                    variantIndex={variantIndex}
-                    onImageUpload={handleImageUpload}
-                    onImageRemove={handleImageRemove}
-                    isUploading={isUploading}
-                    uploadProgress={uploadProgress}
-                    error={uploadErrors[variantIndex]}
-                  />
-                )}
-
-
-                {/* Sizes Section */}
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium text-white">المقاسات</h4>
-                    <button
-                      type="button"
-                      onClick={() => addSize(variantIndex)}
-                      className="p-2 bg-blue-500/10 text-blue-500 rounded-xl
-                               hover:bg-blue-500/20 transition-colors"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {variant.sizes.map((size, sizeIndex) => (
-                      <div key={sizeIndex} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                        <div className="flex-1">
-                          <Input
-                            placeholder="المقاس"
-                            value={size.size}
-                            onChange={(e) => handleSizeChange(
-                              variantIndex,
-                              sizeIndex,
-                              'size',
-                              e.target.value
-                            )}
-                            error={errors[`variant${variantIndex}Size${sizeIndex}`]}
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <Input
-                            type="number"
-                            placeholder="الكمية"
-                            value={size.quantity}
-                            onChange={(e) => handleSizeChange(
-                              variantIndex,
-                              sizeIndex,
-                              'quantity',
-                              e.target.value
-                            )}
-                            error={errors[`variant${variantIndex}Quantity${sizeIndex}`]}
-                          />
-                        </div>
-                        {variant.sizes.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeSize(variantIndex, sizeIndex)}
-                            className="p-2 bg-red-500/10 text-red-500 rounded-xl
-                                     hover:bg-red-500/20 transition-colors self-start"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Error Message */}
-          {errors.submit && (
-            <div className="bg-red-500/10 text-red-500 p-4 rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              <p>{errors.submit}</p>
-            </div>
-          )}
-
-          {/* Submit Buttons - Mobile Fixed Bottom */}
-          <div className="sticky bottom-0 left-0 right-0 bg-neutral-900 border-t border-neutral-800/50 
-                         -mx-4 md:-mx-6 px-4 md:px-6 py-4 flex gap-3 md:gap-4">
-            <AdminButton
+          ))}
+        </div>
+        {/* Variants Section */}
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold text-white">الألوان والمقاسات</h3>
+            <button
               type="button"
-              onClick={onClose}
-              variant="secondary"
-              className="flex-1 md:flex-none"
+              onClick={addVariant}
+              className="p-2 bg-primary-500/10 text-primary-500 rounded-xl
+                       hover:bg-primary-500/20 transition-colors"
             >
-              إلغاء
-            </AdminButton>
-            <AdminButton
-              type="submit"
-              disabled={isSubmitting || isUploading}
-              variant="primary"
-              loading={isSubmitting}
-              className="flex-1 md:flex-none"
-            >
-              {isSubmitting ? (
-                <span>جاري الحفظ...</span>
-              ) : (
-                <>
-                  <Check className="w-5 h-5" />
-                  <span>حفظ</span>
-                </>
-              )}
-            </AdminButton>
+              <Plus className="w-5 h-5" />
+            </button>
           </div>
-        </form>
-      </div>
-    </div>
+
+          {formData.variants.map((variant, variantIndex) => (
+            <div
+              key={variantIndex}
+              className="bg-neutral-800/30 rounded-xl p-4 space-y-4"
+            >
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 pb-4">
+                <ResponsiveGrid cols={2} className="flex-1">
+                  <ResponsiveSelect
+                    name="اللون"
+                    value={getDefaultValue(variant.colorName)}
+                    onChange={(e) => {
+                      const selectedColor = COLOR_OPTIONS.find(color => color.value === e.target.value);
+                      handleVariantChange(variantIndex, 'colorName', e.target.value);
+                      handleVariantChange(variantIndex, 'colorCode', selectedColor?.code || '#000000');
+                    }}
+                    error={errors[`variant${variantIndex}Color`]}
+                    options={COLOR_OPTIONS}
+                    required
+                  />
+
+                  <ResponsiveFormField
+                    label="كود اللون"
+                    hint="اختر لون مخصص"
+                  >
+                    <input
+                      type="color"
+                      value={getDefaultValue(variant.colorCode, '#000000')}
+                      onChange={(e) => handleVariantChange(variantIndex, 'colorCode', e.target.value)}
+                      className="w-full h-12 rounded-xl border border-neutral-700/50 bg-neutral-800/70"
+                    />
+                  </ResponsiveFormField>
+                </ResponsiveGrid>
+                {formData.variants.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeVariant(variantIndex)}
+                    className="p-2 bg-error-500/10 text-error-500 rounded-xl
+                            hover:bg-error-500/20 transition-colors self-start"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+
+              {ediState && (
+                <ProductImageUpload
+                  variant={variant}
+                  variantIndex={variantIndex}
+                  onImageUpload={handleImageUpload}
+                  onImageRemove={handleImageRemove}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
+                  error={uploadErrors[variantIndex]}
+                />
+              )}
+
+
+              {/* Sizes Section */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-white">المقاسات</h4>
+                  <button
+                    type="button"
+                    onClick={() => addSize(variantIndex)}
+                    className="p-2 bg-primary-500/10 text-primary-500 rounded-xl
+                             hover:bg-primary-500/20 transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {variant.sizes.map((size, sizeIndex) => (
+                    <div key={sizeIndex} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <div className="flex-1">
+                        <ResponsiveInput
+                          name="المقاس"
+                          value={getDefaultValue(size.size)}
+                          onChange={(e) => handleSizeChange(
+                            variantIndex,
+                            sizeIndex,
+                            'size',
+                            e.target.value
+                          )}
+                          placeholder=""
+                          error={errors[`variant${variantIndex}Size${sizeIndex}`]}
+                          hint="مثال: S, M, L, XL"
+                          required
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <ResponsiveInput
+                          name="الكمية"
+                          type="number"
+                          value={getDefaultValue(size.quantity, 0)}
+                          onChange={(e) => handleSizeChange(
+                            variantIndex,
+                            sizeIndex,
+                            'quantity',
+                            e.target.value
+                          )}
+                          placeholder=""
+                          error={errors[`variant${variantIndex}Quantity${sizeIndex}`]}
+                          hint="عدد القطع المتوفرة"
+                          required
+                        />
+                      </div>
+                      {variant.sizes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeSize(variantIndex, sizeIndex)}
+                          className="p-2 bg-error-500/10 text-error-500 rounded-xl
+                                   hover:bg-error-500/20 transition-colors self-start"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Error Message */}
+        {errors.submit && (
+          <div className="bg-error-500/10 text-error-500 p-4 rounded-xl flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            <p>{errors.submit}</p>
+          </div>
+        )}
+
+        {/* Submit Buttons */}
+        <ResponsiveButtonGroup className="pt-6 border-t border-neutral-800/50">
+          <AdminButton
+            type="button"
+            onClick={onClose}
+            variant="secondary"
+            className="flex-1 sm:flex-none"
+          >
+            إلغاء
+          </AdminButton>
+          <AdminButton
+            type="submit"
+            disabled={isSubmitting || isUploading}
+            variant="primary"
+            loading={isSubmitting}
+            className="flex-1 sm:flex-none"
+          >
+            {isSubmitting ? (
+              <span>جاري الحفظ...</span>
+            ) : (
+              <>
+                <Check className="w-5 h-5" />
+                <span>حفظ</span>
+              </>
+            )}
+          </AdminButton>
+        </ResponsiveButtonGroup>
+      </form>
+    </ResponsiveModal>
   );
 };
 
@@ -936,8 +973,8 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
             {/* Status Badge */}
             <div className={`px-2 py-1 rounded-full text-xs font-medium
                          ${product.status === 'active'
-                ? 'bg-green-500/20 text-green-500'
-                : 'bg-red-500/20 text-red-500'}`}>
+                ? 'bg-success-500/20 text-success-500'
+                : 'bg-error-500/20 text-error-500'}`}>
               {product.status === 'active' ? 'نشط' : 'غير نشط'}
             </div>
 
@@ -1010,15 +1047,15 @@ const ProductListItem = ({ product, onEdit, onDelete }) => {
         <div className="flex flex-col gap-2">
           <button
             onClick={onEdit}
-            className="p-2 rounded-xl bg-blue-500/10 text-blue-500
-                     hover:bg-blue-500/20 transition-colors"
+            className="p-2 rounded-xl bg-primary-500/10 text-primary-500
+                     hover:bg-primary-500/20 transition-colors"
           >
             <Edit3 className="w-5 h-5" />
           </button>
           <button
             onClick={onDelete}
-            className="p-2 rounded-xl bg-red-500/10 text-red-500
-                     hover:bg-red-500/20 transition-colors"
+            className="p-2 rounded-xl bg-error-500/10 text-error-500
+                     hover:bg-error-500/20 transition-colors"
           >
             <Trash2 className="w-5 h-5" />
           </button>
@@ -1248,13 +1285,6 @@ const ErrorState = ({ message }) => (
   </div>
 );
 
-const EmptyState = () => (
-  <div className="col-span-full text-center py-12">
-    <PackageSearch className="w-16 h-16 text-neutral-700 mx-auto mb-4" />
-    <h3 className="text-xl font-bold text-white mb-2">لا توجد منتجات</h3>
-    <p className="text-neutral-400">لم يتم العثور على منتجات تطابق معايير البحث</p>
-  </div>
-);
 
 const CATEGORIES = [
   { id: 'all', label: 'الكل', icon: Box },

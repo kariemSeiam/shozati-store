@@ -643,31 +643,49 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-16"
+                    className="flex flex-col items-center justify-center py-16 px-6 min-h-[400px] bg-gradient-to-br from-primary-50/30 via-white to-primary-50/20 rounded-2xl"
                   >
-                    <div className="w-24 h-24 mx-auto mb-6 relative">
-                      <div className="absolute inset-0 bg-primary-400/20 rounded-full animate-ping" />
-                      <div className="relative w-full h-full rounded-full bg-gradient-to-b 
-                                  from-primary-50 to-white flex items-center justify-center
-                                  border border-primary-200 shadow-lg shadow-primary-200/20">
-                        <Package className="w-12 h-12 text-primary-500" />
-                      </div>
+                    {/* Animated Background Elements */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
+                      <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-primary-100/20 rounded-full blur-2xl animate-pulse"></div>
+                      <div className="absolute bottom-1/4 right-1/4 w-20 h-20 bg-primary-200/20 rounded-full blur-xl animate-pulse delay-1000"></div>
                     </div>
-                    <h3 className="text-xl font-bold text-primary-900 mb-2">لا توجد طلبات</h3>
-                    <p className="text-primary-600 mb-8">
-                      ابدأ التسوق الآن واستمتع بمجموعتنا المميزة
-                    </p>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={onClose}
-                      className="bg-gradient-to-r from-primary-500 to-primary-600 
-                               text-white rounded-2xl px-8 py-3 font-medium
-                               shadow-lg shadow-primary-500/25 hover:shadow-xl 
-                               hover:shadow-primary-500/30 transition-all duration-300"
-                    >
-                      تسوق الآن
-                    </motion.button>
+
+                    {/* Main Content */}
+                    <div className="relative z-10 flex flex-col items-center text-center max-w-sm mx-auto">
+                      {/* Icon Container */}
+                      <div className="relative mb-6">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500/10 via-primary-400/10 to-primary-600/10 
+                                      flex items-center justify-center shadow-xl shadow-primary-500/10 border border-primary-200/30
+                                      backdrop-blur-sm">
+                          <Package className="w-10 h-10 text-primary-600" />
+                        </div>
+                      </div>
+
+                      {/* Text Content */}
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-bold text-neutral-800 leading-tight">لا توجد طلبات</h3>
+                        <p className="text-neutral-600 text-base leading-relaxed">
+                          ابدأ التسوق الآن واستمتع بمجموعتنا المميزة
+                        </p>
+                      </div>
+
+                      {/* Decorative Line */}
+                      <div className="mt-6 w-16 h-0.5 bg-gradient-to-r from-transparent via-primary-400 to-transparent rounded-full"></div>
+
+                      {/* Action Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={onClose}
+                        className="mt-6 bg-gradient-to-r from-primary-500 to-primary-600 
+                                 text-white rounded-2xl px-8 py-3 font-medium
+                                 shadow-lg shadow-primary-500/25 hover:shadow-xl 
+                                 hover:shadow-primary-500/30 transition-all duration-300"
+                      >
+                        تسوق الآن
+                      </motion.button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

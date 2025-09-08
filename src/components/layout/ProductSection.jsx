@@ -30,14 +30,6 @@ const ProductSection = React.memo(({
     return `${products.length} منتج`;
   };
 
-  const handleShowAllProducts = () => {
-    updateFilters({ 
-      category: '',
-      subcategory: '',
-      search: '' 
-    });
-    setSelectedCategory('all');
-  };
 
   return (
     <>
@@ -46,7 +38,7 @@ const ProductSection = React.memo(({
         <h2 className="text-lg font-bold text-slate-800">
           {getCategoryTitle(selectedCategory)}
         </h2>
-        
+
         {/* Products count */}
         {products.length > 0 && (
           <div className="text-sm text-slate-600">
@@ -57,11 +49,9 @@ const ProductSection = React.memo(({
 
       {/* Empty state or Product Grid */}
       {!productsLoading && products.length === 0 ? (
-        <EmptyState 
+        <EmptyState
           title="لا توجد منتجات"
           description="لم نتمكن من العثور على منتجات في هذه الفئة"
-          actionText="عرض كل المنتجات"
-          onAction={handleShowAllProducts}
         />
       ) : (
         <ProductGrid
