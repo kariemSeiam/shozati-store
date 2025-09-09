@@ -133,7 +133,7 @@ const AdminDashboard = () => {
               key={id}
               onClick={() => setActiveTab(id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl
-                       transition-all duration-300 group text-right
+                       transition-all duration-300 group text-left
                        ${activeTab === id
                   ? 'text-primary-400 bg-primary-500/10 border border-primary-500/20'
                   : 'text-neutral-400 hover:text-neutral-300 hover:bg-neutral-850/50'}`}
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
                             ${activeTab === id ? 'text-primary-400' : 'group-hover:scale-110'}`} />
               <span className="font-medium">{label}</span>
               {activeTab === id && (
-                <div className="mr-auto w-2 h-8 rounded-full bg-gradient-to-b 
+                <div className="ml-auto w-2 h-8 rounded-full bg-gradient-to-b 
                               from-primary-400 to-primary-600" />
               )}
             </button>

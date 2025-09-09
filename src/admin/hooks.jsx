@@ -1167,10 +1167,15 @@ export const useSlides = () => {
             if (response) {
                 setSlides(response);
                 previousSlides.current = response;
+            } else {
+                // Reset to empty array if no response
+                setSlides([]);
             }
             return response;
         } catch (error) {
             setErrors(prev => ({ ...prev, slides: error.message }));
+            // Reset to empty array on error
+            setSlides([]);
             return null;
         } finally {
             setLoading(prev => ({ ...prev, slides: false }));
