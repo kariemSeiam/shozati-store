@@ -326,29 +326,26 @@ const SupportActions = () => {
   return (
     <div className="grid grid-cols-2 gap-4 p-6 pt-0">
       {actions.map((action, index) => (
-        <motion.button
+        <button
           key={index}
-          whileHover={{ scale: 1.03, y: -3 }}
-          whileTap={{ scale: 0.97 }}
           onClick={action.onClick}
           className={`bg-gradient-to-br ${action.gradient} 
                      rounded-2xl p-4 flex flex-col items-center gap-3
                      border border-primary-200/60 backdrop-blur-xl 
                      shadow-lg shadow-primary-200/30
-                     hover:shadow-xl hover:border-primary-300/60
-                     transition-all duration-300 group`}
+                     hover:shadow-xl hover:border-primary-300/60 hover:scale-105 hover:-translate-y-1
+                     active:scale-95 transition-all duration-300 group`}
         >
-          <motion.div
+          <div
             className={`p-3 rounded-xl bg-gradient-to-br from-white to-primary-50 ${action.color}
                        group-hover:scale-110 transition-all duration-300 
-                       shadow-md shadow-primary-200/40 ring-1 ring-primary-100`}
-            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-            transition={{ duration: 0.5 }}
+                       shadow-md shadow-primary-200/40 ring-1 ring-primary-100
+                       group-hover:rotate-3`}
           >
             <action.icon className="w-6 h-6" />
-          </motion.div>
+          </div>
           <span className="text-sm text-primary-900 font-medium">{action.label}</span>
-        </motion.button>
+        </button>
       ))}
     </div>
   );
@@ -471,18 +468,16 @@ const OrderDetailsContent = ({ order, onCancel }) => {
 
       {['pending', 'processing'].includes(order.status) && (
         <div className="px-6 pt-4 pb-0">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={() => onCancel(order.id)}
             className="w-full bg-gradient-to-r from-rose-50 to-rose-100
                          text-rose-600 rounded-2xl py-4 px-6 font-medium
                          shadow-lg shadow-rose-200/20 hover:shadow-xl
-                         hover:shadow-rose-300/20 transition-all duration-300
-                         border border-rose-200 backdrop-blur-xl"
+                         hover:shadow-rose-300/20 hover:scale-105 active:scale-95
+                         transition-all duration-300 border border-rose-200 backdrop-blur-xl"
           >
             إلغاء الطلب
-          </motion.button>
+          </button>
         </div>
       )}
 
@@ -538,17 +533,15 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-primary-900 mb-2">حدث خطأ</h3>
           <p className="text-primary-600 mb-6">{error}</p>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={fetchOrders}
             className="bg-gradient-to-r from-primary-500 to-primary-600 text-white 
                      rounded-xl px-6 py-3 font-medium shadow-lg shadow-primary-500/25 
-                     hover:shadow-xl hover:shadow-primary-500/30 
+                     hover:shadow-xl hover:shadow-primary-500/30 hover:scale-105 active:scale-95
                      transition-all duration-300"
           >
             إعادة المحاولة
-          </motion.button>
+          </button>
         </div>
       </motion.div>
     );
@@ -580,15 +573,13 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           >
             <div className="px-4 py-4">
               <div className="flex justify-between items-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={onClose}
                   className="p-2 rounded-xl bg-primary-50 text-primary-500 
-                           hover:bg-primary-100 transition-colors"
+                           hover:bg-primary-100 hover:scale-105 active:scale-95 transition-all duration-200"
                 >
                   <X className="w-5 h-5" />
-                </motion.button>
+                </button>
                 <h2 className="text-xl font-bold text-primary-900">طلباتي</h2>
                 <div className="w-9" />
               </div>
@@ -603,19 +594,16 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
             >
               <div className="flex gap-2 overflow-x-auto hide-scrollbar py-1">
                 {filterTabs.map((tab, index) => (
-                  <motion.button
+                  <button
                     key={tab.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
                     onClick={() => setFilterStatus(tab.id)}
                     className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all
-                              shadow-sm ${filterStatus === tab.id
+                              shadow-sm hover:scale-105 active:scale-95 ${filterStatus === tab.id
                         ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium shadow-lg shadow-primary-500/25'
                         : 'bg-primary-50 text-primary-600 hover:bg-primary-100'}`}
                   >
                     {tab.label}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </motion.div>
@@ -625,7 +613,7 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           <div className="flex-1 overflow-auto hide-scrollbar"
           >
             <div className="px-4 py-4 space-y-4"
-            
+
             >
               <AnimatePresence mode="popLayout">
                 {filteredOrders.length > 0 ? (
@@ -678,17 +666,16 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
                       <div className="mt-6 w-16 h-0.5 bg-gradient-to-r from-transparent via-primary-400 to-transparent rounded-full"></div>
 
                       {/* Action Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <button
                         onClick={onClose}
                         className="mt-6 bg-gradient-to-r from-primary-500 to-primary-600 
                                  text-white rounded-2xl px-8 py-3 font-medium
                                  shadow-lg shadow-primary-500/25 hover:shadow-xl 
-                                 hover:shadow-primary-500/30 transition-all duration-300"
+                                 hover:shadow-primary-500/30 hover:scale-105 active:scale-95
+                                 transition-all duration-300"
                       >
                         تسوق الآن
-                      </motion.button>
+                      </button>
                     </div>
                   </motion.div>
                 )}

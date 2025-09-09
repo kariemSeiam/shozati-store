@@ -18,16 +18,8 @@ export const OrderStatus = {
 // Enhanced Admin Hook
 export const useAdmin = () => {
     // Authentication States
-    const [token, setToken] = useState(localStorage.getItem('adminToken') || 'admin_dev_token_123123');
+    const [token, setToken] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
-
-    // Set default token for development
-    useEffect(() => {
-        if (!localStorage.getItem('adminToken')) {
-            localStorage.setItem('adminToken', 'admin_dev_token_123123');
-        }
-        setIsInitialized(true);
-    }, []);
 
     // Loading States
     const [loading, setLoading] = useState(false);
@@ -46,13 +38,20 @@ export const useAdmin = () => {
         setAuthError(null);
 
         try {
+            // Use regular login endpoint since admin-specific endpoint doesn't exist
             const response = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({ phone: ADMIN_PHONE }),
             });
 
-            if (!response.ok) throw new Error('Authentication failed');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Authentication failed' }));
+                throw new Error(`Admin authentication failed: ${errorData.message || 'Invalid admin credentials'}`);
+            }
 
             const data = await response.json();
             setToken(data.token);
@@ -75,17 +74,44 @@ export const useAdmin = () => {
     // Initialize authentication
     useEffect(() => {
         const initializeAuth = async () => {
-            if (!token && !isInitialized) {
+            if (!isInitialized) {
                 try {
-                    await login();
+                    // Check if we have a token in localStorage
+                    const storedToken = localStorage.getItem('adminToken');
+                    if (storedToken && storedToken !== 'admin_dev_token_123123') {
+                        // We have a valid token, use it
+                        console.log('Restoring admin token from localStorage');
+                        setToken(storedToken);
+                        setIsInitialized(true);
+                    } else {
+                        // No valid token, try to login
+                        try {
+                            await login();
+                            setIsInitialized(true);
+                        } catch (loginError) {
+                            console.error('Login failed:', loginError);
+                            setToken(null);
+                            setIsInitialized(true);
+                        }
+                    }
                 } catch (err) {
                     console.error('Initial authentication failed:', err);
+                    // If login fails, clear any invalid token
+                    localStorage.removeItem('adminToken');
+                    setToken(null);
+                    setIsInitialized(true);
                 }
             }
-            setIsInitialized(true);
         };
 
         initializeAuth();
+    }, [isInitialized]);
+
+    // Ensure token is properly set when it changes
+    useEffect(() => {
+        if (token && !isInitialized) {
+            setIsInitialized(true);
+        }
     }, [token, isInitialized]);
 
     // Modified useAdmin hook apiCall implementation
@@ -103,10 +129,16 @@ export const useAdmin = () => {
                 headers['Content-Type'] = 'application/json';
             }
 
+
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
                 headers,
             });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
 
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
@@ -117,11 +149,19 @@ export const useAdmin = () => {
         };
 
         try {
+            if (!token) {
+                // If no token and not initialized yet, wait a bit for initialization
+                if (!isInitialized) {
+                    throw new Error('Authentication not initialized yet');
+                }
+                throw new Error('No authentication token available');
+            }
             return await makeRequest(token);
         } catch (error) {
             if (error.name === 'AbortError') return null;
 
-            if (error.message.includes('Token')) {
+            // If token is invalid or expired, try to re-authenticate
+            if (error.message.includes('Token') || error.message.includes('401') || error.message.includes('UNAUTHORIZED') || error.message.includes('No authentication token')) {
                 try {
                     const authData = await login();
                     return await makeRequest(authData.token);
@@ -131,9 +171,20 @@ export const useAdmin = () => {
             }
             throw error;
         }
-    }, [token]);
+    }, [token, isInitialized]);
 
 
+
+    // Manual login function for UI
+    const manualLogin = async () => {
+        try {
+            await login();
+            return true;
+        } catch (error) {
+            console.error('Manual login failed:', error);
+            return false;
+        }
+    };
 
     return {
         // States
@@ -147,7 +198,7 @@ export const useAdmin = () => {
         // Methods
         setLoading,
         setError,
-        login,
+        login: manualLogin,
         logout,
         apiCall,
     };
@@ -622,7 +673,7 @@ export const useProducts = (config = {}) => {
 
             const response = await apiCall(`/admin/products?${queryParams}`, {
                 signal: abortController.current.signal
-            }, true); // Add authentication
+            });
 
 
 
@@ -1411,7 +1462,7 @@ export const useAnalytics = () => {
                 ...(customDateRange.endDate && { endDate: customDateRange.endDate.toISOString() }),
             }).toString();
 
-            const response = await apiCall(`/admin/analytics/dashboard?${queryParams}`, {}, true); // Add authentication
+            const response = await apiCall(`/admin/analytics/dashboard?${queryParams}`);
             if (response) {
                 setAnalytics(response);
             }

@@ -392,7 +392,6 @@ const Customers = () => {
 const StatCard = ({ title, value, icon: Icon, trend, subtitle, color = 'emerald' }) => {
     const colors = {
         emerald: 'bg-success-500/10 text-success-500 border-success-500/20',
-        blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
         blue: 'bg-blue-500/10 text-blue-500 border-blue-500/20'
     };
 
