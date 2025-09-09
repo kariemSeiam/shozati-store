@@ -121,83 +121,15 @@ body {
   opacity: 1;
 }
 
-/* Creative Background Patterns - Ultra Light */
+/* Simplified Background Patterns */
 .bg-pattern-dots {
   background-image: radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.03) 1px, transparent 0);
   background-size: 32px 32px;
 }
 
-.bg-pattern-grid {
-  background-image: 
-    linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.bg-pattern-diagonal {
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 15px,
-    rgba(59, 130, 246, 0.015) 15px,
-    rgba(59, 130, 246, 0.015) 30px
-  );
-}
-
-.bg-pattern-waves {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.02'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm10 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-.bg-pattern-hexagon {
-  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='m20 20 8.66-15h-17.32l8.66 15zm-8.66 15h17.32l-8.66-15-8.66 15z'/%3E%3C/g%3E%3C/svg%3E");
-}
-
-.bg-pattern-circuit {
-  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.02'%3E%3Cpath d='M0 0h40v40H0zm40 40h40v40H40z'/%3E%3Ccircle cx='20' cy='20' r='4'/%3E%3Ccircle cx='60' cy='60' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-.bg-pattern-triangles {
-  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='M20 20L0 0h40zm0 20L0 20h40z'/%3E%3C/g%3E%3C/svg%3E");
-}
-
-.bg-gradient-subtle {
-  background: linear-gradient(135deg, 
-    rgba(239, 246, 255, 0.3) 0%, 
-    rgba(219, 234, 254, 0.2) 25%, 
-    rgba(255, 255, 255, 0.95) 50%, 
-    rgba(240, 249, 255, 0.25) 75%, 
-    rgba(239, 246, 255, 0.3) 100%
-  );
-}
-
-.bg-mesh-gradient {
-  background: 
-    radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.04) 0px, transparent 35%),
-    radial-gradient(at 80% 0%, rgba(14, 165, 233, 0.03) 0px, transparent 45%),
-    radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.025) 0px, transparent 40%),
-    radial-gradient(at 80% 50%, rgba(14, 165, 233, 0.04) 0px, transparent 45%),
-    radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.03) 0px, transparent 35%),
-    radial-gradient(at 80% 100%, rgba(14, 165, 233, 0.025) 0px, transparent 45%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.99) 100%);
-}
-
-/* Enhanced Animation Classes */
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pattern-drift {
-  animation: pattern-drift 60s linear infinite;
-}
-
+/* Simplified Animation Classes */
 .animate-fade-in-up {
-  animation: fade-in 0.6s ease-out;
-}
-
-.bg-animated-dots {
-  background-image: radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.02) 1px, transparent 0);
-  background-size: 32px 32px;
-  animation: pattern-drift 120s linear infinite;
+  animation: fade-in 0.3s ease-out;
 }
 
 /* Enhanced Animations */
@@ -212,41 +144,6 @@ body {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pattern-drift {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
-}
-
-@keyframes subtle-pulse {
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes gentle-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 @keyframes scale-in {
   from {
