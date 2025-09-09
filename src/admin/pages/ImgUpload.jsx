@@ -1,54 +1,5 @@
-// ProductImageUpload.jsx
-import React, { useCallback, useState } from 'react';
-import { Upload, X, AlertCircle } from 'lucide-react';
 
-export const ProductImageUpload = ({ 
-  variant, 
-  variantIndex, 
-  onImageUpload, 
-  onImageRemove,
-  isUploading,
-  uploadProgress,
-  error 
-}) => {
-  const handleFileSelect = async (event) => {
-    const files = Array.from(event.target.files);
-    if (!files?.length) return;
-    
-    try {
-      // Pass the files directly to the parent handler
-      await onImageUpload(variantIndex, files);
-    } catch (error) {
-      console.error('Error handling files:', error);
-    }
-    
-    // Reset input
-    event.target.value = '';
-  };
-
-  // Calculate progress percentage
-  const progressPercentage = uploadProgress[variantIndex] || 0;
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="block text-sm font-medium text-gray-400">
-          الصور
-        </label>
-        {isUploading && progressPercentage > 0 && (
-          <span className="text-sm text-blue-500">
-            {Math.round(progressPercentage)}% تم الرفع
-          </span>
-        )}
-      </div>
-
-      <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
-        {/* Existing Images */}
-        {variant.images.map((image, imageIndex) => (
-          <div
-            key={imageIndex}
-            className="relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden group"
-          >
+image.png
             <img
               src={image}
               alt={`${variant.colorName} - ${imageIndex + 1}`}
