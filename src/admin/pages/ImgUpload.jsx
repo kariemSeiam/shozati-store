@@ -1,5 +1,40 @@
+import React, { useState, useCallback } from 'react';
+import { Upload, X, AlertCircle } from 'lucide-react';
 
-image.png
+// ProductImageUpload Component
+const ProductImageUpload = ({
+  variant,
+  variantIndex,
+  onImageUpload,
+  onImageRemove,
+  isUploading = false,
+  uploadProgress = {},
+  error = null
+}) => {
+  const progressPercentage = uploadProgress[variantIndex] || 0;
+
+  const handleFileSelect = useCallback((e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      onImageUpload(variantIndex, files);
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  }, [onImageUpload, variantIndex]);
+
+  return (
+    <div className="space-y-4">
+      <h4 className="text-sm font-medium text-gray-300">
+        صور {variant.colorName}
+      </h4>
+
+      <div className="flex gap-3 overflow-x-auto pb-2">
+        {/* Existing Images */}
+        {variant.images?.map((image, imageIndex) => (
+          <div
+            key={imageIndex}
+            className="relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden group"
+          >
             <img
               src={image}
               alt={`${variant.colorName} - ${imageIndex + 1}`}
@@ -22,13 +57,13 @@ image.png
         ))}
 
         {/* Upload Button */}
-        <label 
+        <label
           className={`relative flex-shrink-0 w-24 h-24 flex items-center 
                     justify-center rounded-xl cursor-pointer group 
                     transition-all duration-300 border-2 border-dashed
-                    ${isUploading 
-                      ? 'bg-blue-500/10 border-blue-500/30' 
-                      : 'bg-gray-800/50 border-gray-700 hover:border-blue-500'}`}
+                    ${isUploading
+              ? 'bg-blue-500/10 border-blue-500/30'
+              : 'bg-gray-800/50 border-gray-700 hover:border-blue-500'}`}
         >
           <input
             type="file"
@@ -54,11 +89,11 @@ image.png
               </svg>
             </div>
           ) : (
-            <Upload 
+            <Upload
               className={`w-6 h-6 transition-colors duration-300
-                      ${isUploading 
-                        ? 'text-blue-500 animate-pulse' 
-                        : 'text-gray-400 group-hover:text-blue-500'}`} 
+                      ${isUploading
+                  ? 'text-blue-500 animate-pulse'
+                  : 'text-gray-400 group-hover:text-blue-500'}`}
             />
           )}
         </label>
@@ -75,7 +110,7 @@ image.png
   );
 };
 
-// useProductImageUpload.js
+// useProductImageUpload Hook
 export const useProductImageUpload = (uploadImages) => {
   const [uploadErrors, setUploadErrors] = useState({});
   const [isUploading, setIsUploading] = useState(false);
@@ -83,7 +118,7 @@ export const useProductImageUpload = (uploadImages) => {
 
   const handleFormImageUpload = useCallback(async (variantIndex, formData, files) => {
     if (!files?.length) return formData;
-    
+
     setIsUploading(true);
     setUploadErrors({});
     setUploadProgress(prev => ({ ...prev, [variantIndex]: 0 }));
@@ -124,9 +159,9 @@ export const useProductImageUpload = (uploadImages) => {
         variants: formData.variants.map((variant, idx) =>
           idx === variantIndex
             ? {
-                ...variant,
-                images: [...variant.images, ...uploadedUrls]
-              }
+              ...variant,
+              images: [...variant.images, ...uploadedUrls]
+            }
             : variant
         )
       };
@@ -162,12 +197,12 @@ export const useProductImageUpload = (uploadImages) => {
 
 // Usage in ProductModal or parent component
 const ProductForm = ({ product, onSubmit, uploadImages }) => {
-  const { 
-    handleFormImageUpload, 
+  const {
+    handleFormImageUpload,
     clearImageFiles,
-    uploadErrors, 
+    uploadErrors,
     isUploading,
-    uploadProgress 
+    uploadProgress
   } = useProductImageUpload(uploadImages);
 
   const handleImageUpload = async (variantIndex, files) => {
@@ -208,3 +243,6 @@ const ProductForm = ({ product, onSubmit, uploadImages }) => {
     </form>
   );
 };
+
+export { ProductImageUpload };
+export default ProductImageUpload;

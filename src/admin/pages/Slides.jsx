@@ -49,7 +49,7 @@ const Slides = () => {
       <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-800/50">
         <h1 className="text-xl font-bold text-white">إدارة العروض</h1>
         <span className="text-sm text-neutral-400">
-          {slides.length} عرض
+          {slides && Array.isArray(slides) ? slides.length : 0} عرض
         </span>
       </div>
 
@@ -96,7 +96,7 @@ const Slides = () => {
           <LoadingState />
         ) : errors.slides ? (
           <ErrorState message={errors.slides} />
-        ) : slides.length === 0 ? (
+        ) : !slides || !Array.isArray(slides) || slides.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
