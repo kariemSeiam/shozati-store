@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useCallback, memo, useRef, useMemo } from 'react';
-import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import {
     Heart, Star, Tag, Share2, ChevronDown, Plus, Minus, Check,
     Package, Shield, Clock, X, ArrowRight, Loader2, Palette, Hash,
@@ -84,55 +83,43 @@ export const ColorSelector = memo(({
             <div className="flex gap-2 overflow-x-auto hide-scrollbar py-1 px-1"
                 dir='rtl'>
                 {visibleVariants.map((variant) => (
-                    <motion.button
+                    <button
                         key={variant.id}
                         onClick={() => onVariantSelect(variant)}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className={`relative p-0.5 rounded-full transition-all ${selectedVariant?.id === variant.id
+                        className={`relative p-0.5 rounded-full transition-all duration-200 ${selectedVariant?.id === variant.id
                             ? 'ring-2 ring-primary-500 ring-offset-1 ring-offset-white'
                             : ''
                             }`}
                     >
                         <div
-                            className="w-6 h-6 rounded-full border border-neutral-200 shadow-sm"
+                            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-neutral-200 shadow-sm"
                             style={{ backgroundColor: variant.colorCode }}
                         />
                         {selectedVariant?.id === variant.id && (
-                            <motion.div
-                                layoutId="selectedColor"
-                                className="absolute inset-0 flex items-center justify-center"
-                            >
-                                <Check className="w-3 h-3 text-white drop-shadow" />
-                            </motion.div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white drop-shadow" />
+                            </div>
                         )}
-                    </motion.button>
+                    </button>
                 ))}
                 {hasMoreColors && !isExpanded && (
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                    <button
                         onClick={() => setIsExpanded(true)}
-                        className="flex items-center justify-center px-2 py-1 rounded-full 
+                        className="flex items-center justify-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full 
                             bg-neutral-100 hover:bg-neutral-200 transition-colors border 
                             border-neutral-200 shadow-sm"
                     >
                         <span className="text-xs text-neutral-600">+{remainingCount}</span>
-                    </motion.button>
+                    </button>
                 )}
                 {hasMoreColors && isExpanded && (
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                    <button
                         onClick={() => setIsExpanded(false)}
-                        className="flex items-center justify-center px-2 rounded-full 
+                        className="flex items-center justify-center px-1.5 sm:px-2 rounded-full 
                             hover:bg-neutral-100 transition-colors"
                     >
-                        <ChevronDown className="w-4 h-4 text-neutral-400" />
-                    </motion.button>
+                        <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-neutral-400" />
+                    </button>
                 )}
             </div>
         </div>
@@ -248,20 +235,15 @@ const Badges = memo(({ rating, tag, tagColor }) => {
     return (
         <div className="absolute top-4 right-3 flex flex-col gap-2 z-10">
             {rating > 0 && (
-                <motion.div
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, type: "spring" }}
-                    className="bg-gradient-to-r from-white/95 to-white/85
-                       backdrop-blur-md rounded-full px-3 py-1.5
+                <div className="bg-gradient-to-r from-white/95 to-white/85
+                       rounded-full px-3 py-1.5
                        shadow-lg shadow-blue-100/30 
                        border border-blue-100/50
                        hover:border-blue-200/60
                        hover:shadow-xl hover:shadow-blue-100/40
+                       hover:scale-105 hover:-translate-y-0.5
                        flex items-center gap-1.5
-                       transition-all duration-300"
+                       transition-all duration-200"
                 >
                     <Star className="w-4 h-4 text-blue-500 fill-blue-400" />
                     <span className="text-sm font-semibold bg-gradient-to-r 
@@ -269,22 +251,16 @@ const Badges = memo(({ rating, tag, tagColor }) => {
                            bg-clip-text text-transparent">
                         {rating.toFixed(1)}
                     </span>
-                </motion.div>
+                </div>
             )}
 
             {tag && tagColor && (
-                <motion.div
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, type: "spring" }}
-                    className="relative overflow-hidden"
-                >
+                <div className="relative overflow-hidden">
                     <div
                         className="rounded-full px-3 py-1.5 text-sm font-medium
-                         shadow-lg backdrop-blur-md
-                         hover:shadow-xl transition-all duration-300
+                         shadow-lg hover:shadow-xl
+                         hover:scale-105 hover:-translate-y-0.5
+                         transition-all duration-200
                          flex items-center gap-2"
                         style={{
                             background: `linear-gradient(to right, ${tagColor}, ${shades?.lighter})`,
@@ -295,7 +271,7 @@ const Badges = memo(({ rating, tag, tagColor }) => {
                             {tag}
                         </span>
                     </div>
-                </motion.div>
+                </div>
             )}
         </div>
     );
@@ -385,7 +361,6 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isChangingVariant, setIsChangingVariant] = useState(false);
-    const [isPressed, setIsPressed] = useState(false);
     const [showGallery, setShowGallery] = useState(false);
     const [imagesLoaded, setImagesLoaded] = useState({});
 
@@ -450,8 +425,6 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
         if (!canProceed) return;
     }, [checkAuthAndProceed, product.id, toggleFavorite]);
 
-    const handlePressStart = useCallback(() => setIsPressed(true), []);
-    const handlePressEnd = useCallback(() => setIsPressed(false), []);
 
     const navigateImage = useCallback((direction) => {
         const newIndex = (currentImageIndex + direction + selectedVariant.images.length) % selectedVariant.images.length;
@@ -483,19 +456,8 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
     };
 
     return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            whileHover={{
-                scale: 1.02,
-                transition: { duration: 0.3, ease: "easeOut" }
-            }}
-            whileTap={{ scale: 0.98 }}
-            onTapStart={handlePressStart}
-            onTapEnd={handlePressEnd}
-            className="relative overflow-hidden group"
+        <div
+            className="relative overflow-hidden group hover:scale-102 active:scale-98 transition-transform duration-200"
             onClick={() => onSelect(product)}
             style={cardStyle}
         >
@@ -507,64 +469,49 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
 
                 {/* Image Section */}
                 <div className="relative aspect-[4/5] overflow-hidden">
-                    <motion.div
-                        animate={{
-                            scale: isPressed ? 1.05 : 1,
-                            transition: { duration: 0.4, type: "spring" }
-                        }}
-                        className="absolute inset-0"
-                    >
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={`${selectedVariant.id}-${currentImageIndex}`}
-                                initial={{ opacity: 0, scale: 1.05 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.3, type: "spring" }}
+                    <div className="absolute inset-0">
+                        <div
+                            key={`${selectedVariant.id}-${currentImageIndex}`}
+                            className="w-full h-full"
+                        >
+                            <LazyImage
+                                src={selectedVariant.images[currentImageIndex]}
+                                alt={product.name}
                                 className="w-full h-full"
-                            >
-                                <LazyImage
-                                    src={selectedVariant.images[currentImageIndex]}
-                                    alt={product.name}
-                                    className="w-full h-full"
-                                    onLoad={() => handleImageLoad(selectedVariant.images[currentImageIndex])}
-                                    loadingClass="bg-neutral-100/80"
-                                    fallback={
-                                        <div className="w-full h-full flex items-center justify-center bg-neutral-100">
-                                            <div className="text-neutral-400">صورة غير متوفرة</div>
-                                        </div>
-                                    }
-                                />
-                            </motion.div>
-                        </AnimatePresence>
-                    </motion.div>
+                                onLoad={() => handleImageLoad(selectedVariant.images[currentImageIndex])}
+                                loadingClass="bg-neutral-100/80"
+                                fallback={
+                                    <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+                                        <div className="text-neutral-400">صورة غير متوفرة</div>
+                                    </div>
+                                }
+                            />
+                        </div>
+                    </div>
 
                     {/* Premium Glass Effect */}
-                    <motion.div
-                        className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-white/10
-                                 backdrop-blur-sm opacity-0 group-hover:opacity-100
-                                 transition-all duration-700"
-                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-white/10
+                                 opacity-0 group-hover:opacity-100
+                                 transition-all duration-300" />
 
-                    {/* Image Navigation */}
+                    {/* Image Navigation - Responsive */}
                     {selectedVariant.images.length > 1 && (
                         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 
-                                      flex justify-between px-2 opacity-0 group-hover:opacity-100
+                                      flex justify-between px-1.5 sm:px-2 opacity-0 group-hover:opacity-100
                                       transition-opacity duration-300">
                             {[ChevronDown, ChevronDown].map((Icon, idx) => (
-                                <motion.button
+                                <button
                                     key={idx}
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         navigateImage(idx === 0 ? -1 : 1);
                                     }}
-                                    className="bg-white/80 backdrop-blur-md p-2 rounded-full
-                                             shadow-lg shadow-primary-100/30 border border-primary-100/60"
+                                    className="bg-white/80 p-1 sm:p-1.5 rounded-full
+                                             shadow-md shadow-primary-100/30 border border-primary-100/60
+                                             hover:scale-110 active:scale-90 transition-transform duration-200"
                                 >
-                                    <Icon className={`w-5 h-5 text-primary-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
-                                </motion.button>
+                                    <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-600 ${idx === 0 ? 'rotate-90' : '-rotate-90'}`} />
+                                </button>
                             ))}
                         </div>
                     )}
@@ -575,38 +522,34 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                         tagColor={product.tagColor}
                     />
 
-                    {/* Enhanced Favorite Button */}
+                    {/* Enhanced Favorite Button - Responsive */}
                     {isAuthenticated && (
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                        <button
                             onClick={handleFavoriteClick}
-                            className={`absolute top-3 left-3 p-3 rounded-full z-10
-                                      backdrop-blur-md transition-all duration-500
+                            className={`absolute top-4 left-4 sm:top-3 sm:left-2.5 
+                                      p-1.5 sm:p-2 rounded-full z-10
+                                      transition-all duration-300 hover:scale-110 active:scale-90
                                       ${isFavorite
-                                    ? 'bg-rose-50/90 shadow-lg shadow-rose-200/50'
-                                    : 'bg-white/90 shadow-lg shadow-primary-200/30'}`}
+                                    ? 'bg-rose-50/90 shadow-md shadow-rose-200/50'
+                                    : 'bg-white/90 shadow-md shadow-primary-200/30'}`}
                         >
                             {isLoading ? (
-                                <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
+                                <Loader2 className="w-3 h-5 sm:w-4 sm:h-5 text-primary-500 animate-spin" />
                             ) : (
                                 <Heart
-                                    className={`w-5 h-5 transition-all duration-500
+                                    className={`w-5 h-5 sm:w-4 sm:h-4 transition-all duration-300
                                               ${isFavorite
-                                            ? 'text-rose-500 fill-rose-500 scale-110'
+                                            ? 'text-rose-500 fill-rose-500'
                                             : 'text-neutral-600 hover:text-rose-500'}`}
                                 />
                             )}
-                        </motion.button>
+                        </button>
                     )}
 
                     {/* Color Selector */}
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10">
-                        <motion.div
-                            whileHover={{ y: -4 }}
-                            className="backdrop-blur-md rounded-full p-1
-                                     shadow-sm shadow-primary-100/30 border border-primary-100/50"
-                        >
+                        <div className="rounded-full p-1 shadow-sm shadow-primary-100/30 border border-primary-100/50
+                                      hover:-translate-y-1 transition-transform duration-200">
                             <ColorSelector
                                 variants={product.variants}
                                 selectedVariant={selectedVariant}
@@ -614,30 +557,27 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                                 showCollapsed={true}
                                 maxVisible={3}
                             />
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Product Info Section */}
                 <div className="relative px-4 py-2 pt-3 pb-4 space-y-3 bg-white/80 backdrop-blur-md">
-                    <motion.div className="relative">
+                    <div className="relative">
                         <h3 className="font-bold text-base line-clamp-2 text-right
                                      bg-gradient-to-r from-primary-900 to-primary-700
                                      bg-clip-text text-transparent">
                             {product.name}
                         </h3>
-                    </motion.div>
+                    </div>
 
                     {/* Price Display */}
                     <div className="flex items-baseline gap-2 justify-end">
-                        <motion.span
-                            className="text-lg font-bold bg-gradient-to-r 
+                        <span className="text-lg font-bold bg-gradient-to-r 
                                      from-primary-600 to-primary-500
-                                     bg-clip-text text-transparent"
-                            whileHover={{ scale: 1.05 }}
-                        >
+                                     bg-clip-text text-transparent">
                             {formatCurrency(product.discountPrice || product.basePrice)}
-                        </motion.span>
+                        </span>
                         {product.discountPrice && (
                             <span className="text-sm text-primary-400/90 line-through">
                                 {formatCurrency(product.basePrice)}
@@ -647,18 +587,7 @@ export const ProductCard = memo(({ product, onSelect, checkAuthAndProceed }) => 
                 </div>
             </div>
 
-            {/* Touch Ripple Effect - Optimized using CSS transforms only */}
-            <motion.div
-                className="absolute inset-0 bg-primary-100/20 rounded-3xl pointer-events-none"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{
-                    scale: isPressed ? 1.2 : 0,
-                    opacity: isPressed ? 1 : 0
-                }}
-                transition={{ duration: 0.3, type: "spring" }}
-                style={{ willChange: 'transform, opacity' }}
-            />
-        </motion.div>
+        </div>
     );
 });
 
@@ -978,33 +907,27 @@ export const ProductSheet = memo(({
                     {/* Image Gallery with optimized loading */}
                     <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                         {selectedVariant && (
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={`${selectedVariant.id}-${currentImageIndex}`}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="w-full h-full"
-                                >
-                                    <LazyImage
-                                        src={selectedVariant.images[currentImageIndex]}
-                                        alt={product.name}
-                                        className="w-full h-full cursor-zoom-in"
-                                        onLoad={handleImageLoad}
-                                        loadingClass="bg-neutral-100/80 backdrop-blur-sm"
-                                        fallback={
-                                            <div className="w-full h-full flex items-center justify-center bg-neutral-100">
-                                                <div className="text-neutral-400">صورة غير متوفرة</div>
-                                            </div>
-                                        }
-                                    />
-                                    <div
-                                        className="absolute inset-0"
-                                        onClick={() => setShowImageViewer(true)}
-                                    />
-                                </motion.div>
-                            </AnimatePresence>
+                            <div
+                                key={`${selectedVariant.id}-${currentImageIndex}`}
+                                className="w-full h-full"
+                            >
+                                <LazyImage
+                                    src={selectedVariant.images[currentImageIndex]}
+                                    alt={product.name}
+                                    className="w-full h-full cursor-zoom-in"
+                                    onLoad={handleImageLoad}
+                                    loadingClass="bg-neutral-100/80"
+                                    fallback={
+                                        <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+                                            <div className="text-neutral-400">صورة غير متوفرة</div>
+                                        </div>
+                                    }
+                                />
+                                <div
+                                    className="absolute inset-0"
+                                    onClick={() => setShowImageViewer(true)}
+                                />
+                            </div>
                         )}
 
                         {/* Image Navigation Indicators */}
