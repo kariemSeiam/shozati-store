@@ -597,6 +597,7 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
             {/* Premium Filter Tabs */}
             <motion.div
               className="px-4 pb-4 overflow-hidden"
+              dir="rtl"
               animate={{ height: isFiltersVisible ? 'auto' : 0 }}
               transition={{ duration: 0.3 }}
             >
@@ -621,8 +622,11 @@ export const OrdersView = ({ onClose, initialOrderId = null }) => {
           </motion.div>
 
           {/* Orders List with Enhanced Styling */}
-          <div className="flex-1 overflow-auto hide-scrollbar">
-            <div className="px-4 py-4 space-y-4">
+          <div className="flex-1 overflow-auto hide-scrollbar"
+          >
+            <div className="px-4 py-4 space-y-4"
+            
+            >
               <AnimatePresence mode="popLayout">
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order, index) => (
