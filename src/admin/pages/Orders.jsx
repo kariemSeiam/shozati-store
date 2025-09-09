@@ -175,11 +175,6 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
             text: 'text-blue-500',
             border: 'border-blue-500/20'
         },
-        blue: {
-            bg: 'bg-blue-500/10',
-            text: 'text-blue-500',
-            border: 'border-blue-500/20'
-        },
         red: {
             bg: 'bg-red-500/10',
             text: 'text-red-500',
@@ -783,7 +778,6 @@ const OrderDetailsSheet = ({ order, isOpen, onClose, onUpdateStatus }) => {
                                 { status: 'cancelled', label: 'إلغاء', icon: Ban, color: 'red' }
                             ].map(({ status, label, icon: Icon, color }) => {
                                 const colorClasses = {
-                                    blue: { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
                                     blue: { text: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
                                     green: { text: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/30' },
                                     red: { text: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' }

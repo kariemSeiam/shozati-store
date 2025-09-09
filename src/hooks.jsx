@@ -36,15 +36,22 @@ const StorageManager = {
 };
 
 // API Request Utilities with Caching
-const createHeaders = (requiresAuth = false) => {
+const createHeaders = (requiresAuth = false, isAdmin = false) => {
     const headers = {
         'Content-Type': 'application/json',
     };
 
     if (requiresAuth) {
-        const token = StorageManager.getToken();
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        if (isAdmin) {
+            const adminToken = localStorage.getItem('adminToken');
+            if (adminToken) {
+                headers['Authorization'] = `Bearer ${adminToken}`;
+            }
+        } else {
+            const token = StorageManager.getToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
         }
     }
 
@@ -61,7 +68,7 @@ const generateCacheKey = (endpoint, options) => {
     return key;
 };
 
-const apiRequest = async (endpoint, options = {}, requiresAuth = false) => {
+const apiRequest = async (endpoint, options = {}, requiresAuth = false, isAdmin = false) => {
     const cacheKey = generateCacheKey(endpoint, options);
     const cachedResponse = apiCache.get(cacheKey);
     const now = Date.now();
@@ -78,7 +85,7 @@ const apiRequest = async (endpoint, options = {}, requiresAuth = false) => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 ...options.headers,
-                ...createHeaders(requiresAuth),
+                ...createHeaders(requiresAuth, isAdmin),
             },
             mode: 'cors', // Add this line
         });

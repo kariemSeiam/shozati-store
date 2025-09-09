@@ -12,13 +12,16 @@ import Customers from './pages/Customers';
 import Slides from './pages/Slides';
 
 import { useAdmin } from './hooks';
+
+// Import ADMIN_PHONE for display purposes
+const ADMIN_PHONE = '0000000000';
 import Coupons from './pages/Coupons';
 import { ADMIN_COLORS } from './components/DesignSystem';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytics');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { token, isInitialized, loading, error, logout } = useAdmin();
+  const { token, isInitialized, loading, error, logout, login, isAuthenticating } = useAdmin();
 
   if (!isInitialized || loading) {
     return (
@@ -42,27 +45,47 @@ const AdminDashboard = () => {
             <AlertCircle className="w-20 h-20 text-danger-500 mx-auto" />
             <div className="absolute inset-0 rounded-full bg-danger-500/20 animate-pulse" />
           </div>
-          <h1 className="text-2xl font-bold text-white" dir="rtl">عذراً، حدث خطأ ما</h1>
-          <p className="text-neutral-400 leading-relaxed" dir="rtl">{error}</p>
+          <h1 className="text-2xl font-bold text-white" dir="rtl">خطأ في المصادقة</h1>
+          <p className="text-neutral-400 leading-relaxed" dir="rtl">
+            {error || 'فشل في تسجيل الدخول كمدير. تأكد من صحة بيانات الاعتماد.'}
+          </p>
+          <p className="text-xs text-neutral-500" dir="rtl">
+            رقم الهاتف: {ADMIN_PHONE}
+          </p>
+          <button
+            onClick={login}
+            disabled={isAuthenticating}
+            className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 
+                     disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isAuthenticating ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول مرة أخرى'}
+          </button>
         </div>
       </div>
     );
   }
 
-  // Allow admin access even without token (direct access mode)
-  // if (!token) {
-  //   return (
-  //     <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
-  //       <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
-  //         <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-  //           <LogOut className="w-10 h-10 text-white" />
-  //         </div>
-  //         <h1 className="text-2xl font-bold text-white" dir="rtl">تسجيل الدخول مطلوب</h1>
-  //         <p className="text-neutral-400 leading-relaxed" dir="rtl">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (!token && isInitialized) {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+        <div className="text-center space-y-6 p-8 rounded-2xl bg-neutral-850/50 backdrop-blur-xl border border-neutral-700/50 max-w-md">
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
+            <LogOut className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-white" dir="rtl">تسجيل الدخول مطلوب</h1>
+          <p className="text-neutral-400 leading-relaxed" dir="rtl">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
+          <button
+            onClick={login}
+            disabled={isAuthenticating}
+            className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 
+                     disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isAuthenticating ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'analytics', icon: PieChart, label: 'التحليلات' },

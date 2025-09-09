@@ -81,7 +81,7 @@ const Coupons = () => {
             </div>
 
             {/* Stats Overview */}
-            {couponStats && (
+            {couponStats && !isLoadingStats && (
                 <div className="p-4 grid grid-cols-2 gap-4">
                     <AdminStatCard
                         title="القسائم النشطة"
@@ -97,7 +97,7 @@ const Coupons = () => {
                     />
                     <AdminStatCard
                         title="معدل الاستخدام"
-                        value={`${((couponStats.totalUsedCoupons || 0) / (couponStats.totalCoupons || 1) * 100).toFixed(1)}%`}
+                        value={`${((couponStats.totalUsedCoupons || 0) / Math.max(couponStats.totalCoupons || 1, 1) * 100).toFixed(1)}%`}
                         icon={TrendingUp}
                         color="warning"
                     />
@@ -197,7 +197,7 @@ const Coupons = () => {
                     <LoadingState />
                 ) : error ? (
                     <ErrorState message={error} />
-                ) : coupons.length === 0 ? (
+                ) : !coupons || coupons.length === 0 ? (
                     <EmptyState />
                 ) : (
                     coupons.map(coupon => (
